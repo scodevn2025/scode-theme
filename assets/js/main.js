@@ -19,7 +19,7 @@ jQuery(document).ready(function($) {
         
         let currentSlide = 0;
         const totalSlides = $slides.length;
-        const autoPlayInterval = 5000; // 5 seconds
+        const autoPlayInterval = 6000; // 6 seconds
         let autoPlayTimer;
         
         function showSlide(index) {
@@ -30,6 +30,14 @@ jQuery(document).ready(function($) {
             $dots.eq(index).addClass('active');
             
             currentSlide = index;
+            
+            // Add entrance animation
+            const $currentSlide = $slides.eq(index);
+            $currentSlide.find('.slide-content-wrapper').addClass('slide-in');
+            
+            setTimeout(() => {
+                $currentSlide.find('.slide-content-wrapper').removeClass('slide-in');
+            }, 1000);
         }
         
         function nextSlide() {
@@ -74,28 +82,166 @@ jQuery(document).ready(function($) {
         $slider.on('mouseenter', stopAutoPlay);
         $slider.on('mouseleave', startAutoPlay);
         
+        // Keyboard navigation
+        $(document).on('keydown', function(e) {
+            if (e.keyCode === 37) { // Left arrow
+                prevSlide();
+                stopAutoPlay();
+                startAutoPlay();
+            } else if (e.keyCode === 39) { // Right arrow
+                nextSlide();
+                stopAutoPlay();
+                startAutoPlay();
+            }
+        });
+        
+        // Touch/swipe support for mobile
+        let startX = 0;
+        let endX = 0;
+        
+        $slider.on('touchstart', function(e) {
+            startX = e.originalEvent.touches[0].clientX;
+        });
+        
+        $slider.on('touchend', function(e) {
+            endX = e.originalEvent.changedTouches[0].clientX;
+            handleSwipe();
+        });
+        
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = startX - endX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    nextSlide();
+                } else {
+                    prevSlide();
+                }
+                stopAutoPlay();
+                startAutoPlay();
+            }
+        }
+        
         // Start auto-play
         startAutoPlay();
     }
 
     // ===== MOBILE MENU TOGGLE =====
     function initMobileMenu() {
-        const $menuToggle = $('.menu-toggle');
-        const $mainMenu = $('.main-menu');
+        const $menuToggle = $('.mobile-menu-toggle');
+        const $primaryMenu = $('.primary-menu-wrapper');
+        const $categoryMenu = $('.category-menu-wrapper');
         
         $menuToggle.on('click', function() {
-            $mainMenu.toggleClass('active');
-            const isExpanded = $mainMenu.hasClass('active');
+            $primaryMenu.toggleClass('active');
+            const isExpanded = $primaryMenu.hasClass('active');
             $menuToggle.attr('aria-expanded', isExpanded);
+            
+            // Close category menu when mobile menu opens
+            if (isExpanded) {
+                $categoryMenu.removeClass('active');
+            }
         });
         
         // Close menu when clicking outside
         $(document).on('click', function(e) {
             if (!$(e.target).closest('.main-navigation').length) {
-                $mainMenu.removeClass('active');
+                $primaryMenu.removeClass('active');
                 $menuToggle.attr('aria-expanded', 'false');
             }
         });
+        
+        // Close menu on escape key
+        $(document).on('keydown', function(e) {
+            if (e.keyCode === 27) { // ESC key
+                $primaryMenu.removeClass('active');
+                $menuToggle.attr('aria-expanded', 'false');
+            }
+        });
+    }
+
+    // ===== CATEGORY DROPDOWN =====
+    function initCategoryDropdown() {
+        const $categoryToggle = $('.category-toggle');
+        const $categoryDropdown = $('.category-dropdown');
+        
+        // Show dropdown on click (mobile)
+        $categoryToggle.on('click', function() {
+            $categoryDropdown.toggleClass('active');
+        });
+        
+        // Hide dropdown when clicking outside
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.category-menu-wrapper').length) {
+                $categoryDropdown.removeClass('active');
+            }
+        });
+        
+        // Keyboard navigation for category menu
+        $categoryToggle.on('keydown', function(e) {
+            if (e.keyCode === 13 || e.keyCode === 32) { // Enter or Space
+                e.preventDefault();
+                $categoryDropdown.toggleClass('active');
+            }
+        });
+    }
+
+    // ===== HEADER SCROLL EFFECTS =====
+    function initHeaderScrollEffects() {
+        const $header = $('.main-header');
+        let lastScrollTop = 0;
+        
+        $(window).on('scroll', function() {
+            const scrollTop = $(this).scrollTop();
+            
+            if (scrollTop > 100) {
+                $header.addClass('scrolled');
+            } else {
+                $header.removeClass('scrolled');
+            }
+            
+            // Hide/show header on scroll
+            if (scrollTop > lastScrollTop && scrollTop > 200) {
+                $header.addClass('header-hidden');
+            } else {
+                $header.removeClass('header-hidden');
+            }
+            
+            lastScrollTop = scrollTop;
+        });
+    }
+
+    // ===== SEARCH ENHANCEMENTS =====
+    function initSearchEnhancements() {
+        const $searchInput = $('.search-box input');
+        const $searchBox = $('.search-box');
+        let searchTimeout;
+        
+        $searchInput.on('focus', function() {
+            $searchBox.addClass('focused');
+        });
+        
+        $searchInput.on('blur', function() {
+            $searchBox.removeClass('focused');
+        });
+        
+        $searchInput.on('input', function() {
+            clearTimeout(searchTimeout);
+            const query = $(this).val().trim();
+            
+            if (query.length >= 2) {
+                searchTimeout = setTimeout(() => {
+                    performSearch(query);
+                }, 500);
+            }
+        });
+        
+        // Search suggestions (placeholder for future implementation)
+        function performSearch(query) {
+            console.log('Searching for:', query);
+            // Here you would implement AJAX search with suggestions
+        }
     }
 
     // ===== FLASH SALE COUNTDOWN =====
@@ -123,6 +269,11 @@ jQuery(document).ready(function($) {
             $('#countdown-hours').text(hours.toString().padStart(2, '0'));
             $('#countdown-minutes').text(minutes.toString().padStart(2, '0'));
             $('#countdown-seconds').text(seconds.toString().padStart(2, '0'));
+            
+            // Add pulse effect when time is running out
+            if (hours === 0 && minutes < 10) {
+                $countdown.addClass('urgent');
+            }
         }
         
         updateCountdown();
@@ -158,6 +309,7 @@ jQuery(document).ready(function($) {
                 align-items: center;
                 justify-content: center;
                 padding: 20px;
+                animation: fadeIn 0.3s ease;
             ">
                 <div class="modal-content" style="
                     background: white;
@@ -166,6 +318,7 @@ jQuery(document).ready(function($) {
                     max-width: 500px;
                     width: 100%;
                     position: relative;
+                    animation: slideInUp 0.3s ease;
                 ">
                     <button class="close-modal" style="
                         position: absolute;
@@ -176,6 +329,7 @@ jQuery(document).ready(function($) {
                         font-size: 24px;
                         cursor: pointer;
                         color: #666;
+                        transition: color 0.2s ease;
                     ">&times;</button>
                     
                     <h3>Xem nhanh sản phẩm #${productId}</h3>
@@ -191,6 +345,7 @@ jQuery(document).ready(function($) {
                             border-radius: 5px;
                             cursor: pointer;
                             margin-right: 10px;
+                            transition: background-color 0.2s ease;
                         ">Thêm vào giỏ</button>
                         
                         <button class="view-details" style="
@@ -200,6 +355,7 @@ jQuery(document).ready(function($) {
                             padding: 10px 20px;
                             border-radius: 5px;
                             cursor: pointer;
+                            transition: background-color 0.2s ease;
                         ">Xem chi tiết</button>
                     </div>
                 </div>
@@ -217,6 +373,14 @@ jQuery(document).ready(function($) {
         
         $('.close-modal').on('click', function() {
             $('.quick-view-modal').remove();
+        });
+        
+        // Close on ESC key
+        $(document).on('keydown.quickview', function(e) {
+            if (e.keyCode === 27) {
+                $('.quick-view-modal').remove();
+                $(document).off('keydown.quickview');
+            }
         });
     }
 
@@ -236,6 +400,12 @@ jQuery(document).ready(function($) {
                 
                 // Update cart count if exists
                 updateCartCount();
+                
+                // Add success animation
+                $(this).addClass('success');
+                setTimeout(() => {
+                    $(this).removeClass('success');
+                }, 2000);
             }, 1000);
         });
     }
@@ -245,6 +415,12 @@ jQuery(document).ready(function($) {
         if ($cartCount.length) {
             const currentCount = parseInt($cartCount.text()) || 0;
             $cartCount.text(currentCount + 1);
+            
+            // Add pulse animation
+            $cartCount.addClass('pulse');
+            setTimeout(() => {
+                $cartCount.removeClass('pulse');
+            }, 1000);
         }
     }
 
@@ -263,29 +439,6 @@ jQuery(document).ready(function($) {
         $backToTop.on('click', function() {
             $('html, body').animate({ scrollTop: 0 }, 600);
         });
-    }
-
-    // ===== SEARCH FUNCTIONALITY =====
-    function initSearch() {
-        const $searchInput = $('.header-search input');
-        let searchTimeout;
-        
-        $searchInput.on('input', function() {
-            clearTimeout(searchTimeout);
-            const query = $(this).val().trim();
-            
-            if (query.length >= 2) {
-                searchTimeout = setTimeout(() => {
-                    performSearch(query);
-                }, 500);
-            }
-        });
-    }
-    
-    function performSearch(query) {
-        // Here you would typically make an AJAX call to search products
-        console.log('Searching for:', query);
-        // showNotification(`Đang tìm kiếm: ${query}`, 'info');
     }
 
     // ===== NEWSLETTER SUBSCRIPTION =====
@@ -407,11 +560,13 @@ jQuery(document).ready(function($) {
     function init() {
         initHeroSlider();
         initMobileMenu();
+        initCategoryDropdown();
+        initHeaderScrollEffects();
+        initSearchEnhancements();
         initCountdownTimer();
         initQuickView();
         initAddToCart();
         initBackToTop();
-        initSearch();
         initNewsletter();
         initSmoothScroll();
         initLazyLoading();
@@ -421,13 +576,18 @@ jQuery(document).ready(function($) {
     // Start initialization
     init();
 
-    // Add CSS animations
+    // Add CSS animations and styles
     $('<style>')
         .prop('type', 'text/css')
         .html(`
             @keyframes slideInRight {
                 from { transform: translateX(100%); opacity: 0; }
                 to { transform: translateX(0); opacity: 1; }
+            }
+            
+            @keyframes slideInUp {
+                from { transform: translateY(30px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
             }
             
             .back-to-top {
@@ -460,6 +620,46 @@ jQuery(document).ready(function($) {
             .product-card.hover {
                 transform: translateY(-5px);
                 box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            }
+            
+            .main-header.scrolled {
+                box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            }
+            
+            .main-header.header-hidden {
+                transform: translateY(-100%);
+            }
+            
+            .search-box.focused {
+                transform: scale(1.02);
+            }
+            
+            .search-box.focused input {
+                border-color: #f36c21;
+                box-shadow: 0 0 0 3px rgba(243, 108, 33, 0.1);
+            }
+            
+            .flash-sale-countdown.urgent {
+                animation: pulse 1s infinite;
+            }
+            
+            .add-to-cart.success {
+                background-color: #28a745 !important;
+                transform: scale(1.05);
+            }
+            
+            .cart-count.pulse {
+                animation: pulse 0.6s ease-in-out;
+            }
+            
+            .category-dropdown.active {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+            
+            .primary-menu-wrapper.active {
+                display: block;
             }
         `)
         .appendTo('head');
