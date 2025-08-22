@@ -1,12 +1,12 @@
 <?php
 /**
- * Single Product Template - Test Version
+ * Test Single Product Template
  */
 
 get_header(); ?>
 
 <div style="padding: 20px; background: #f0f0f0; margin: 20px;">
-    <h1>Single Product Template - Test Version</h1>
+    <h1>Test Single Product Template</h1>
     <p>Nếu bạn thấy trang này, có nghĩa là template hierarchy đang hoạt động.</p>
     
     <h2>Thông tin trang:</h2>
@@ -22,19 +22,6 @@ get_header(); ?>
     <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
         <h3><?php the_title(); ?></h3>
         <div><?php the_content(); ?></div>
-        
-        <?php if (class_exists('WooCommerce')) : ?>
-            <?php global $product; ?>
-            <?php if ($product) : ?>
-                <h4>Thông tin WooCommerce:</h4>
-                <ul>
-                    <li>Giá: <?php echo $product->get_price(); ?></li>
-                    <li>Giá gốc: <?php echo $product->get_regular_price(); ?></li>
-                    <li>Giá khuyến mãi: <?php echo $product->get_sale_price(); ?></li>
-                    <li>SKU: <?php echo $product->get_sku(); ?></li>
-                </ul>
-            <?php endif; ?>
-        <?php endif; ?>
     <?php endwhile; endif; ?>
 </div>
 

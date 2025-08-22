@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-get_header('shop'); ?>
+// Don't call get_header() here as it's already loaded by woocommerce.php
 
 <main class="main-content single-product-page" id="main-content">
     <div class="container">
@@ -698,4 +698,4 @@ get_header('shop'); ?>
     </div>
 </div>
 
-<?php get_footer('shop'); ?>
+<!-- Footer is already loaded by woocommerce.php -->

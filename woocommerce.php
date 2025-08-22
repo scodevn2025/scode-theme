@@ -15,31 +15,10 @@ get_header(); ?>
             
             <?php if (is_product()) : ?>
                 <!-- Single Product Page -->
-                <?php get_template_part('woocommerce/single-product'); ?>
-                
-            <?php elseif (is_shop() || is_product_category() || is_product_tag()) : ?>
-                <!-- Shop/Category/Tag Pages -->
-                <div class="woocommerce-shop-wrapper">
-                    <?php woocommerce_content(); ?>
-                </div>
-                
-            <?php elseif (is_cart()) : ?>
-                <!-- Cart Page -->
-                <div class="woocommerce-cart-wrapper">
-                    <?php woocommerce_content(); ?>
-                </div>
-                
-            <?php elseif (is_checkout()) : ?>
-                <!-- Checkout Page -->
-                <div class="woocommerce-checkout-wrapper">
-                    <?php woocommerce_content(); ?>
-                </div>
-                
-            <?php elseif (is_account_page()) : ?>
-                <!-- My Account Page -->
-                <div class="woocommerce-account-wrapper">
-                    <?php woocommerce_content(); ?>
-                </div>
+                <?php 
+                // Load our custom single product template
+                include get_template_directory() . '/woocommerce/single-product.php';
+                ?>
                 
             <?php else : ?>
                 <!-- Other WooCommerce Pages -->
