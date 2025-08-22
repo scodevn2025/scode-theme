@@ -43,8 +43,64 @@ function scode_theme_setup() {
     // Add image sizes
     add_image_size('product-thumb', 300, 300, true);
     add_image_size('product-medium', 400, 400, true);
+    add_image_size('slide-large', 1200, 400, true);
+    add_image_size('banner-medium', 600, 200, true);
 }
 add_action('after_setup_theme', 'scode_theme_setup');
+
+/**
+ * Register Custom Post Type for Slides
+ */
+function scode_register_slides_post_type() {
+    $labels = array(
+        'name'               => __('Slides', 'scode-theme'),
+        'singular_name'      => __('Slide', 'scode-theme'),
+        'menu_name'          => __('Slides', 'scode-theme'),
+        'add_new'            => __('Add New Slide', 'scode-theme'),
+        'add_new_item'       => __('Add New Slide', 'scode-theme'),
+        'edit_item'          => __('Edit Slide', 'scode-theme'),
+        'new_item'           => __('New Slide', 'scode-theme'),
+        'view_item'          => __('View Slide', 'scode-theme'),
+        'search_items'       => __('Search Slides', 'scode-theme'),
+        'not_found'          => __('No slides found', 'scode-theme'),
+        'not_found_in_trash' => __('No slides found in trash', 'scode-theme'),
+    );
+
+    $args = array(
+        'labels'              => $labels,
+        'public'              => true,
+        'publicly_queryable'  => false,
+        'show_ui'             => true,
+        'show_in_menu'        => true,
+        'query_var'           => true,
+        'rewrite'             => array('slug' => 'slide'),
+        'capability_type'     => 'post',
+        'has_archive'         => false,
+        'hierarchical'        => false,
+        'menu_position'       => 20,
+        'menu_icon'           => 'dashicons-images-alt2',
+        'supports'            => array('title', 'editor', 'thumbnail'),
+    );
+
+    register_post_type('slides', $args);
+}
+add_action('init', 'scode_register_slides_post_type');
+
+/**
+ * Get Slides for Hero Section
+ */
+function scode_get_hero_slides($limit = 5) {
+    $args = array(
+        'post_type'      => 'slides',
+        'posts_per_page' => $limit,
+        'post_status'    => 'publish',
+        'meta_key'       => 'slide_order',
+        'orderby'        => 'meta_value_num',
+        'order'          => 'ASC',
+    );
+
+    return new WP_Query($args);
+}
 
 /**
  * Enqueue scripts and styles

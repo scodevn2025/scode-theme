@@ -4,372 +4,330 @@
  * @package ScodeTheme
  */
 
-(function($) {
+jQuery(document).ready(function($) {
     'use strict';
 
-    // DOM Ready
-    $(document).ready(function() {
-        initTheme();
-    });
-
-    // Window Load
-    $(window).on('load', function() {
-        // Hide loading overlay
-        $('#loading-overlay').removeClass('show');
-    });
-
-    /**
-     * Initialize theme functionality
-     */
-    function initTheme() {
-        initCountdownTimer();
-        initQuickView();
-        initAddToCart();
-        initBackToTop();
-        initMobileMenu();
-        initSearch();
-        initNewsletter();
-        initSmoothScroll();
-        initLazyLoading();
-        initProductHover();
-    }
-
-    /**
-     * Flash Sale Countdown Timer
-     */
-    function initCountdownTimer() {
-        const countdownElement = $('.flash-sale-countdown');
-        if (countdownElement.length === 0) return;
-
-        // Set end time (24 hours from now)
-        const endTime = new Date().getTime() + (24 * 60 * 60 * 1000);
-
-        function updateCountdown() {
-            const now = new Date().getTime();
-            const distance = endTime - now;
-
-            if (distance < 0) {
-                // Countdown finished
-                $('.countdown-timer').html('<span>Kết thúc!</span>');
-                return;
-            }
-
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            $('#countdown-hours').text(hours.toString().padStart(2, '0'));
-            $('#countdown-minutes').text(minutes.toString().padStart(2, '0'));
-            $('#countdown-seconds').text(seconds.toString().padStart(2, '0'));
+    // ===== HERO SLIDER =====
+    function initHeroSlider() {
+        const $slider = $('.hero-slider');
+        const $slides = $('.hero-slide');
+        const $dots = $('.slider-dot');
+        const $prevBtn = $('.slider-arrow.prev');
+        const $nextBtn = $('.slider-arrow.next');
+        
+        if ($slides.length <= 1) return;
+        
+        let currentSlide = 0;
+        const totalSlides = $slides.length;
+        const autoPlayInterval = 5000; // 5 seconds
+        let autoPlayTimer;
+        
+        function showSlide(index) {
+            $slides.removeClass('active');
+            $dots.removeClass('active');
+            
+            $slides.eq(index).addClass('active');
+            $dots.eq(index).addClass('active');
+            
+            currentSlide = index;
         }
-
-        // Update countdown every second
-        updateCountdown();
-        setInterval(updateCountdown, 1000);
-    }
-
-    /**
-     * Quick View Functionality
-     */
-    function initQuickView() {
-        $(document).on('click', '.quick-view', function(e) {
-            e.preventDefault();
-            
-            const productId = $(this).data('product-id');
-            const button = $(this);
-            
-            // Show loading state
-            button.html('<i class="fas fa-spinner fa-spin"></i>');
-            
-            // AJAX request for quick view
-            $.ajax({
-                url: scode_ajax.ajax_url,
-                type: 'POST',
-                data: {
-                    action: 'scode_quick_view',
-                    product_id: productId,
-                    nonce: scode_ajax.nonce
-                },
-                success: function(response) {
-                    if (response.success) {
-                        showQuickViewModal(response.data);
-                    } else {
-                        showNotification('Có lỗi xảy ra khi tải thông tin sản phẩm', 'error');
-                    }
-                },
-                error: function() {
-                    showNotification('Có lỗi xảy ra khi tải thông tin sản phẩm', 'error');
-                },
-                complete: function() {
-                    button.html('<i class="fas fa-eye"></i>');
-                }
-            });
-        });
-    }
-
-    /**
-     * Show Quick View Modal
-     */
-    function showQuickViewModal(content) {
-        // Remove existing modal
-        $('.quick-view-modal').remove();
         
-        // Create modal HTML
-        const modal = $(`
-            <div class="quick-view-modal">
-                <div class="modal-overlay"></div>
-                <div class="modal-content">
-                    <button class="modal-close">&times;</button>
-                    ${content}
-                </div>
-            </div>
-        `);
+        function nextSlide() {
+            const nextIndex = (currentSlide + 1) % totalSlides;
+            showSlide(nextIndex);
+        }
         
-        // Add to body
-        $('body').append(modal);
+        function prevSlide() {
+            const prevIndex = (currentSlide - 1 + totalSlides) % totalSlides;
+            showSlide(prevIndex);
+        }
         
-        // Show modal
-        setTimeout(() => modal.addClass('show'), 10);
+        function startAutoPlay() {
+            autoPlayTimer = setInterval(nextSlide, autoPlayInterval);
+        }
         
-        // Close modal events
-        modal.find('.modal-close, .modal-overlay').on('click', function() {
-            modal.removeClass('show');
-            setTimeout(() => modal.remove(), 300);
+        function stopAutoPlay() {
+            clearInterval(autoPlayTimer);
+        }
+        
+        // Event listeners
+        $dots.on('click', function() {
+            const slideIndex = $(this).data('slide');
+            showSlide(slideIndex);
+            stopAutoPlay();
+            startAutoPlay();
         });
         
-        // Close on ESC key
-        $(document).on('keydown.quickview', function(e) {
-            if (e.keyCode === 27) {
-                modal.removeClass('show');
-                setTimeout(() => modal.remove(), 300);
-                $(document).off('keydown.quickview');
-            }
-        });
-    }
-
-    /**
-     * Add to Cart Functionality
-     */
-    function initAddToCart() {
-        $(document).on('click', '.add-to-cart', function(e) {
-            e.preventDefault();
-            
-            const button = $(this);
-            const productId = button.data('product-id');
-            
-            // Show loading state
-            const originalText = button.text();
-            button.html('<i class="fas fa-spinner fa-spin"></i>');
-            button.prop('disabled', true);
-            
-            // AJAX add to cart
-            $.ajax({
-                url: scode_ajax.ajax_url,
-                type: 'POST',
-                data: {
-                    action: 'woocommerce_ajax_add_to_cart',
-                    product_id: productId,
-                    nonce: scode_ajax.nonce
-                },
-                success: function(response) {
-                    if (response.success) {
-                        showNotification('Đã thêm sản phẩm vào giỏ hàng!', 'success');
-                        updateCartCount(response.data.cart_count);
-                        button.text('Đã thêm');
-                        button.addClass('added');
-                        
-                        setTimeout(() => {
-                            button.text(originalText);
-                            button.removeClass('added');
-                        }, 2000);
-                    } else {
-                        showNotification('Có lỗi xảy ra khi thêm vào giỏ hàng', 'error');
-                    }
-                },
-                error: function() {
-                    showNotification('Có lỗi xảy ra khi thêm vào giỏ hàng', 'error');
-                },
-                complete: function() {
-                    button.prop('disabled', false);
-                }
-            });
-        });
-    }
-
-    /**
-     * Update Cart Count
-     */
-    function updateCartCount(count) {
-        $('.cart-count').text(count);
-        $('.cart-count').addClass('pulse');
-        
-        setTimeout(() => {
-            $('.cart-count').removeClass('pulse');
-        }, 1000);
-    }
-
-    /**
-     * Back to Top Button
-     */
-    function initBackToTop() {
-        const backToTop = $('#back-to-top');
-        
-        $(window).on('scroll', function() {
-            if ($(this).scrollTop() > 300) {
-                backToTop.addClass('show');
-            } else {
-                backToTop.removeClass('show');
-            }
+        $prevBtn.on('click', function() {
+            prevSlide();
+            stopAutoPlay();
+            startAutoPlay();
         });
         
-        backToTop.on('click', function() {
-            $('html, body').animate({
-                scrollTop: 0
-            }, 800);
+        $nextBtn.on('click', function() {
+            nextSlide();
+            stopAutoPlay();
+            startAutoPlay();
         });
+        
+        // Pause auto-play on hover
+        $slider.on('mouseenter', stopAutoPlay);
+        $slider.on('mouseleave', startAutoPlay);
+        
+        // Start auto-play
+        startAutoPlay();
     }
 
-    /**
-     * Mobile Menu Toggle
-     */
+    // ===== MOBILE MENU TOGGLE =====
     function initMobileMenu() {
-        $('.menu-toggle').on('click', function() {
-            const navigation = $('.main-navigation');
-            navigation.toggleClass('mobile-open');
-            
-            if (navigation.hasClass('mobile-open')) {
-                $('body').addClass('menu-open');
-            } else {
-                $('body').removeClass('menu-open');
-            }
+        const $menuToggle = $('.menu-toggle');
+        const $mainMenu = $('.main-menu');
+        
+        $menuToggle.on('click', function() {
+            $mainMenu.toggleClass('active');
+            const isExpanded = $mainMenu.hasClass('active');
+            $menuToggle.attr('aria-expanded', isExpanded);
         });
         
         // Close menu when clicking outside
         $(document).on('click', function(e) {
-            if (!$(e.target).closest('.main-navigation, .menu-toggle').length) {
-                $('.main-navigation').removeClass('mobile-open');
-                $('body').removeClass('menu-open');
+            if (!$(e.target).closest('.main-navigation').length) {
+                $mainMenu.removeClass('active');
+                $menuToggle.attr('aria-expanded', 'false');
             }
         });
     }
 
-    /**
-     * Search Functionality
-     */
-    function initSearch() {
-        const searchForm = $('.header-search');
-        const searchInput = searchForm.find('input');
-        const searchButton = searchForm.find('button');
+    // ===== FLASH SALE COUNTDOWN =====
+    function initCountdownTimer() {
+        const $countdown = $('.flash-sale-countdown');
+        if (!$countdown.length) return;
         
-        // Search button click
-        searchButton.on('click', function(e) {
-            e.preventDefault();
-            performSearch();
-        });
+        // Set deadline (you can make this dynamic via PHP)
+        const deadline = new Date();
+        deadline.setHours(deadline.getHours() + 24); // 24 hours from now
         
-        // Enter key press
-        searchInput.on('keypress', function(e) {
-            if (e.keyCode === 13) {
-                e.preventDefault();
-                performSearch();
-            }
-        });
-        
-        // Auto-complete (if enabled)
-        if (searchInput.length > 0) {
-            searchInput.on('input', debounce(function() {
-                const query = $(this).val();
-                if (query.length >= 3) {
-                    performAutoComplete(query);
-                }
-            }, 300));
-        }
-    }
-
-    /**
-     * Perform Search
-     */
-    function performSearch() {
-        const query = $('.header-search input').val().trim();
-        
-        if (query.length === 0) {
-            showNotification('Vui lòng nhập từ khóa tìm kiếm', 'warning');
-            return;
-        }
-        
-        // Redirect to search results
-        window.location.href = scode_ajax.site_url + '?s=' + encodeURIComponent(query);
-    }
-
-    /**
-     * Newsletter Subscription
-     */
-    function initNewsletter() {
-        $('.newsletter-form').on('submit', function(e) {
-            e.preventDefault();
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = deadline.getTime() - now;
             
-            const form = $(this);
-            const email = form.find('input[name="newsletter_email"]').val();
-            const submitBtn = form.find('.newsletter-submit');
-            
-            if (!isValidEmail(email)) {
-                showNotification('Vui lòng nhập email hợp lệ', 'warning');
+            if (distance < 0) {
+                $countdown.html('<span>Flash Sale đã kết thúc!</span>');
                 return;
             }
             
-            // Show loading state
-            const originalIcon = submitBtn.html();
-            submitBtn.html('<i class="fas fa-spinner fa-spin"></i>');
-            submitBtn.prop('disabled', true);
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
             
-            // AJAX subscription
-            $.ajax({
-                url: scode_ajax.ajax_url,
-                type: 'POST',
-                data: {
-                    action: 'scode_newsletter',
-                    email: email,
-                    nonce: scode_ajax.nonce
-                },
-                success: function(response) {
-                    if (response.success) {
-                        showNotification('Đăng ký nhận tin thành công!', 'success');
-                        form[0].reset();
-                    } else {
-                        showNotification('Có lỗi xảy ra khi đăng ký', 'error');
-                    }
-                },
-                error: function() {
-                    showNotification('Có lỗi xảy ra khi đăng ký', 'error');
-                },
-                complete: function() {
-                    submitBtn.html(originalIcon);
-                    submitBtn.prop('disabled', false);
-                }
-            });
+            $('#countdown-hours').text(hours.toString().padStart(2, '0'));
+            $('#countdown-minutes').text(minutes.toString().padStart(2, '0'));
+            $('#countdown-seconds').text(seconds.toString().padStart(2, '0'));
+        }
+        
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    }
+
+    // ===== PRODUCT QUICK VIEW =====
+    function initQuickView() {
+        $('.quick-view').on('click', function(e) {
+            e.preventDefault();
+            const productId = $(this).data('product-id');
+            
+            // Show loading
+            showNotification('Đang tải thông tin sản phẩm...', 'info');
+            
+            // Here you would typically make an AJAX call to get product details
+            // For now, we'll show a simple modal
+            showQuickViewModal(productId);
+        });
+    }
+    
+    function showQuickViewModal(productId) {
+        const modal = `
+            <div class="quick-view-modal" style="
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            ">
+                <div class="modal-content" style="
+                    background: white;
+                    border-radius: 10px;
+                    padding: 30px;
+                    max-width: 500px;
+                    width: 100%;
+                    position: relative;
+                ">
+                    <button class="close-modal" style="
+                        position: absolute;
+                        top: 15px;
+                        right: 20px;
+                        background: none;
+                        border: none;
+                        font-size: 24px;
+                        cursor: pointer;
+                        color: #666;
+                    ">&times;</button>
+                    
+                    <h3>Xem nhanh sản phẩm #${productId}</h3>
+                    <p>Chức năng này sẽ hiển thị thông tin chi tiết sản phẩm.</p>
+                    <p>Bạn có thể tích hợp với WooCommerce để hiển thị thông tin thực tế.</p>
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="add-to-cart" style="
+                            background: #f36c21;
+                            color: white;
+                            border: none;
+                            padding: 10px 20px;
+                            border-radius: 5px;
+                            cursor: pointer;
+                            margin-right: 10px;
+                        ">Thêm vào giỏ</button>
+                        
+                        <button class="view-details" style="
+                            background: #666;
+                            color: white;
+                            border: none;
+                            padding: 10px 20px;
+                            border-radius: 5px;
+                            cursor: pointer;
+                        ">Xem chi tiết</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        $('body').append(modal);
+        
+        // Close modal events
+        $('.quick-view-modal').on('click', function(e) {
+            if (e.target === this) {
+                $(this).remove();
+            }
+        });
+        
+        $('.close-modal').on('click', function() {
+            $('.quick-view-modal').remove();
         });
     }
 
-    /**
-     * Smooth Scroll for Anchor Links
-     */
+    // ===== ADD TO CART =====
+    function initAddToCart() {
+        $('.add-to-cart').on('click', function(e) {
+            e.preventDefault();
+            const productId = $(this).data('product-id');
+            
+            // Show loading
+            $(this).text('Đang thêm...').prop('disabled', true);
+            
+            // Simulate AJAX call
+            setTimeout(() => {
+                showNotification('Đã thêm sản phẩm vào giỏ hàng!', 'success');
+                $(this).text('Thêm vào giỏ').prop('disabled', false);
+                
+                // Update cart count if exists
+                updateCartCount();
+            }, 1000);
+        });
+    }
+    
+    function updateCartCount() {
+        const $cartCount = $('.cart-count');
+        if ($cartCount.length) {
+            const currentCount = parseInt($cartCount.text()) || 0;
+            $cartCount.text(currentCount + 1);
+        }
+    }
+
+    // ===== BACK TO TOP =====
+    function initBackToTop() {
+        const $backToTop = $('#back-to-top');
+        
+        $(window).on('scroll', function() {
+            if ($(this).scrollTop() > 300) {
+                $backToTop.addClass('visible');
+            } else {
+                $backToTop.removeClass('visible');
+            }
+        });
+        
+        $backToTop.on('click', function() {
+            $('html, body').animate({ scrollTop: 0 }, 600);
+        });
+    }
+
+    // ===== SEARCH FUNCTIONALITY =====
+    function initSearch() {
+        const $searchInput = $('.header-search input');
+        let searchTimeout;
+        
+        $searchInput.on('input', function() {
+            clearTimeout(searchTimeout);
+            const query = $(this).val().trim();
+            
+            if (query.length >= 2) {
+                searchTimeout = setTimeout(() => {
+                    performSearch(query);
+                }, 500);
+            }
+        });
+    }
+    
+    function performSearch(query) {
+        // Here you would typically make an AJAX call to search products
+        console.log('Searching for:', query);
+        // showNotification(`Đang tìm kiếm: ${query}`, 'info');
+    }
+
+    // ===== NEWSLETTER SUBSCRIPTION =====
+    function initNewsletter() {
+        $('.newsletter-form').on('submit', function(e) {
+            e.preventDefault();
+            const email = $(this).find('input[name="newsletter_email"]').val().trim();
+            
+            if (!isValidEmail(email)) {
+                showNotification('Vui lòng nhập email hợp lệ!', 'error');
+                return;
+            }
+            
+            // Show loading
+            const $submitBtn = $(this).find('.newsletter-submit');
+            const originalText = $submitBtn.html();
+            $submitBtn.html('<i class="fas fa-spinner fa-spin"></i>').prop('disabled', true);
+            
+            // Simulate AJAX call
+            setTimeout(() => {
+                showNotification('Cảm ơn bạn đã đăng ký nhận tin!', 'success');
+                $(this)[0].reset();
+                $submitBtn.html(originalText).prop('disabled', false);
+            }, 1000);
+        });
+    }
+
+    // ===== SMOOTH SCROLLING =====
     function initSmoothScroll() {
         $('a[href^="#"]').on('click', function(e) {
-            const target = $(this.getAttribute('href'));
+            e.preventDefault();
+            const target = $($(this).attr('href'));
             
             if (target.length) {
-                e.preventDefault();
-                
                 $('html, body').animate({
                     scrollTop: target.offset().top - 100
-                }, 800);
+                }, 600);
             }
         });
     }
 
-    /**
-     * Lazy Loading for Images
-     */
+    // ===== LAZY LOADING =====
     function initLazyLoading() {
         if ('IntersectionObserver' in window) {
             const imageObserver = new IntersectionObserver((entries, observer) => {
@@ -389,9 +347,7 @@
         }
     }
 
-    /**
-     * Product Hover Effects
-     */
+    // ===== PRODUCT HOVER EFFECTS =====
     function initProductHover() {
         $('.product-card').on('mouseenter', function() {
             $(this).addClass('hover');
@@ -400,168 +356,111 @@
         });
     }
 
-    /**
-     * Show Notification
-     */
+    // ===== NOTIFICATION SYSTEM =====
     function showNotification(message, type = 'info') {
-        // Remove existing notifications
-        $('.notification').remove();
-        
         const notification = $(`
-            <div class="notification notification-${type}">
-                <div class="notification-content">
-                    <span class="notification-message">${message}</span>
-                    <button class="notification-close">&times;</button>
-                </div>
+            <div class="notification notification-${type}" style="
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 5px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 10001;
+                max-width: 300px;
+                animation: slideInRight 0.3s ease;
+            ">
+                ${message}
             </div>
         `);
         
         $('body').append(notification);
         
-        // Show notification
-        setTimeout(() => notification.addClass('show'), 10);
-        
-        // Auto hide after 5 seconds
         setTimeout(() => {
-            notification.removeClass('show');
-            setTimeout(() => notification.remove(), 300);
-        }, 5000);
-        
-        // Close button
-        notification.find('.notification-close').on('click', function() {
-            notification.removeClass('show');
-            setTimeout(() => notification.remove(), 300);
-        });
+            notification.fadeOut(300, function() {
+                $(this).remove();
+            });
+        }, 3000);
     }
 
-    /**
-     * Utility Functions
-     */
-    
-    // Debounce function
-    function debounce(func, wait, immediate) {
+    // ===== UTILITY FUNCTIONS =====
+    function debounce(func, wait) {
         let timeout;
-        return function executedFunction() {
-            const context = this;
-            const args = arguments;
-            const later = function() {
-                timeout = null;
-                if (!immediate) func.apply(context, args);
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
             };
-            const callNow = immediate && !timeout;
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);
-            if (callNow) func.apply(context, args);
         };
     }
     
-    // Email validation
     function isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     }
 
-    /**
-     * WooCommerce Specific Functions
-     */
-    if (typeof wc_add_to_cart_params !== 'undefined') {
-        // Update cart fragments
-        $(document.body).on('added_to_cart', function(event, fragments, cart_hash, button) {
-            // Update cart count
-            if (fragments && fragments['div.widget_shopping_cart_content']) {
-                $('.cart-count').text(fragments['div.widget_shopping_cart_content'].find('.cart-count').text());
+    // ===== INITIALIZE ALL FUNCTIONS =====
+    function init() {
+        initHeroSlider();
+        initMobileMenu();
+        initCountdownTimer();
+        initQuickView();
+        initAddToCart();
+        initBackToTop();
+        initSearch();
+        initNewsletter();
+        initSmoothScroll();
+        initLazyLoading();
+        initProductHover();
+    }
+
+    // Start initialization
+    init();
+
+    // Add CSS animations
+    $('<style>')
+        .prop('type', 'text/css')
+        .html(`
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
             }
-        });
-    }
-
-    /**
-     * Performance Optimizations
-     */
-    
-    // Throttle scroll events
-    let ticking = false;
-    $(window).on('scroll', function() {
-        if (!ticking) {
-            requestAnimationFrame(function() {
-                // Handle scroll events here
-                ticking = false;
-            });
-            ticking = true;
-        }
-    });
-    
-    // Preload critical images
-    function preloadImages() {
-        const criticalImages = [
-            // Add critical image URLs here
-        ];
-        
-        criticalImages.forEach(src => {
-            const img = new Image();
-            img.src = src;
-        });
-    }
-    
-    // Initialize preloading
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', preloadImages);
-    } else {
-        preloadImages();
-    }
-
-    /**
-     * Accessibility Improvements
-     */
-    
-    // Keyboard navigation for dropdowns
-    $('.main-menu > li').on('keydown', function(e) {
-        const $this = $(this);
-        const $submenu = $this.find('.submenu');
-        
-        if (e.keyCode === 13 || e.keyCode === 32) { // Enter or Space
-            e.preventDefault();
-            $submenu.toggle();
-        }
-    });
-    
-    // Focus management for modals
-    function trapFocus(element) {
-        const focusableElements = element.find(
-            'a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select'
-        );
-        
-        const firstFocusableElement = focusableElements[0];
-        const lastFocusableElement = focusableElements[focusableElements.length - 1];
-        
-        element.on('keydown', function(e) {
-            if (e.keyCode === 9) { // Tab key
-                if (e.shiftKey) {
-                    if (document.activeElement === firstFocusableElement) {
-                        e.preventDefault();
-                        lastFocusableElement.focus();
-                    }
-                } else {
-                    if (document.activeElement === lastFocusableElement) {
-                        e.preventDefault();
-                        firstFocusableElement.focus();
-                    }
-                }
+            
+            .back-to-top {
+                position: fixed;
+                bottom: 30px;
+                right: 30px;
+                width: 50px;
+                height: 50px;
+                background: #f36c21;
+                color: white;
+                border: none;
+                border-radius: 50%;
+                cursor: pointer;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+                z-index: 1000;
             }
-        });
-    }
-
-    /**
-     * Error Handling
-     */
-    window.addEventListener('error', function(e) {
-        console.error('JavaScript error:', e.error);
-        // You can send error reports to your analytics service here
-    });
-
-    // Global error handler for AJAX
-    $(document).ajaxError(function(event, xhr, settings, error) {
-        console.error('AJAX error:', error);
-        showNotification('Có lỗi xảy ra khi tải dữ liệu', 'error');
-    });
-
-})(jQuery);
+            
+            .back-to-top.visible {
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            .back-to-top:hover {
+                background: #e55a1a;
+                transform: translateY(-3px);
+            }
+            
+            .product-card.hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            }
+        `)
+        .appendTo('head');
+});

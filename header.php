@@ -94,6 +94,71 @@
         </nav>
     </header>
     
+    <!-- Hero Slider -->
+    <div class="hero-slider">
+        <?php
+        $slides = scode_get_hero_slides(5);
+        if ($slides->have_posts()) :
+            $slide_index = 0;
+            while ($slides->have_posts()) : $slides->the_post();
+                $slide_button_text = get_post_meta(get_the_ID(), 'button_text', true);
+                $slide_button_url = get_post_meta(get_the_ID(), 'button_url', true);
+                $slide_class = ($slide_index === 0) ? 'hero-slide active' : 'hero-slide';
+                ?>
+                
+                <div class="<?php echo esc_attr($slide_class); ?>">
+                    <?php if (has_post_thumbnail()) : ?>
+                        <div class="hero-slide-bg" style="background-image: url('<?php echo get_the_post_thumbnail_url(get_the_ID(), 'slide-large'); ?>');"></div>
+                    <?php endif; ?>
+                    
+                    <div class="hero-slide-overlay"></div>
+                    
+                    <div class="hero-slide-content">
+                        <h1><?php the_title(); ?></h1>
+                        <div class="hero-slide-description"><?php the_content(); ?></div>
+                        
+                        <?php if (!empty($slide_button_text) && !empty($slide_button_url)) : ?>
+                            <a href="<?php echo esc_url($slide_button_url); ?>" class="hero-cta">
+                                <?php echo esc_html($slide_button_text); ?>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <?php
+                $slide_index++;
+            endwhile;
+            wp_reset_postdata();
+            
+            // Create navigation dots dynamically
+            if ($slides->post_count > 1) :
+                ?>
+                <div class="slider-nav">
+                    <?php for ($i = 0; $i < $slides->post_count; $i++) : ?>
+                        <div class="slider-dot <?php echo ($i === 0) ? 'active' : ''; ?>" data-slide="<?php echo $i; ?>"></div>
+                    <?php endfor; ?>
+                </div>
+                
+                <!-- Slide Arrows -->
+                <div class="slider-arrow prev">‹</div>
+                <div class="slider-arrow next">›</div>
+                <?php
+            endif;
+        else :
+            // Fallback if no slides
+            ?>
+            <div class="hero-slide active">
+                <div class="hero-slide-bg" style="background: linear-gradient(135deg, #f36c21, #ff8c42);"></div>
+                <div class="hero-slide-overlay"></div>
+                
+                <div class="hero-slide-content">
+                    <h1>Chào mừng đến với OTNT - ÔNG TRÙM NỘI TRỢ</h1>
+                    <div class="hero-slide-description">Cửa hàng công nghệ hàng đầu Việt Nam với các sản phẩm chất lượng cao và dịch vụ chăm sóc khách hàng tốt nhất.</div>
+                    <a href="<?php echo home_url('/san-pham'); ?>" class="hero-cta">Khám phá ngay</a>
+                </div>
+            </div>
+        <?php endif; ?>
+    </div>
+    
     <!-- Main Content -->
     <main class="main-content" id="main-content">
         <div class="container">
