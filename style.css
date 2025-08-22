@@ -427,6 +427,10 @@ a:hover {
 /* ===== CATEGORY QUICK LINKS ===== */
 .category-links {
     margin: 2rem 0;
+    background: var(--bg-primary);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
 }
 
 .category-grid {
@@ -444,16 +448,28 @@ a:hover {
     transition: all 0.3s ease;
     padding: 1rem;
     border-radius: var(--border-radius);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
 }
 
 .category-item:hover {
     transform: translateY(-5px);
     color: var(--primary-color);
+    box-shadow: var(--shadow-md);
 }
 
 .category-icon {
-    font-size: 2rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--bg-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+    color: var(--primary-color);
 }
 
 .category-item span {
