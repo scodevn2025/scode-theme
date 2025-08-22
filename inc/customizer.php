@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 /**
  * Customizer additions
  */
-function scode_theme_customize_register($wp_customize) {
+function scode_theme_customize_register_backup($wp_customize) {
     // Add section for theme options
     $wp_customize->add_section('scode_theme_options', array(
         'title'    => __('ScodeTheme Options', 'scode-theme'),
@@ -143,7 +143,7 @@ function scode_theme_customize_register($wp_customize) {
         'description' => __('Copyright text in the footer', 'scode-theme'),
     ));
 }
-add_action('customize_register', 'scode_theme_customize_register');
+// add_action('customize_register', 'scode_theme_customize_register_backup');
 
 /**
  * Custom CSS from customizer

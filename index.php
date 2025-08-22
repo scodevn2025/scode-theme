@@ -103,58 +103,142 @@ get_header(); ?>
         </section>
 
         <!-- Featured Products Section -->
-        <?php if (class_exists('WooCommerce')) : ?>
-        <section class="product-section">
-            <div class="section-header">
-                <h2 class="section-title">Sản phẩm nổi bật</h2>
-                <a href="<?php echo home_url('/san-pham-noi-bat'); ?>" class="view-all">Xem tất cả</a>
-            </div>
-            
-            <?php
-            $featured_products = scode_get_featured_products(12);
-            if ($featured_products->have_posts()) :
-            ?>
-                <div class="products-grid cols-6">
-                    <?php while ($featured_products->have_posts()) : $featured_products->the_post(); 
-                        global $product;
+        <section class="product-section featured-products">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">SẢN PHẨM NỔI BẬT</h2>
+                    <a href="<?php echo home_url('/san-pham-noi-bat'); ?>" class="view-all">Xem tất cả</a>
+                </div>
+                
+                <?php if (class_exists('WooCommerce')) : ?>
+                    <?php
+                    $featured_products = scode_get_featured_products(6);
+                    if ($featured_products->have_posts()) :
                     ?>
-                        <div class="product-card">
-                            <div class="product-image">
-                                <?php if (has_post_thumbnail()) : ?>
-                                    <a href="<?php the_permalink(); ?>">
-                                        <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
-                                    </a>
-                                <?php endif; ?>
+                        <div class="products-grid cols-6">
+                            <?php
+                            while ($featured_products->have_posts()) : $featured_products->the_post();
+                                global $product;
+                                $product_id = $product->get_id();
+                                $regular_price = $product->get_regular_price();
+                                $sale_price = $product->get_sale_price();
+                                $current_price = $product->get_price();
                                 
-                                <?php echo scode_get_product_badges($product); ?>
-                            </div>
-                            
-                            <div class="product-info">
-                                <h3 class="product-title">
-                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                                </h3>
+                                // Calculate discount percentage
+                                $discount_percentage = 0;
+                                if ($regular_price && $sale_price) {
+                                    $discount_percentage = round((($regular_price - $sale_price) / $regular_price) * 100);
+                                }
                                 
-                                <?php echo scode_get_product_price_html($product); ?>
+                                // Get product badges
+                                $is_new = get_post_meta($product_id, '_is_new', true);
+                                $is_premium = get_post_meta($product_id, '_is_premium', true);
+                                $is_global = get_post_meta($product_id, '_is_global', true);
+                                $is_genuine = get_post_meta($product_id, '_is_genuine', true);
                                 
-                                <div class="product-actions">
-                                    <button class="add-to-cart" data-product-id="<?php echo $product->get_id(); ?>">
-                                        Thêm vào giỏ
-                                    </button>
-                                    <button class="quick-view" data-product-id="<?php echo $product->get_id(); ?>">
-                                        Xem nhanh
-                                    </button>
+                                // Get product features
+                                $product_features = get_post_meta($product_id, '_product_features', true);
+                                $gift_value = get_post_meta($product_id, '_gift_value', true);
+                                $free_shipping = get_post_meta($product_id, '_free_shipping', true);
+                            ?>
+                                <div class="product-card featured">
+                                    <!-- MI VIETNAM.VN Logo -->
+                                    <div class="brand-logo">
+                                        <span>MI VIETNAM.VN</span>
+                                    </div>
+                                    
+                                    <div class="product-image">
+                                        <?php if (has_post_thumbnail()) : ?>
+                                            <img src="<?php echo get_the_post_thumbnail_url($product_id, 'product-thumb'); ?>" 
+                                                 alt="<?php the_title_attribute(); ?>" 
+                                                 class="product-img">
+                                        <?php endif; ?>
+                                        
+                                        <!-- Discount Badge -->
+                                        <?php if ($discount_percentage > 0) : ?>
+                                            <div class="discount-badge">-<?php echo $discount_percentage; ?>%</div>
+                                        <?php endif; ?>
+                                        
+                                        <!-- Additional Badges -->
+                                        <div class="additional-badges">
+                                            <?php if ($is_global) : ?>
+                                                <div class="badge global">Global version</div>
+                                            <?php endif; ?>
+                                            
+                                            <?php if ($is_premium) : ?>
+                                                <div class="badge premium">SẢN PHẨM CAO CẤP</div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Hot Sale Banner -->
+                                    <div class="hot-sale-banner">
+                                        <span>HOT SALE HÈ RỰC RỠ</span>
+                                    </div>
+                                    
+                                    <!-- Product Info -->
+                                    <div class="product-info">
+                                        <h3 class="product-title">
+                                            <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                                        </h3>
+                                        
+                                        <!-- Product Features List -->
+                                        <?php if (!empty($product_features)) : ?>
+                                            <div class="product-features-list">
+                                                <?php 
+                                                $features_array = explode("\n", $product_features);
+                                                $features_count = 0;
+                                                foreach ($features_array as $feature) {
+                                                    if (trim($feature) && $features_count < 3) {
+                                                        echo '<span class="feature-text">' . esc_html(trim($feature)) . '</span>';
+                                                        $features_count++;
+                                                    }
+                                                }
+                                                ?>
+                                            </div>
+                                        <?php endif; ?>
+                                        
+                                        <!-- Gift Information -->
+                                        <?php if ($gift_value) : ?>
+                                            <div class="gift-info">
+                                                <span class="gift-text">QUÀ TẶNG <?php echo esc_html($gift_value); ?></span>
+                                            </div>
+                                        <?php endif; ?>
+                                        
+                                        <!-- Product Price -->
+                                        <div class="product-price">
+                                            <?php if ($sale_price && $regular_price) : ?>
+                                                <span class="current-price"><?php echo scode_format_price($sale_price); ?></span>
+                                                <span class="old-price"><?php echo scode_format_price($regular_price); ?></span>
+                                            <?php else : ?>
+                                                <span class="current-price"><?php echo scode_format_price($current_price); ?></span>
+                                            <?php endif; ?>
+                                        </div>
+                                        
+                                        <!-- Product Actions -->
+                                        <div class="product-actions">
+                                            <button class="add-to-cart" data-product-id="<?php echo $product_id; ?>">
+                                                <i class="fas fa-shopping-cart"></i>
+                                                Thêm vào giỏ
+                                            </button>
+                                            <button class="quick-view" data-product-id="<?php echo $product_id; ?>">
+                                                <i class="fas fa-eye"></i>
+                                                Xem nhanh
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            <?php endwhile; ?>
                         </div>
-                    <?php endwhile; wp_reset_postdata(); ?>
-                </div>
-            <?php else : ?>
-                <div class="no-products">
-                    <p>Chưa có sản phẩm nổi bật nào.</p>
-                </div>
-            <?php endif; ?>
+                        <?php wp_reset_postdata(); ?>
+                    <?php else : ?>
+                        <div class="no-products">
+                            <p>Chưa có sản phẩm nổi bật nào.</p>
+                        </div>
+                    <?php endif; ?>
+                <?php endif; ?>
+            </div>
         </section>
-        <?php endif; ?>
 
         <!-- Best Sellers Section -->
         <?php if (class_exists('WooCommerce')) : ?>
