@@ -1,8 +1,9 @@
 <?php
 /**
- * WooCommerce Overrides and Customizations
+ * WooCommerce Template Overrides
  * 
- * @package ScodeTheme
+ * @package SCODE_Theme
+ * @version 1.0.0
  */
 
 // Prevent direct access
@@ -10,167 +11,457 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// ===== WOOCOMMERCE TEMPLATE OVERRIDES =====
+
 /**
- * Check if WooCommerce is active
+ * Override WooCommerce content wrapper
  */
-if (!class_exists('WooCommerce')) {
-    return;
+function scode_woocommerce_content() {
+    if (is_singular('product')) {
+        while (have_posts()) {
+            the_post();
+            wc_get_template_part('content', 'single-product');
+        }
+    } else {
+        if (have_posts()) {
+            do_action('woocommerce_before_shop_loop');
+            
+            woocommerce_product_loop_start();
+            
+            if (wc_get_loop_prop('is_shortcode')) {
+                $columns = absint(wc_get_loop_prop('columns'));
+            } else {
+                $columns = wc_get_default_products_per_row();
+            }
+            
+            woocommerce_product_loop_start();
+            
+            if (have_posts()) {
+                while (have_posts()) {
+                    the_post();
+                    do_action('woocommerce_shop_loop');
+                    wc_get_template_part('content', 'product');
+                }
+            }
+            
+            woocommerce_product_loop_end();
+            
+            do_action('woocommerce_after_shop_loop');
+        } else {
+            do_action('woocommerce_no_products_found');
+        }
+    }
 }
 
 /**
- * Remove WooCommerce default styles
+ * Customize product loop columns
  */
-add_filter('woocommerce_enqueue_styles', '__return_empty_array');
+function scode_woocommerce_loop_columns() {
+    return 4; // Default 4 columns
+}
+add_filter('loop_shop_columns', 'scode_woocommerce_loop_columns');
 
 /**
- * Customize WooCommerce pagination
+ * Customize products per page
  */
-function scode_theme_woocommerce_pagination_args($args) {
-    $args['prev_text'] = __('← Trước', 'scode-theme');
-    $args['next_text'] = __('Sau →', 'scode-theme');
+function scode_woocommerce_products_per_page() {
+    return 12; // Default 12 products per page
+}
+add_filter('loop_shop_per_page', 'scode_woocommerce_products_per_page');
+
+/**
+ * Customize product sorting options
+ */
+function scode_woocommerce_catalog_orderby($sorting_options) {
+    $sorting_options = array(
+        'menu_order' => __('Mặc định', 'scode-theme'),
+        'popularity' => __('Phổ biến', 'scode-theme'),
+        'rating' => __('Đánh giá cao', 'scode-theme'),
+        'date' => __('Mới nhất', 'scode-theme'),
+        'price' => __('Giá thấp đến cao', 'scode-theme'),
+        'price-desc' => __('Giá cao đến thấp', 'scode-theme'),
+    );
+    
+    return $sorting_options;
+}
+add_filter('woocommerce_catalog_orderby', 'scode_woocommerce_catalog_orderby');
+
+/**
+ * Customize pagination
+ */
+function scode_woocommerce_pagination_args($args) {
+    $args['prev_text'] = '<i class="fas fa-chevron-left"></i> Trước';
+    $args['next_text'] = 'Sau <i class="fas fa-chevron-right"></i>';
+    $args['type'] = 'list';
+    
     return $args;
 }
-add_filter('woocommerce_pagination_args', 'scode_theme_woocommerce_pagination_args');
+add_filter('woocommerce_pagination_args', 'scode_woocommerce_pagination_args');
 
 /**
- * Customize WooCommerce breadcrumbs
+ * Customize breadcrumbs
  */
-function scode_theme_woocommerce_breadcrumb_defaults($args) {
-    $args['delimiter'] = ' <i class="fas fa-chevron-right"></i> ';
+function scode_woocommerce_breadcrumb_defaults($args) {
+    $args['delimiter'] = '<i class="fas fa-chevron-right"></i>';
     $args['wrap_before'] = '<nav class="woocommerce-breadcrumb">';
     $args['wrap_after'] = '</nav>';
+    $args['before'] = '';
+    $args['after'] = '';
+    $args['home'] = _x('Trang chủ', 'breadcrumb', 'scode-theme');
+    
     return $args;
 }
-add_filter('woocommerce_breadcrumb_defaults', 'scode_theme_woocommerce_breadcrumb_defaults');
+add_filter('woocommerce_breadcrumb_defaults', 'scode_woocommerce_breadcrumb_defaults');
 
 /**
- * Add discount percentage to product cards
+ * Customize sale flash
  */
-function scode_theme_product_discount_percentage() {
-    global $product;
+function scode_woocommerce_sale_flash($html, $post, $product) {
     if ($product->is_on_sale()) {
         $regular_price = $product->get_regular_price();
         $sale_price = $product->get_sale_price();
-        if ($regular_price && $sale_price) {
-            $percentage = round((1 - $sale_price / $regular_price) * 100);
-            echo '<span class="discount-badge">-' . $percentage . '%</span>';
-        }
-    }
-}
-add_action('woocommerce_before_shop_loop_item_title', 'scode_theme_product_discount_percentage');
-
-/**
- * Customize WooCommerce product loop
- */
-function scode_theme_woocommerce_product_loop_start() {
-    echo '<div class="products-grid">';
-}
-add_action('woocommerce_before_shop_loop', 'scode_theme_woocommerce_product_loop_start', 40);
-
-function scode_theme_woocommerce_product_loop_end() {
-    echo '</div>';
-}
-add_action('woocommerce_after_shop_loop', 'scode_theme_woocommerce_product_loop_end', 5);
-
-/**
- * Customize WooCommerce product classes
- */
-function scode_theme_woocommerce_product_classes($classes, $product) {
-    $classes[] = 'product-card';
-    return $classes;
-}
-add_filter('woocommerce_product_class', 'scode_theme_woocommerce_product_classes', 10, 2);
-
-/**
- * Customize WooCommerce product image
- */
-function scode_theme_woocommerce_product_image() {
-    global $product;
-    if (has_post_thumbnail()) {
-        echo '<a href="' . get_permalink() . '">';
-        the_post_thumbnail('scode-product-card', array('class' => 'product-image'));
-        echo '</a>';
-    } else {
-        echo '<a href="' . get_permalink() . '">';
-        echo '<img src="' . get_template_directory_uri() . '/assets/img/placeholder-product.jpg" alt="' . get_the_title() . '" class="product-image">';
-        echo '</a>';
-    }
-}
-remove_action('woocommerce_before_shop_loop_item_title', 'woocommerce_template_loop_product_thumbnail', 10);
-add_action('woocommerce_before_shop_loop_item_title', 'scode_theme_woocommerce_product_image', 10);
-
-/**
- * Customize WooCommerce product title
- */
-function scode_theme_woocommerce_product_title() {
-    echo '<h3 class="product-title"><a href="' . get_permalink() . '">' . get_the_title() . '</a></h3>';
-}
-remove_action('woocommerce_shop_loop_item_title', 'woocommerce_template_loop_product_title', 10);
-add_action('woocommerce_shop_loop_item_title', 'scode_theme_woocommerce_product_title', 10);
-
-/**
- * Customize WooCommerce product price
- */
-function scode_theme_woocommerce_product_price() {
-    global $product;
-    echo '<div class="product-price">';
-    if ($product->is_on_sale()) {
-        echo '<span class="old-price">' . wc_price($product->get_regular_price()) . '</span>';
-        echo '<span class="current-price">' . wc_price($product->get_sale_price()) . '</span>';
-    } else {
-        echo '<span class="current-price">' . wc_price($product->get_price()) . '</span>';
-    }
-    echo '</div>';
-}
-remove_action('woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_price', 10);
-add_action('woocommerce_after_shop_loop_item_title', 'scode_theme_woocommerce_product_price', 10);
-
-/**
- * Customize WooCommerce add to cart button
- */
-function scode_theme_woocommerce_add_to_cart_button() {
-    global $product;
-    echo '<button class="add-to-cart-btn" data-product-id="' . $product->get_id() . '">';
-    echo __('Thêm vào giỏ', 'scode-theme');
-    echo '</button>';
-}
-remove_action('woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart', 10);
-add_action('woocommerce_after_shop_loop_item', 'scode_theme_woocommerce_add_to_cart_button', 10);
-
-/**
- * AJAX add to cart functionality
- */
-function scode_theme_add_to_cart_ajax() {
-    $product_id = intval($_POST['product_id']);
-    
-    if ($product_id > 0) {
-        $result = WC()->cart->add_to_cart($product_id);
         
-        if ($result) {
-            wp_send_json_success(array(
-                'message' => __('Sản phẩm đã được thêm vào giỏ hàng!', 'scode-theme'),
-                'cart_count' => WC()->cart->get_cart_contents_count()
-            ));
-        } else {
-            wp_send_json_error(array(
-                'message' => __('Không thể thêm sản phẩm vào giỏ hàng.', 'scode-theme')
-            ));
+        if ($regular_price && $sale_price) {
+            $percentage = round((($regular_price - $sale_price) / $regular_price) * 100);
+            return '<span class="onsale">-' . $percentage . '%</span>';
         }
-    } else {
-        wp_send_json_error(array(
-            'message' => __('ID sản phẩm không hợp lệ.', 'scode-theme')
-        ));
     }
+    
+    return $html;
 }
-add_action('wp_ajax_add_to_cart', 'scode_theme_add_to_cart_ajax');
-add_action('wp_ajax_nopriv_add_to_cart', 'scode_theme_add_to_cart_ajax');
+add_filter('woocommerce_sale_flash', 'scode_woocommerce_sale_flash', 10, 3);
 
 /**
- * Customize WooCommerce mini cart
+ * Customize add to cart button
  */
-function scode_theme_woocommerce_mini_cart() {
+function scode_woocommerce_add_to_cart_button() {
+    global $product;
+    
+    if ($product->is_type('simple')) {
+        echo '<button type="submit" class="single_add_to_cart_button button alt">
+            <i class="fas fa-shopping-cart"></i> Thêm vào giỏ hàng
+        </button>';
+    } elseif ($product->is_type('variable')) {
+        echo '<button type="submit" class="single_add_to_cart_button button alt">
+            <i class="fas fa-shopping-cart"></i> Chọn mua
+        </button>';
+    }
+}
+
+/**
+ * Customize product meta
+ */
+function scode_woocommerce_product_meta() {
+    global $product;
+    
+    if ($product->get_sku()) {
+        echo '<span class="sku_wrapper">SKU: <span class="sku">' . $product->get_sku() . '</span></span>';
+    }
+    
+    if ($product->get_categories()) {
+        echo '<span class="posted_in">Danh mục: ' . $product->get_categories() . '</span>';
+    }
+    
+    if ($product->get_tags()) {
+        echo '<span class="tagged_as">Tags: ' . $product->get_tags() . '</span>';
+    }
+}
+
+/**
+ * Customize related products
+ */
+function scode_woocommerce_related_products_args($args) {
+    $args['posts_per_page'] = 4; // Show 4 related products
+    $args['columns'] = 4; // 4 columns
+    
+    return $args;
+}
+add_filter('woocommerce_output_related_products_args', 'scode_woocommerce_related_products_args');
+
+/**
+ * Customize upsell products
+ */
+function scode_woocommerce_upsell_products_args($args) {
+    $args['posts_per_page'] = 4; // Show 4 upsell products
+    $args['columns'] = 4; // 4 columns
+    
+    return $args;
+}
+add_filter('woocommerce_upsell_display_args', 'scode_woocommerce_upsell_products_args');
+
+/**
+ * Customize cross-sell products
+ */
+function scode_woocommerce_cross_sell_products_args($args) {
+    $args['posts_per_page'] = 4; // Show 4 cross-sell products
+    $args['columns'] = 4; // 4 columns
+    
+    return $args;
+}
+add_filter('woocommerce_cross_sells_total', function() { return 4; });
+
+/**
+ * Customize product gallery
+ */
+function scode_woocommerce_product_gallery() {
+    global $product;
+    
+    $attachment_ids = $product->get_gallery_image_ids();
+    $post_thumbnail_id = $product->get_image_id();
+    
+    if ($post_thumbnail_id) {
+        $attachment_ids = array_merge(array($post_thumbnail_id), $attachment_ids);
+    }
+    
+    if (!empty($attachment_ids)) {
+        echo '<div class="woocommerce-product-gallery">';
+        echo '<div class="gallery-main">';
+        
+        foreach ($attachment_ids as $attachment_id) {
+            $image_url = wp_get_attachment_image_url($attachment_id, 'product-large');
+            $image_alt = get_post_meta($attachment_id, '_wp_attachment_image_alt', true);
+            
+            echo '<div class="gallery-item">';
+            echo '<img src="' . esc_url($image_url) . '" alt="' . esc_attr($image_alt) . '">';
+            echo '</div>';
+        }
+        
+        echo '</div>';
+        
+        if (count($attachment_ids) > 1) {
+            echo '<div class="gallery-thumbs">';
+            foreach ($attachment_ids as $attachment_id) {
+                $image_url = wp_get_attachment_image_url($attachment_id, 'product-thumb');
+                $image_alt = get_post_meta($attachment_id, '_wp_attachment_image_alt', true);
+                
+                echo '<div class="thumb-item">';
+                echo '<img src="' . esc_url($image_url) . '" alt="' . esc_attr($image_alt) . '">';
+                echo '</div>';
+            }
+            echo '</div>';
+        }
+        
+        echo '</div>';
+    }
+}
+
+/**
+ * Customize product tabs
+ */
+function scode_woocommerce_product_tabs($tabs) {
+    // Reorder tabs
+    $tabs['description']['priority'] = 10;
+    $tabs['additional_information']['priority'] = 20;
+    $tabs['reviews']['priority'] = 30;
+    
+    // Customize tab titles
+    $tabs['description']['title'] = __('Mô tả', 'scode-theme');
+    $tabs['additional_information']['title'] = __('Thông số kỹ thuật', 'scode-theme');
+    $tabs['reviews']['title'] = __('Đánh giá', 'scode-theme');
+    
+    return $tabs;
+}
+add_filter('woocommerce_product_tabs', 'scode_woocommerce_product_tabs');
+
+/**
+ * Customize checkout fields
+ */
+function scode_woocommerce_checkout_fields($fields) {
+    // Customize billing fields
+    $fields['billing']['billing_first_name']['label'] = __('Họ', 'scode-theme');
+    $fields['billing']['billing_last_name']['label'] = __('Tên', 'scode-theme');
+    $fields['billing']['billing_phone']['label'] = __('Số điện thoại', 'scode-theme');
+    $fields['billing']['billing_email']['label'] = __('Email', 'scode-theme');
+    $fields['billing']['billing_address_1']['label'] = __('Địa chỉ', 'scode-theme');
+    $fields['billing']['billing_city']['label'] = __('Thành phố', 'scode-theme');
+    $fields['billing']['billing_state']['label'] = __('Tỉnh/Thành phố', 'scode-theme');
+    $fields['billing']['billing_postcode']['label'] = __('Mã bưu điện', 'scode-theme');
+    
+    // Customize shipping fields
+    $fields['shipping']['shipping_first_name']['label'] = __('Họ', 'scode-theme');
+    $fields['shipping']['shipping_last_name']['label'] = __('Tên', 'scode-theme');
+    $fields['shipping']['shipping_address_1']['label'] = __('Địa chỉ', 'scode-theme');
+    $fields['shipping']['shipping_city']['label'] = __('Thành phố', 'scode-theme');
+    $fields['shipping']['shipping_state']['label'] = __('Tỉnh/Thành phố', 'scode-theme');
+    $fields['shipping']['shipping_postcode']['label'] = __('Mã bưu điện', 'scode-theme');
+    
+    return $fields;
+}
+add_filter('woocommerce_checkout_fields', 'scode_woocommerce_checkout_fields');
+
+/**
+ * Customize order received text
+ */
+function scode_woocommerce_thankyou_order_received_text($str, $order) {
+    return 'Cảm ơn bạn đã đặt hàng! Đơn hàng của bạn đã được nhận.';
+}
+add_filter('woocommerce_thankyou_order_received_text', 'scode_woocommerce_thankyou_order_received_text', 10, 2);
+
+/**
+ * Customize email templates
+ */
+function scode_woocommerce_email_styles($css) {
+    $css .= '
+        .woocommerce-email-header {
+            background-color: #f36c21 !important;
+            color: white !important;
+        }
+        .woocommerce-email-footer {
+            background-color: #4a4a4a !important;
+            color: white !important;
+        }
+    ';
+    
+    return $css;
+}
+add_filter('woocommerce_email_styles', 'scode_woocommerce_email_styles');
+
+/**
+ * Add custom product fields
+ */
+function scode_add_custom_product_fields() {
+    global $woocommerce, $post;
+    
+    echo '<div class="options_group">';
+    
+    // Product brand
+    woocommerce_wp_text_input(array(
+        'id' => '_product_brand',
+        'label' => __('Thương hiệu', 'scode-theme'),
+        'placeholder' => __('Nhập thương hiệu sản phẩm', 'scode-theme'),
+        'desc_tip' => true,
+        'description' => __('Thương hiệu của sản phẩm', 'scode-theme'),
+    ));
+    
+    // Product warranty
+    woocommerce_wp_text_input(array(
+        'id' => '_product_warranty',
+        'label' => __('Bảo hành', 'scode-theme'),
+        'placeholder' => __('Ví dụ: 12 tháng', 'scode-theme'),
+        'desc_tip' => true,
+        'description' => __('Thời gian bảo hành sản phẩm', 'scode-theme'),
+    ));
+    
+    // Product features
+    woocommerce_wp_textarea_input(array(
+        'id' => '_product_features',
+        'label' => __('Tính năng nổi bật', 'scode-theme'),
+        'placeholder' => __('Nhập các tính năng (mỗi dòng một tính năng)', 'scode-theme'),
+        'desc_tip' => true,
+        'description' => __('Các tính năng chính của sản phẩm', 'scode-theme'),
+    ));
+    
+    // Product video
+    woocommerce_wp_text_input(array(
+        'id' => '_product_video',
+        'label' => __('Video sản phẩm', 'scode-theme'),
+        'placeholder' => __('URL video YouTube hoặc Vimeo', 'scode-theme'),
+        'desc_tip' => true,
+        'description' => __('Link video giới thiệu sản phẩm', 'scode-theme'),
+    ));
+    
+    echo '</div>';
+}
+add_action('woocommerce_product_options_general_product_data', 'scode_add_custom_product_fields');
+
+/**
+ * Save custom product fields
+ */
+function scode_save_custom_product_fields($post_id) {
+    $fields = array(
+        '_product_brand',
+        '_product_warranty',
+        '_product_features',
+        '_product_video'
+    );
+    
+    foreach ($fields as $field) {
+        if (isset($_POST[$field])) {
+            update_post_meta($post_id, $field, sanitize_text_field($_POST[$field]));
+        }
+    }
+}
+add_action('woocommerce_process_product_meta', 'scode_save_custom_product_fields');
+
+/**
+ * Display custom product fields on frontend
+ */
+function scode_display_custom_product_fields() {
+    global $product;
+    
+    $brand = get_post_meta($product->get_id(), '_product_brand', true);
+    $warranty = get_post_meta($product->get_id(), '_product_warranty', true);
+    $features = get_post_meta($product->get_id(), '_product_features', true);
+    $video = get_post_meta($product->get_id(), '_product_video', true);
+    
+    if ($brand || $warranty || $features || $video) {
+        echo '<div class="product-extra-info">';
+        
+        if ($brand) {
+            echo '<div class="product-brand">';
+            echo '<strong>Thương hiệu:</strong> ' . esc_html($brand);
+            echo '</div>';
+        }
+        
+        if ($warranty) {
+            echo '<div class="product-warranty">';
+            echo '<strong>Bảo hành:</strong> ' . esc_html($warranty);
+            echo '</div>';
+        }
+        
+        if ($features) {
+            echo '<div class="product-features">';
+            echo '<strong>Tính năng nổi bật:</strong>';
+            echo '<ul>';
+            $feature_list = explode("\n", $features);
+            foreach ($feature_list as $feature) {
+                if (trim($feature)) {
+                    echo '<li>' . esc_html(trim($feature)) . '</li>';
+                }
+            }
+            echo '</ul>';
+            echo '</div>';
+        }
+        
+        if ($video) {
+            echo '<div class="product-video">';
+            echo '<strong>Video sản phẩm:</strong>';
+            echo '<div class="video-container">';
+            // Convert YouTube/Vimeo URL to embed
+            if (strpos($video, 'youtube.com') !== false || strpos($video, 'youtu.be') !== false) {
+                $video_id = '';
+                if (preg_match('/youtube\.com\/watch\?v=([^&]+)/', $video, $matches)) {
+                    $video_id = $matches[1];
+                } elseif (preg_match('/youtu\.be\/([^?]+)/', $video, $matches)) {
+                    $video_id = $matches[1];
+                }
+                if ($video_id) {
+                    echo '<iframe width="560" height="315" src="https://www.youtube.com/embed/' . esc_attr($video_id) . '" frameborder="0" allowfullscreen></iframe>';
+                }
+            } elseif (strpos($video, 'vimeo.com') !== false) {
+                $video_id = '';
+                if (preg_match('/vimeo\.com\/([0-9]+)/', $video, $matches)) {
+                    $video_id = $matches[1];
+                }
+                if ($video_id) {
+                    echo '<iframe width="560" height="315" src="https://player.vimeo.com/video/' . esc_attr($video_id) . '" frameborder="0" allowfullscreen></iframe>';
+                }
+            }
+            echo '</div>';
+            echo '</div>';
+        }
+        
+        echo '</div>';
+    }
+}
+add_action('woocommerce_single_product_summary', 'scode_display_custom_product_fields', 25);
+
+/**
+ * Customize mini cart
+ */
+function scode_woocommerce_mini_cart() {
     if (WC()->cart->is_empty()) {
-        echo '<p class="woocommerce-mini-cart__empty-message">' . __('Giỏ hàng trống.', 'scode-theme') . '</p>';
+        echo '<p class="woocommerce-mini-cart__empty-message">Giỏ hàng trống</p>';
     } else {
         echo '<ul class="woocommerce-mini-cart cart_list product_list_widget">';
         
@@ -189,123 +480,29 @@ function scode_theme_woocommerce_mini_cart() {
                 echo '<span class="product-name">' . esc_html($product_name) . '</span>';
                 echo '</a>';
                 echo '<span class="quantity">' . sprintf('%s &times; %s', $cart_item['quantity'], $product_price) . '</span>';
+                echo '<a href="' . esc_url(wc_get_cart_remove_url($cart_item_key)) . '" class="remove remove_from_cart_link">&times;</a>';
                 echo '</li>';
             }
         }
         
         echo '</ul>';
         
-        echo '<p class="woocommerce-mini-cart__total total"><strong>' . __('Tổng cộng:', 'scode-theme') . '</strong> <span class="woocommerce-Price-amount amount">' . WC()->cart->get_cart_subtotal() . '</span></p>';
+        echo '<p class="woocommerce-mini-cart__total total"><strong>Tổng cộng:</strong> <span class="woocommerce-Price-amount amount">' . WC()->cart->get_cart_subtotal() . '</span></p>';
         
-        echo '<div class="woocommerce-mini-cart__buttons buttons">';
-        echo '<a href="' . esc_url(wc_get_cart_url()) . '" class="button wc-forward">' . __('Xem giỏ hàng', 'scode-theme') . '</a>';
-        echo '<a href="' . esc_url(wc_get_checkout_url()) . '" class="button checkout wc-forward">' . __('Thanh toán', 'scode-theme') . '</a>';
-        echo '</div>';
+        echo '<p class="woocommerce-mini-cart__buttons buttons">';
+        echo '<a href="' . esc_url(wc_get_cart_url()) . '" class="button wc-forward">Xem giỏ hàng</a>';
+        echo '<a href="' . esc_url(wc_get_checkout_url()) . '" class="button checkout wc-forward">Thanh toán</a>';
+        echo '</p>';
     }
 }
 
 /**
- * Customize WooCommerce product archive page
+ * AJAX update cart count
  */
-function scode_theme_woocommerce_archive_page() {
-    if (is_shop() || is_product_category() || is_product_tag()) {
-        echo '<div class="woocommerce-archive-header">';
-        echo '<h1 class="archive-title">';
-        if (is_shop()) {
-            echo __('Cửa hàng', 'scode-theme');
-        } elseif (is_product_category()) {
-            single_cat_title();
-        } elseif (is_product_tag()) {
-            single_tag_title();
-        }
-        echo '</h1>';
-        echo '</div>';
-    }
+function scode_ajax_update_cart_count() {
+    wp_send_json_success(array(
+        'cart_count' => WC()->cart->get_cart_contents_count()
+    ));
 }
-add_action('woocommerce_before_main_content', 'scode_theme_woocommerce_archive_page', 10);
-
-/**
- * Customize WooCommerce single product page
- */
-function scode_theme_woocommerce_single_product() {
-    if (is_product()) {
-        echo '<div class="single-product-header">';
-        echo '<h1 class="product-title">' . get_the_title() . '</h1>';
-        echo '</div>';
-    }
-}
-add_action('woocommerce_before_single_product', 'scode_theme_woocommerce_single_product', 10);
-
-/**
- * Add custom fields to WooCommerce products
- */
-function scode_theme_add_product_custom_fields() {
-    global $post;
-    
-    echo '<div class="product-custom-fields">';
-    
-    // Add custom fields here if needed
-    $custom_field = get_post_meta($post->ID, '_custom_field', true);
-    if ($custom_field) {
-        echo '<div class="custom-field">';
-        echo '<strong>' . __('Custom Field:', 'scode-theme') . '</strong> ' . esc_html($custom_field);
-        echo '</div>';
-    }
-    
-    echo '</div>';
-}
-add_action('woocommerce_single_product_summary', 'scode_theme_add_product_custom_fields', 25);
-
-/**
- * Customize WooCommerce checkout page
- */
-function scode_theme_woocommerce_checkout_fields($fields) {
-    // Customize checkout fields if needed
-    return $fields;
-}
-add_filter('woocommerce_checkout_fields', 'scode_theme_woocommerce_checkout_fields');
-
-/**
- * Add custom CSS for WooCommerce pages
- */
-function scode_theme_woocommerce_custom_css() {
-    if (is_woocommerce() || is_cart() || is_checkout() || is_account_page()) {
-        ?>
-        <style>
-            /* WooCommerce specific styles */
-            .woocommerce .products-grid {
-                display: grid;
-                grid-template-columns: repeat(var(--product-grid-columns), 1fr);
-                gap: 1.5rem;
-            }
-            
-            .woocommerce .product-card {
-                background: var(--bg-primary);
-                border: 1px solid var(--border-color);
-                border-radius: var(--border-radius);
-                overflow: hidden;
-                transition: all 0.3s ease;
-            }
-            
-            .woocommerce .product-card:hover {
-                transform: translateY(-5px);
-                box-shadow: var(--shadow-xl);
-            }
-            
-            .woocommerce .discount-badge {
-                position: absolute;
-                top: 1rem;
-                left: 1rem;
-                background: var(--error-color);
-                color: var(--text-white);
-                padding: 0.25rem 0.75rem;
-                border-radius: 20px;
-                font-size: 0.875rem;
-                font-weight: 600;
-                z-index: 10;
-            }
-        </style>
-        <?php
-    }
-}
-add_action('wp_head', 'scode_theme_woocommerce_custom_css');
+add_action('wp_ajax_scode_update_cart_count', 'scode_ajax_update_cart_count');
+add_action('wp_ajax_nopriv_scode_update_cart_count', 'scode_ajax_update_cart_count');

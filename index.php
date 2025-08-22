@@ -1,429 +1,496 @@
 <?php
 /**
- * The main template file - Simplified Version
- *
- * @package ScodeTheme
+ * The main template file
+ * 
+ * @package SCODE_Theme
+ * @version 1.0.0
  */
 
 get_header(); ?>
 
-<!-- Icons Row Section -->
-<section class="icons-row">
+<!-- Main Content -->
+<main class="main-content" id="main-content">
     <div class="container">
-        <div class="icons-grid">
-            <div class="icon-item">
-                <i class="fas fa-truck"></i>
-                <h4>Giao nhanh</h4>
-                <p>2–4h nội thành</p>
-            </div>
-            <div class="icon-item">
-                <i class="fas fa-shield-alt"></i>
-                <h4>Bảo hành chính hãng</h4>
-                <p>Đổi mới 7 ngày</p>
-            </div>
-            <div class="icon-item">
-                <i class="fas fa-credit-card"></i>
-                <h4>Trả góp 0%</h4>
-                <p>Qua thẻ/ứng dụng</p>
-            </div>
-            <div class="icon-item">
-                <i class="fas fa-headset"></i>
-                <h4>Hỗ trợ 24/7</h4>
-                <p>Hotline 0834.777.111</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Flash Sale Section -->
-<section class="product-section">
-    <div class="container">
-        <div class="section-header">
-            <h2 class="section-title">FLASH SALE</h2>
-            <div class="flash-sale-countdown">
-                <span>Flash Sale: </span>
-                <div class="countdown-timer">
-                    <div class="countdown-segment" id="countdown-hours">00</div>
-                    <span>:</span>
-                    <div class="countdown-segment" id="countdown-minutes">00</div>
-                    <span>:</span>
-                    <div class="countdown-segment" id="countdown-seconds">00</div>
-                </div>
-            </div>
-            <a href="<?php echo home_url('/khuyen-mai/flash-sale'); ?>" class="view-all">Xem tất cả</a>
-        </div>
         
-        <div class="products-grid cols-5">
-            <div class="product-card">
-                <div class="product-badges">
-                    <div class="product-badge sale">-20%</div>
+        <!-- Icons Row Section -->
+        <section class="icons-row">
+            <div class="icons-grid">
+                <div class="icon-item">
+                    <i class="fas fa-truck"></i>
+                    <h4>Giao nhanh</h4>
+                    <p>2-4h nội thành</p>
                 </div>
-                <div class="product-image">
-                    <a href="#">
-                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/placeholder-product.jpg" alt="Sản phẩm mẫu" onerror="this.style.display='none'">
-                    </a>
+                <div class="icon-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <h4>Bảo hành chính hãng</h4>
+                    <p>Đổi mới 7 ngày</p>
                 </div>
-                <div class="product-info">
-                    <h3 class="product-title">
-                        <a href="#">Robot hút bụi thông minh</a>
-                    </h3>
-                    <div class="product-price">
-                        <span class="old-price">2.500.000đ</span>
-                        <span class="current-price">2.000.000đ</span>
-                    </div>
-                    <div class="product-actions">
-                        <button class="add-to-cart" data-product-id="1">
-                            Thêm vào giỏ
-                        </button>
-                        <button class="quick-view" data-product-id="1">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
+                <div class="icon-item">
+                    <i class="fas fa-credit-card"></i>
+                    <h4>Trả góp 0%</h4>
+                    <p>Qua thẻ/ứng dụng</p>
+                </div>
+                <div class="icon-item">
+                    <i class="fas fa-headset"></i>
+                    <h4>Hỗ trợ 24/7</h4>
+                    <p>Hotline <?php echo esc_html(get_theme_mod('scode_hotline', '0834.777.111')); ?></p>
                 </div>
             </div>
-            
-            <div class="product-card">
-                <div class="product-badges">
-                    <div class="product-badge sale">-15%</div>
-                </div>
-                <div class="product-image">
-                    <a href="#">
-                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/placeholder-product.jpg" alt="Sản phẩm mẫu" onerror="this.style.display='none'">
-                    </a>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-title">
-                        <a href="#">Máy lọc không khí cao cấp</a>
-                    </h3>
-                    <div class="product-price">
-                        <span class="old-price">3.200.000đ</span>
-                        <span class="current-price">2.720.000đ</span>
-                    </div>
-                    <div class="product-actions">
-                        <button class="add-to-cart" data-product-id="2">
-                            Thêm vào giỏ
-                        </button>
-                        <button class="quick-view" data-product-id="2">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="product-card">
-                <div class="product-badges">
-                    <div class="product-badge sale">-25%</div>
-                </div>
-                <div class="product-image">
-                    <a href="#">
-                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/placeholder-product.jpg" alt="Sản phẩm mẫu" onerror="this.style.display='none'">
-                    </a>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-title">
-                        <a href="#">Smartwatch thể thao</a>
-                    </h3>
-                    <div class="product-price">
-                        <span class="old-price">1.800.000đ</span>
-                        <span class="current-price">1.350.000đ</span>
-                    </div>
-                    <div class="product-actions">
-                        <button class="add-to-cart" data-product-id="3">
-                            Thêm vào giỏ
-                        </button>
-                        <button class="quick-view" data-product-id="3">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="product-card">
-                <div class="product-badges">
-                    <div class="product-badge sale">-30%</div>
-                </div>
-                <div class="product-image">
-                    <a href="#">
-                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/placeholder-product.jpg" alt="Sản phẩm mẫu" onerror="this.style.display='none'">
-                    </a>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-title">
-                        <a href="#">Máy lọc nước gia đình</a>
-                    </h3>
-                    <div class="product-price">
-                        <span class="old-price">4.500.000đ</span>
-                        <span class="current-price">3.150.000đ</span>
-                    </div>
-                    <div class="product-actions">
-                        <button class="add-to-cart" data-product-id="4">
-                            Thêm vào giỏ
-                        </button>
-                        <button class="quick-view" data-product-id="4">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="product-card">
-                <div class="product-badges">
-                    <div class="product-badge sale">-18%</div>
-                </div>
-                <div class="product-image">
-                    <a href="#">
-                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/placeholder-product.jpg" alt="Sản phẩm mẫu" onerror="this.style.display='none'">
-                    </a>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-title">
-                        <a href="#">Điện thoại thông minh</a>
-                    </h3>
-                    <div class="product-price">
-                        <span class="old-price">8.900.000đ</span>
-                        <span class="current-price">7.298.000đ</span>
-                    </div>
-                    <div class="product-actions">
-                        <button class="add-to-cart" data-product-id="5">
-                            Thêm vào giỏ
-                        </button>
-                        <button class="quick-view" data-product-id="5">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+        </section>
 
-<!-- Mid Banner 1 -->
-<section class="banner-wide">
-    <div class="container">
-        <a href="<?php echo home_url('/khuyen-mai'); ?>">
-            <div style="background: linear-gradient(135deg, #f36c21, #ff8c42); height: 200px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; font-weight: bold;">
-                🎉 KHUYẾN MÃI ĐẶC BIỆT 🎉
+        <!-- Flash Sale Section -->
+        <?php if (class_exists('WooCommerce')) : ?>
+        <section class="product-section">
+            <div class="section-header">
+                <h2 class="section-title">FLASH SALE</h2>
+                <a href="<?php echo home_url('/khuyen-mai/flash-sale'); ?>" class="view-all">Xem tất cả</a>
             </div>
-        </a>
-    </div>
-</section>
+            
+            <?php
+            $flash_sale_products = scode_get_sale_products(10);
+            if ($flash_sale_products->have_posts()) :
+            ?>
+                <div class="products-grid cols-5">
+                    <?php while ($flash_sale_products->have_posts()) : $flash_sale_products->the_post(); 
+                        global $product;
+                    ?>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <?php if (has_post_thumbnail()) : ?>
+                                    <a href="<?php the_permalink(); ?>">
+                                        <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
+                                    </a>
+                                <?php endif; ?>
+                                
+                                <?php echo scode_get_product_badges($product); ?>
+                            </div>
+                            
+                            <div class="product-info">
+                                <h3 class="product-title">
+                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                                </h3>
+                                
+                                <?php echo scode_get_product_price_html($product); ?>
+                                
+                                <div class="product-actions">
+                                    <button class="add-to-cart" data-product-id="<?php echo $product->get_id(); ?>">
+                                        Thêm vào giỏ
+                                    </button>
+                                    <button class="quick-view" data-product-id="<?php echo $product->get_id(); ?>">
+                                        Xem nhanh
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endwhile; wp_reset_postdata(); ?>
+                </div>
+            <?php else : ?>
+                <div class="no-products">
+                    <p>Chưa có sản phẩm khuyến mãi nào.</p>
+                </div>
+            <?php endif; ?>
+        </section>
+        <?php endif; ?>
 
-<!-- Featured Products Section -->
-<section class="product-section">
-    <div class="container">
-        <div class="section-header">
-            <h2 class="section-title">Sản phẩm nổi bật</h2>
-            <a href="<?php echo home_url('/san-pham-noi-bat'); ?>" class="view-all">Xem tất cả</a>
-        </div>
-        
-        <div class="products-grid cols-6">
-            <div class="product-card">
-                <div class="product-badges">
-                    <div class="product-badge featured">FEATURED</div>
+        <!-- Mid Banner 1 -->
+        <section class="banner-wide">
+            <a href="<?php echo home_url('/khuyen-mai'); ?>">
+                <div class="banner-placeholder" style="background: linear-gradient(135deg, #f36c21, #ff8c42); height: 200px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: 700;">
+                    <i class="fas fa-tags"></i>
+                    <span style="margin-left: 1rem;">KHUYẾN MÃI ĐẶC BIỆT</span>
                 </div>
-                <div class="product-image">
-                    <a href="#">
-                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/placeholder-product.jpg" alt="Sản phẩm mẫu" onerror="this.style.display='none'">
-                    </a>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-title">
-                        <a href="#">Laptop gaming cao cấp</a>
-                    </h3>
-                    <div class="product-price">
-                        <span class="current-price">25.000.000đ</span>
-                    </div>
-                    <div class="product-actions">
-                        <button class="add-to-cart" data-product-id="6">
-                            Thêm vào giỏ
-                        </button>
-                        <button class="quick-view" data-product-id="6">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="product-card">
-                <div class="product-badges">
-                    <div class="product-badge new">NEW</div>
-                </div>
-                <div class="product-image">
-                    <a href="#">
-                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/placeholder-product.jpg" alt="Sản phẩm mẫu" onerror="this.style.display='none'">
-                    </a>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-title">
-                        <a href="#">Tai nghe không dây</a>
-                    </h3>
-                    <div class="product-price">
-                        <span class="current-price">2.500.000đ</span>
-                    </div>
-                    <div class="product-actions">
-                        <button class="add-to-cart" data-product-id="7">
-                            Thêm vào giỏ
-                        </button>
-                        <button class="quick-view" data-product-id="7">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="product-card">
-                <div class="product-image">
-                    <a href="#">
-                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/placeholder-product.jpg" alt="Sản phẩm mẫu" onerror="this.style.display='none'">
-                    </a>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-title">
-                        <a href="#">Máy tính bảng</a>
-                    </h3>
-                    <div class="product-price">
-                        <span class="current-price">12.000.000đ</span>
-                    </div>
-                    <div class="product-actions">
-                        <button class="add-to-cart" data-product-id="8">
-                            Thêm vào giỏ
-                        </button>
-                        <button class="quick-view" data-product-id="8">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="product-card">
-                <div class="product-image">
-                    <a href="#">
-                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/placeholder-product.jpg" alt="Sản phẩm mẫu" onerror="this.style.display='none'">
-                    </a>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-title">
-                        <a href="#">Camera an ninh</a>
-                    </h3>
-                    <div class="product-price">
-                        <span class="current-price">1.800.000đ</span>
-                    </div>
-                    <div class="product-actions">
-                        <button class="add-to-cart" data-product-id="9">
-                            Thêm vào giỏ
-                        </button>
-                        <button class="quick-view" data-product-id="9">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="product-card">
-                <div class="product-image">
-                    <a href="#">
-                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/placeholder-product.jpg" alt="Sản phẩm mẫu" onerror="this.style.display='none'">
-                    </a>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-title">
-                        <a href="#">Loa bluetooth</a>
-                    </h3>
-                    <div class="product-price">
-                        <span class="current-price">800.000đ</span>
-                    </div>
-                    <div class="product-actions">
-                        <button class="add-to-cart" data-product-id="10">
-                            Thêm vào giỏ
-                        </button>
-                        <button class="quick-view" data-product-id="10">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="product-card">
-                <div class="product-image">
-                    <a href="#">
-                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/placeholder-product.jpg" alt="Sản phẩm mẫu" onerror="this.style.display='none'">
-                    </a>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-title">
-                        <a href="#">Đồng hồ thông minh</a>
-                    </h3>
-                    <div class="product-price">
-                        <span class="current-price">3.500.000đ</span>
-                    </div>
-                    <div class="product-actions">
-                        <button class="add-to-cart" data-product-id="11">
-                            Thêm vào giỏ
-                        </button>
-                        <button class="quick-view" data-product-id="11">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+            </a>
+        </section>
 
-<!-- Category Strip Section -->
-<section class="category-strip">
-    <div class="container">
-        <div class="section-header">
-            <h2 class="section-title">Danh mục nổi bật</h2>
-        </div>
-        
-        <div class="categories-grid">
-            <a href="<?php echo home_url('/danh-muc/robot-hut-bui'); ?>" class="category-item">
-                <div class="category-thumb">
-                    <div style="background: linear-gradient(135deg, #f36c21, #ff8c42); height: 150px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">
-                        🤖
-                    </div>
-                </div>
-                <div class="category-label">Robot hút bụi</div>
-            </a>
+        <!-- Featured Products Section -->
+        <?php if (class_exists('WooCommerce')) : ?>
+        <section class="product-section">
+            <div class="section-header">
+                <h2 class="section-title">Sản phẩm nổi bật</h2>
+                <a href="<?php echo home_url('/san-pham-noi-bat'); ?>" class="view-all">Xem tất cả</a>
+            </div>
             
-            <a href="<?php echo home_url('/danh-muc/may-loc-khong-khi'); ?>" class="category-item">
-                <div class="category-thumb">
-                    <div style="background: linear-gradient(135deg, #17a2b8, #20c997); height: 150px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">
-                        🌬️
-                    </div>
+            <?php
+            $featured_products = scode_get_featured_products(12);
+            if ($featured_products->have_posts()) :
+            ?>
+                <div class="products-grid cols-6">
+                    <?php while ($featured_products->have_posts()) : $featured_products->the_post(); 
+                        global $product;
+                    ?>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <?php if (has_post_thumbnail()) : ?>
+                                    <a href="<?php the_permalink(); ?>">
+                                        <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
+                                    </a>
+                                <?php endif; ?>
+                                
+                                <?php echo scode_get_product_badges($product); ?>
+                            </div>
+                            
+                            <div class="product-info">
+                                <h3 class="product-title">
+                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                                </h3>
+                                
+                                <?php echo scode_get_product_price_html($product); ?>
+                                
+                                <div class="product-actions">
+                                    <button class="add-to-cart" data-product-id="<?php echo $product->get_id(); ?>">
+                                        Thêm vào giỏ
+                                    </button>
+                                    <button class="quick-view" data-product-id="<?php echo $product->get_id(); ?>">
+                                        Xem nhanh
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endwhile; wp_reset_postdata(); ?>
                 </div>
-                <div class="category-label">Máy lọc không khí</div>
-            </a>
+            <?php else : ?>
+                <div class="no-products">
+                    <p>Chưa có sản phẩm nổi bật nào.</p>
+                </div>
+            <?php endif; ?>
+        </section>
+        <?php endif; ?>
+
+        <!-- Best Sellers Section -->
+        <?php if (class_exists('WooCommerce')) : ?>
+        <section class="product-section">
+            <div class="section-header">
+                <h2 class="section-title">Bán chạy</h2>
+                <a href="<?php echo home_url('/ban-chay'); ?>" class="view-all">Xem tất cả</a>
+            </div>
             
-            <a href="<?php echo home_url('/danh-muc/may-loc-nuoc'); ?>" class="category-item">
-                <div class="category-thumb">
-                    <div style="background: linear-gradient(135deg, #007bff, #6610f2); height: 150px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">
-                        💧
-                    </div>
+            <?php
+            $best_sellers = scode_get_best_selling_products(12);
+            if ($best_sellers->have_posts()) :
+            ?>
+                <div class="products-grid cols-6">
+                    <?php while ($best_sellers->have_posts()) : $best_sellers->the_post(); 
+                        global $product;
+                    ?>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <?php if (has_post_thumbnail()) : ?>
+                                    <a href="<?php the_permalink(); ?>">
+                                        <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
+                                    </a>
+                                <?php endif; ?>
+                                
+                                <?php echo scode_get_product_badges($product); ?>
+                            </div>
+                            
+                            <div class="product-info">
+                                <h3 class="product-title">
+                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                                </h3>
+                                
+                                <?php echo scode_get_product_price_html($product); ?>
+                                
+                                <div class="product-actions">
+                                    <button class="add-to-cart" data-product-id="<?php echo $product->get_id(); ?>">
+                                        Thêm vào giỏ
+                                    </button>
+                                    <button class="quick-view" data-product-id="<?php echo $product->get_id(); ?>">
+                                        Xem nhanh
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endwhile; wp_reset_postdata(); ?>
                 </div>
-                <div class="category-label">Máy lọc nước</div>
-            </a>
+            <?php else : ?>
+                <div class="no-products">
+                    <p>Chưa có sản phẩm bán chạy nào.</p>
+                </div>
+            <?php endif; ?>
+        </section>
+        <?php endif; ?>
+
+        <!-- Category Strip Section -->
+        <section class="category-strip">
+            <div class="section-header">
+                <h2 class="section-title">Danh mục nổi bật</h2>
+            </div>
             
-            <a href="<?php echo home_url('/danh-muc/smartwatch'); ?>" class="category-item">
-                <div class="category-thumb">
-                    <div style="background: linear-gradient(135deg, #28a745, #20c997); height: 150px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">
-                        ⌚
+            <div class="categories-grid">
+                <a href="<?php echo home_url('/danh-muc/robot-hut-bui'); ?>" class="category-item">
+                    <div class="category-thumb">
+                        <div class="category-placeholder" style="background: linear-gradient(135deg, #f36c21, #ff8c42); height: 120px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                            <i class="fas fa-robot"></i>
+                        </div>
                     </div>
-                </div>
-                <div class="category-label">Smartwatch</div>
-            </a>
+                    <span class="category-label">Robot hút bụi</span>
+                </a>
+                
+                <a href="<?php echo home_url('/danh-muc/may-loc-khong-khi'); ?>" class="category-item">
+                    <div class="category-thumb">
+                        <div class="category-placeholder" style="background: linear-gradient(135deg, #17a2b8, #20c997); height: 120px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                            <i class="fas fa-wind"></i>
+                        </div>
+                    </div>
+                    <span class="category-label">Máy lọc không khí</span>
+                </a>
+                
+                <a href="<?php echo home_url('/danh-muc/may-loc-nuoc'); ?>" class="category-item">
+                    <div class="category-thumb">
+                        <div class="category-placeholder" style="background: linear-gradient(135deg, #007bff, #6610f2); height: 120px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                            <i class="fas fa-tint"></i>
+                        </div>
+                    </div>
+                    <span class="category-label">Máy lọc nước</span>
+                </a>
+                
+                <a href="<?php echo home_url('/danh-muc/smartwatch'); ?>" class="category-item">
+                    <div class="category-thumb">
+                        <div class="category-placeholder" style="background: linear-gradient(135deg, #28a745, #20c997); height: 120px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <span class="category-label">Smartwatch</span>
+                </a>
+                
+                <a href="<?php echo home_url('/danh-muc/phu-kien'); ?>" class="category-item">
+                    <div class="category-thumb">
+                        <div class="category-placeholder" style="background: linear-gradient(135deg, #6f42c1, #e83e8c); height: 120px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                            <i class="fas fa-headphones"></i>
+                        </div>
+                    </div>
+                    <span class="category-label">Phụ kiện</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Air Purifier Section -->
+        <?php if (class_exists('WooCommerce')) : ?>
+        <section class="product-section">
+            <div class="section-header">
+                <h2 class="section-title">Máy lọc không khí</h2>
+                <a href="<?php echo home_url('/danh-muc/may-loc-khong-khi'); ?>" class="view-all">Xem tất cả</a>
+            </div>
             
-            <a href="<?php echo home_url('/danh-muc/phu-kien'); ?>" class="category-item">
-                <div class="category-thumb">
-                    <div style="background: linear-gradient(135deg, #6f42c1, #e83e8c); height: 150px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">
-                        🔌
-                    </div>
+            <?php
+            $air_purifiers = scode_get_products_by_category('may-loc-khong-khi', 10);
+            if ($air_purifiers->have_posts()) :
+            ?>
+                <div class="products-grid cols-5">
+                    <?php while ($air_purifiers->have_posts()) : $air_purifiers->the_post(); 
+                        global $product;
+                    ?>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <?php if (has_post_thumbnail()) : ?>
+                                    <a href="<?php the_permalink(); ?>">
+                                        <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
+                                    </a>
+                                <?php endif; ?>
+                                
+                                <?php echo scode_get_product_badges($product); ?>
+                            </div>
+                            
+                            <div class="product-info">
+                                <h3 class="product-title">
+                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                                </h3>
+                                
+                                <?php echo scode_get_product_price_html($product); ?>
+                                
+                                <div class="product-actions">
+                                    <button class="add-to-cart" data-product-id="<?php echo $product->get_id(); ?>">
+                                        Thêm vào giỏ
+                                    </button>
+                                    <button class="quick-view" data-product-id="<?php echo $product->get_id(); ?>">
+                                        Xem nhanh
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endwhile; wp_reset_postdata(); ?>
                 </div>
-                <div class="category-label">Phụ kiện</div>
+            <?php else : ?>
+                <div class="no-products">
+                    <p>Chưa có sản phẩm máy lọc không khí nào.</p>
+                </div>
+            <?php endif; ?>
+        </section>
+        <?php endif; ?>
+
+        <!-- Water Purifier Section -->
+        <?php if (class_exists('WooCommerce')) : ?>
+        <section class="product-section">
+            <div class="section-header">
+                <h2 class="section-title">Máy lọc nước</h2>
+                <a href="<?php echo home_url('/danh-muc/may-loc-nuoc'); ?>" class="view-all">Xem tất cả</a>
+            </div>
+            
+            <?php
+            $water_purifiers = scode_get_products_by_category('may-loc-nuoc', 10);
+            if ($water_purifiers->have_posts()) :
+            ?>
+                <div class="products-grid cols-5">
+                    <?php while ($water_purifiers->have_posts()) : $water_purifiers->the_post(); 
+                        global $product;
+                    ?>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <?php if (has_post_thumbnail()) : ?>
+                                    <a href="<?php the_permalink(); ?>">
+                                        <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
+                                    </a>
+                                <?php endif; ?>
+                                
+                                <?php echo scode_get_product_badges($product); ?>
+                            </div>
+                            
+                            <div class="product-info">
+                                <h3 class="product-title">
+                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                                </h3>
+                                
+                                <?php echo scode_get_product_price_html($product); ?>
+                                
+                                <div class="product-actions">
+                                    <button class="add-to-cart" data-product-id="<?php echo $product->get_id(); ?>">
+                                        Thêm vào giỏ
+                                    </button>
+                                    <button class="quick-view" data-product-id="<?php echo $product->get_id(); ?>">
+                                        Xem nhanh
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endwhile; wp_reset_postdata(); ?>
+                </div>
+            <?php else : ?>
+                <div class="no-products">
+                    <p>Chưa có sản phẩm máy lọc nước nào.</p>
+                </div>
+            <?php endif; ?>
+        </section>
+        <?php endif; ?>
+
+        <!-- Mid Banner 2 -->
+        <section class="banner-wide">
+            <a href="<?php echo home_url('/combo-khuyen-mai'); ?>">
+                <div class="banner-placeholder" style="background: linear-gradient(135deg, #6f42c1, #e83e8c); height: 200px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: 700;">
+                    <i class="fas fa-gift"></i>
+                    <span style="margin-left: 1rem;">COMBO KHUYẾN MÃI</span>
+                </div>
             </a>
-        </div>
+        </section>
+
+        <!-- Smartwatch & Fitness Section -->
+        <?php if (class_exists('WooCommerce')) : ?>
+        <section class="product-section">
+            <div class="section-header">
+                <h2 class="section-title">Smartwatch • Fitness</h2>
+                <a href="<?php echo home_url('/danh-muc/smartwatch'); ?>" class="view-all">Xem tất cả</a>
+            </div>
+            
+            <?php
+            $smartwatch_products = scode_get_products_by_category('smartwatch', 12);
+            if ($smartwatch_products->have_posts()) :
+            ?>
+                <div class="products-grid cols-6">
+                    <?php while ($smartwatch_products->have_posts()) : $smartwatch_products->the_post(); 
+                        global $product;
+                    ?>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <?php if (has_post_thumbnail()) : ?>
+                                    <a href="<?php the_permalink(); ?>">
+                                        <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
+                                    </a>
+                                <?php endif; ?>
+                                
+                                <?php echo scode_get_product_badges($product); ?>
+                            </div>
+                            
+                            <div class="product-info">
+                                <h3 class="product-title">
+                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                                </h3>
+                                
+                                <?php echo scode_get_product_price_html($product); ?>
+                                
+                                <div class="product-actions">
+                                    <button class="add-to-cart" data-product-id="<?php echo $product->get_id(); ?>">
+                                        Thêm vào giỏ
+                                    </button>
+                                    <button class="quick-view" data-product-id="<?php echo $product->get_id(); ?>">
+                                        Xem nhanh
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endwhile; wp_reset_postdata(); ?>
+                </div>
+            <?php else : ?>
+                <div class="no-products">
+                    <p>Chưa có sản phẩm smartwatch nào.</p>
+                </div>
+            <?php endif; ?>
+        </section>
+        <?php endif; ?>
+
+        <!-- Accessories Section -->
+        <?php if (class_exists('WooCommerce')) : ?>
+        <section class="product-section">
+            <div class="section-header">
+                <h2 class="section-title">Phụ kiện • Đồ gia dụng nhỏ</h2>
+                <a href="<?php echo home_url('/danh-muc/phu-kien'); ?>" class="view-all">Xem tất cả</a>
+            </div>
+            
+            <?php
+            $accessories = scode_get_products_by_category('phu-kien', 12);
+            if ($accessories->have_posts()) :
+            ?>
+                <div class="products-grid cols-6">
+                    <?php while ($accessories->have_posts()) : $accessories->the_post(); 
+                        global $product;
+                    ?>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <?php if (has_post_thumbnail()) : ?>
+                                    <a href="<?php the_permalink(); ?>">
+                                        <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
+                                    </a>
+                                <?php endif; ?>
+                                
+                                <?php echo scode_get_product_badges($product); ?>
+                            </div>
+                            
+                            <div class="product-info">
+                                <h3 class="product-title">
+                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                                </h3>
+                                
+                                <?php echo scode_get_product_price_html($product); ?>
+                                
+                                <div class="product-actions">
+                                    <button class="add-to-cart" data-product-id="<?php echo $product->get_id(); ?>">
+                                        Thêm vào giỏ
+                                    </button>
+                                    <button class="quick-view" data-product-id="<?php echo $product->get_id(); ?>">
+                                        Xem nhanh
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endwhile; wp_reset_postdata(); ?>
+                </div>
+            <?php else : ?>
+                <div class="no-products">
+                    <p>Chưa có sản phẩm phụ kiện nào.</p>
+                </div>
+            <?php endif; ?>
+        </section>
+        <?php endif; ?>
+
     </div>
-</section>
+</main>
 
 <?php get_footer(); ?>
