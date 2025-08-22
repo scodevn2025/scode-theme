@@ -22,7 +22,7 @@ function scode_theme_customize_register($wp_customize) {
     
     // Primary color setting
     $wp_customize->add_setting('scode_primary_color', array(
-        'default'           => '#FF6A00',
+        'default'           => '#f26522',
         'sanitize_callback' => 'sanitize_hex_color',
     ));
     

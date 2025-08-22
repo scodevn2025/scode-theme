@@ -172,7 +172,7 @@ function scode_theme_woocommerce_mini_cart() {
     if (WC()->cart->is_empty()) {
         echo '<p class="woocommerce-mini-cart__empty-message">' . __('Giỏ hàng trống.', 'scode-theme') . '</p>';
     } else {
-        echo '<ul class="woocommerce-mini-cart cart_list product_list_widget ' . esc_attr($args['list_class']) . '">';
+        echo '<ul class="woocommerce-mini-cart cart_list product_list_widget">';
         
         foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
             $_product = apply_filters('woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key);

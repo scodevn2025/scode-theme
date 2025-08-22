@@ -48,7 +48,7 @@ if (scode_theme_acf_active() && function_exists('acf_add_local_field_group')) {
                 'label' => 'Hero Title',
                 'name' => 'hero_title',
                 'type' => 'text',
-                'default_value' => 'Chào mừng đến với ScodeTheme',
+                'default_value' => 'Chào mừng đến với OTNT - ÔNG TRÙM NỘI TRỢ',
                 'required' => 1,
             ),
             array(
@@ -56,7 +56,7 @@ if (scode_theme_acf_active() && function_exists('acf_add_local_field_group')) {
                 'label' => 'Hero Description',
                 'name' => 'hero_description',
                 'type' => 'textarea',
-                'default_value' => 'Theme WordPress hiện đại, tối ưu cho WooCommerce với thiết kế sạch sẽ và hiệu suất tuyệt vời.',
+                'default_value' => 'Cửa hàng công nghệ hàng đầu Việt Nam với các sản phẩm chất lượng cao.',
                 'required' => 1,
             ),
             array(

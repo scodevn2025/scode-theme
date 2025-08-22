@@ -1,6 +1,6 @@
 /*
-Theme Name: ScodeTheme
-Description: Modern, responsive WordPress theme optimized for WooCommerce with clean design and excellent performance. Inspired by MI VIETNAM.VN design.
+Theme Name: OTNT Theme
+Description: Modern, responsive WordPress theme optimized for WooCommerce with clean design and excellent performance. OTNT - ÔNG TRÙM NỘI TRỢ theme.
 Version: 2.0.0
 Author: Scode Developer
 Text Domain: scode-theme
@@ -8,8 +8,8 @@ Text Domain: scode-theme
 
 /* ===== CSS VARIABLES - MI VIETNAM.VN STYLE ===== */
 :root {
-    /* Primary Colors - MI Vietnam exact colors */
-    --primary-color: #FF6A00;          /* Orange accent like MI Vietnam */
+    /* Primary Colors - OTNT Theme exact colors */
+    --primary-color: #f26522;          /* Orange accent as requested */
     --secondary-color: #1e3a8a;        /* Deep blue */
     --accent-color: #f59e0b;           /* Golden yellow */
     --success-color: #10b981;          /* Green */
@@ -184,15 +184,29 @@ a:hover {
     font-weight: 700;
 }
 
-.site-logo .mi-icon {
-    color: var(--primary-color);
-    font-size: 2rem;
+.site-logo .otnt-icon {
+    background: var(--primary-color);
+    color: var(--text-white);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--border-radius);
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: 1px;
 }
 
-.site-logo .since {
-    font-size: 0.875rem;
-    color: var(--text-muted);
-    font-weight: 400;
+.site-logo .main-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-white);
+    line-height: 1.2;
+}
+
+.site-logo .tagline {
+    font-size: 0.75rem;
+    color: var(--primary-color);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .category-toggle {

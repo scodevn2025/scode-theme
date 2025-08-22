@@ -1,13 +1,13 @@
-# ScodeTheme - WordPress Theme
+# OTNT Theme - WordPress Theme
 
 ## 📝 Mô tả
-ScodeTheme là một WordPress theme hiện đại, responsive được tối ưu hóa cho WooCommerce với thiết kế sạch sẽ và hiệu suất tuyệt vời. Theme được lấy cảm hứng từ giao diện MI VIETNAM.VN.
+OTNT Theme là một WordPress theme hiện đại, responsive được tối ưu hóa cho WooCommerce với thiết kế sạch sẽ và hiệu suất tuyệt vời. Theme được thiết kế cho OTNT - ÔNG TRÙM NỘI TRỢ.
 
 ## ✨ Tính năng chính
 
 ### 🎨 Thiết kế & Giao diện
 - **Responsive Design**: Hoạt động hoàn hảo trên mọi thiết bị
-- **MI VIETNAM.VN Style**: Giao diện hiện đại, chuyên nghiệp
+- **OTNT Style**: Giao diện hiện đại, chuyên nghiệp
 - **CSS Variables**: Dễ dàng tùy chỉnh màu sắc và layout
 - **Typography**: Sử dụng font Inter cho giao diện đẹp mắt
 
@@ -34,7 +34,7 @@ ScodeTheme là một WordPress theme hiện đại, responsive được tối ư
 ## 🏗️ Cấu trúc Theme
 
 ```
-scode-theme/
+otnt-theme/
 ├── assets/
 │   ├── css/
 │   │   ├── main.css          # CSS chính
@@ -255,6 +255,6 @@ Theme này được phát triển bởi **Scode** và được cấp phép theo 
 
 ---
 
-**ScodeTheme** - Theme WordPress hiện đại cho e-commerce  
+**OTNT Theme** - Theme WordPress hiện đại cho e-commerce  
 **Tác giả**: Scode | **Liên hệ**: 0582392345  
-**Phiên bản**: 2.0.0 | **Cập nhật**: <?php echo date('Y-m-d'); ?>
+**Phiên bản**: 2.0.0 | **Cập nhật**: 2024-12-19

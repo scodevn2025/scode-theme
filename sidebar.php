@@ -16,8 +16,8 @@ if (!is_active_sidebar('sidebar-1')) {
     <!-- Default Sidebar Content if no widgets -->
     <?php if (!is_active_sidebar('sidebar-1')) : ?>
         <div class="widget">
-            <h3 class="widget-title"><?php _e('About ScodeTheme', 'scode-theme'); ?></h3>
-            <p><?php _e('A modern WordPress theme optimized for performance and user experience. Perfect for blogs, portfolios, and e-commerce websites.', 'scode-theme'); ?></p>
+            <h3 class="widget-title"><?php _e('About OTNT - ÔNG TRÙM NỘI TRỢ', 'scode-theme'); ?></h3>
+            <p><?php _e('Cửa hàng công nghệ hàng đầu Việt Nam với các sản phẩm chất lượng cao và dịch vụ chăm sóc khách hàng tốt nhất.', 'scode-theme'); ?></p>
         </div>
         
         <div class="widget">

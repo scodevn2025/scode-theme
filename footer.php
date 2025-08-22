@@ -7,8 +7,8 @@
             <div class="footer-content">
                 <!-- Company Information -->
                 <div class="footer-section">
-                    <h3>Về ScodeTheme</h3>
-                    <p>Theme WordPress hiện đại, tối ưu cho WooCommerce với thiết kế sạch sẽ và hiệu suất tuyệt vời.</p>
+                    <h3>Về OTNT - ÔNG TRÙM NỘI TRỢ</h3>
+                    <p>Cửa hàng công nghệ hàng đầu Việt Nam với các sản phẩm chất lượng cao và dịch vụ chăm sóc khách hàng tốt nhất.</p>
                     
                     <?php if (scode_theme_get_option('hotline')) : ?>
                         <div class="contact-info">

@@ -61,10 +61,10 @@
                 <div class="header-left">
                     <!-- Site Logo -->
                     <div class="site-logo">
-                        <span class="mi-icon">MI</span>
+                        <span class="otnt-icon">OTNT</span>
                         <div>
-                            <div>VIETNAM.VN</div>
-                            <div class="since">since 2015</div>
+                            <div class="main-title">ÔNG TRÙM NỘI TRỢ</div>
+                            <div class="tagline">scodevn</div>
                         </div>
                     </div>
                     
@@ -129,9 +129,12 @@
     <div class="main-layout">
         <!-- Left Sidebar - Mega Menu -->
         <aside class="sidebar-left" id="sidebar-left">
+            <div class="sidebar-header">
+                <h3>DANH MỤC SẢN PHẨM</h3>
+            </div>
             <nav class="mega-menu" role="navigation" aria-label="<?php _e('Category navigation', 'scode-theme'); ?>">
                 <div class="mega-menu-item">
-                    <a href="<?php echo home_url('/category/robot-hut-bui'); ?>" class="mega-menu-link">
+                    <a href="<?php echo home_url('/product-category/robot-hut-bui'); ?>" class="mega-menu-link">
                         <span class="menu-icon"><i class="fas fa-robot"></i></span>
                         <span>ROBOT HÚT BỤI</span>
                         <span class="arrow"><i class="fas fa-chevron-right"></i></span>
@@ -139,15 +142,15 @@
                 </div>
                 
                 <div class="mega-menu-item">
-                    <a href="<?php echo home_url('/category/timi-xiaomi'); ?>" class="mega-menu-link">
-                        <span class="menu-icon"><i class="fas fa-mobile-alt"></i></span>
-                        <span>TIMI XIAOMI</span>
+                    <a href="<?php echo home_url('/product-category/tivi-xiaomi'); ?>" class="mega-menu-link">
+                        <span class="menu-icon"><i class="fas fa-tv"></i></span>
+                        <span>TIVI XIAOMI</span>
                         <span class="arrow"><i class="fas fa-chevron-right"></i></span>
                     </a>
                 </div>
                 
                 <div class="mega-menu-item">
-                    <a href="<?php echo home_url('/category/may-hut-bui'); ?>" class="mega-menu-link">
+                    <a href="<?php echo home_url('/product-category/may-hut-bui'); ?>" class="mega-menu-link">
                         <span class="menu-icon"><i class="fas fa-wind"></i></span>
                         <span>MÁY HÚT BỤI</span>
                         <span class="arrow"><i class="fas fa-chevron-right"></i></span>
@@ -155,7 +158,7 @@
                 </div>
                 
                 <div class="mega-menu-item">
-                    <a href="<?php echo home_url('/category/may-chay-bo'); ?>" class="mega-menu-link">
+                    <a href="<?php echo home_url('/product-category/may-chay-bo-kingsmith'); ?>" class="mega-menu-link">
                         <span class="menu-icon"><i class="fas fa-running"></i></span>
                         <span>MÁY CHẠY BỘ KINGSMITH</span>
                         <span class="arrow"><i class="fas fa-chevron-right"></i></span>
@@ -163,7 +166,7 @@
                 </div>
                 
                 <div class="mega-menu-item">
-                    <a href="<?php echo home_url('/category/may-loc-khong-khi'); ?>" class="mega-menu-link">
+                    <a href="<?php echo home_url('/product-category/may-loc-khong-khi'); ?>" class="mega-menu-link">
                         <span class="menu-icon"><i class="fas fa-leaf"></i></span>
                         <span>MÁY LỌC KHÔNG KHÍ</span>
                         <span class="arrow"><i class="fas fa-chevron-right"></i></span>
@@ -171,7 +174,7 @@
                 </div>
                 
                 <div class="mega-menu-item">
-                    <a href="<?php echo home_url('/category/quat-thong-minh'); ?>" class="mega-menu-link">
+                    <a href="<?php echo home_url('/product-category/quat-thong-minh'); ?>" class="mega-menu-link">
                         <span class="menu-icon"><i class="fas fa-fan"></i></span>
                         <span>QUẠT THÔNG MINH</span>
                         <span class="arrow"><i class="fas fa-chevron-right"></i></span>
@@ -179,7 +182,7 @@
                 </div>
                 
                 <div class="mega-menu-item">
-                    <a href="<?php echo home_url('/category/thiet-bi-gia-dung'); ?>" class="mega-menu-link">
+                    <a href="<?php echo home_url('/product-category/thiet-bi-gia-dung'); ?>" class="mega-menu-link">
                         <span class="menu-icon"><i class="fas fa-home"></i></span>
                         <span>THIẾT BỊ GIA DỤNG</span>
                         <span class="arrow"><i class="fas fa-chevron-right"></i></span>
@@ -187,7 +190,7 @@
                 </div>
                 
                 <div class="mega-menu-item">
-                    <a href="<?php echo home_url('/category/camera-wifi'); ?>" class="mega-menu-link">
+                    <a href="<?php echo home_url('/product-category/camera-thiet-bi-wifi'); ?>" class="mega-menu-link">
                         <span class="menu-icon"><i class="fas fa-video"></i></span>
                         <span>CAMERA - THIẾT BỊ WIFI</span>
                         <span class="arrow"><i class="fas fa-chevron-right"></i></span>
@@ -195,7 +198,7 @@
                 </div>
                 
                 <div class="mega-menu-item">
-                    <a href="<?php echo home_url('/category/suc-khoe-the-thao'); ?>" class="mega-menu-link">
+                    <a href="<?php echo home_url('/product-category/suc-khoe-the-thao'); ?>" class="mega-menu-link">
                         <span class="menu-icon"><i class="fas fa-heartbeat"></i></span>
                         <span>SỨC KHỎE - THỂ THAO</span>
                         <span class="arrow"><i class="fas fa-chevron-right"></i></span>
@@ -203,7 +206,7 @@
                 </div>
                 
                 <div class="mega-menu-item">
-                    <a href="<?php echo home_url('/category/flycam-dji'); ?>" class="mega-menu-link">
+                    <a href="<?php echo home_url('/product-category/flycam-dji'); ?>" class="mega-menu-link">
                         <span class="menu-icon"><i class="fas fa-plane"></i></span>
                         <span>FLYCAM - THIẾT BỊ QUAY DJI</span>
                         <span class="arrow"><i class="fas fa-chevron-right"></i></span>
@@ -211,7 +214,7 @@
                 </div>
                 
                 <div class="mega-menu-item">
-                    <a href="<?php echo home_url('/category/phu-kien-robot'); ?>" class="mega-menu-link">
+                    <a href="<?php echo home_url('/product-category/phu-kien-robot'); ?>" class="mega-menu-link">
                         <span class="menu-icon"><i class="fas fa-tools"></i></span>
                         <span>PHỤ KIỆN ROBOT</span>
                         <span class="arrow"><i class="fas fa-chevron-right"></i></span>
@@ -219,7 +222,7 @@
                 </div>
                 
                 <div class="mega-menu-item">
-                    <a href="<?php echo home_url('/category/sua-chua-robot'); ?>" class="mega-menu-link">
+                    <a href="<?php echo home_url('/product-category/sua-chua-robot-hut-bui'); ?>" class="mega-menu-link">
                         <span class="menu-icon"><i class="fas fa-wrench"></i></span>
                         <span>SỬA CHỮA ROBOT HÚT BỤI</span>
                         <span class="arrow"><i class="fas fa-chevron-right"></i></span>

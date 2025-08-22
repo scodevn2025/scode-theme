@@ -44,6 +44,11 @@ function scode_theme_setup() {
     add_theme_support('wc-product-gallery-lightbox');
     add_theme_support('wc-product-gallery-slider');
     
+    // Hide admin bar for non-admin users
+    if (!current_user_can('administrator')) {
+        show_admin_bar(false);
+    }
+    
     // Editor styles
     add_theme_support('editor-styles');
     add_editor_style('assets/css/editor-style.css');
@@ -88,7 +93,14 @@ function scode_theme_scripts() {
     wp_enqueue_style('scode-theme-style', get_stylesheet_uri(), array(), '1.0.0');
     
     // Enqueue main CSS file - ensure this loads
-    wp_enqueue_style('scode-main', get_template_directory_uri() . '/assets/css/main.css', array(), $css_version);
+    if (file_exists(get_template_directory() . '/assets/css/main.css')) {
+        wp_enqueue_style('scode-main', get_template_directory_uri() . '/assets/css/main.css', array(), $css_version);
+    }
+    
+    // Enqueue custom CSS file
+    if (file_exists(get_template_directory() . '/assets/css/custom.css')) {
+        wp_enqueue_style('scode-custom', get_template_directory_uri() . '/assets/css/custom.css', array('scode-main'), $css_version);
+    }
     
     // Google Fonts
     wp_enqueue_style('scode-google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap', array(), null);
@@ -174,25 +186,27 @@ function scode_theme_custom_post_types() {
         'rewrite' => array('slug' => 'deal'),
     ));
     
-    // Banner CPT for Hero Slider
-    register_post_type('banner', array(
+    // Slide CPT for Homepage Slider
+    register_post_type('slide', array(
         'labels' => array(
-            'name' => __('Banners', 'scode-theme'),
-            'singular_name' => __('Banner', 'scode-theme'),
-            'add_new' => __('Add New Banner', 'scode-theme'),
-            'add_new_item' => __('Add New Banner', 'scode-theme'),
-            'edit_item' => __('Edit Banner', 'scode-theme'),
-            'new_item' => __('New Banner', 'scode-theme'),
-            'view_item' => __('View Banner', 'scode-theme'),
-            'search_items' => __('Search Banners', 'scode-theme'),
-            'not_found' => __('No banners found', 'scode-theme'),
-            'not_found_in_trash' => __('No banners found in trash', 'scode-theme'),
+            'name' => __('Slides', 'scode-theme'),
+            'singular_name' => __('Slide', 'scode-theme'),
+            'add_new' => __('Thêm Slide Mới', 'scode-theme'),
+            'add_new_item' => __('Thêm Slide Mới', 'scode-theme'),
+            'edit_item' => __('Sửa Slide', 'scode-theme'),
+            'new_item' => __('Slide Mới', 'scode-theme'),
+            'view_item' => __('Xem Slide', 'scode-theme'),
+            'search_items' => __('Tìm Slide', 'scode-theme'),
+            'not_found' => __('Không tìm thấy slide nào', 'scode-theme'),
+            'not_found_in_trash' => __('Không có slide nào trong thùng rác', 'scode-theme'),
         ),
         'public' => true,
         'has_archive' => false,
+        'publicly_queryable' => false,
         'supports' => array('title', 'editor', 'thumbnail'),
-        'menu_icon' => 'dashicons-images-alt2',
+        'menu_icon' => 'dashicons-slides',
         'show_in_rest' => true,
+        'menu_position' => 20,
     ));
 }
 add_action('init', 'scode_theme_custom_post_types');
@@ -244,8 +258,246 @@ function scode_theme_custom_taxonomies() {
         'rewrite' => array('slug' => 'feature'),
         'show_in_rest' => true,
     ));
+    
+    // Product Series taxonomy (for Roborock Qrevo series)
+    register_taxonomy('product_series', array('product'), array(
+        'labels' => array(
+            'name' => __('Product Series', 'scode-theme'),
+            'singular_name' => __('Product Series', 'scode-theme'),
+            'search_items' => __('Search Product Series', 'scode-theme'),
+            'all_items' => __('All Product Series', 'scode-theme'),
+            'edit_item' => __('Edit Product Series', 'scode-theme'),
+            'update_item' => __('Update Product Series', 'scode-theme'),
+            'add_new_item' => __('Add New Product Series', 'scode-theme'),
+            'new_item_name' => __('New Product Series Name', 'scode-theme'),
+            'menu_name' => __('Product Series', 'scode-theme'),
+        ),
+        'hierarchical' => true,
+        'show_ui' => true,
+        'show_admin_column' => true,
+        'query_var' => true,
+        'rewrite' => array('slug' => 'series'),
+        'show_in_rest' => true,
+    ));
+    
+    // Product Type taxonomy (for different product types)
+    register_taxonomy('product_type', array('product'), array(
+        'labels' => array(
+            'name' => __('Product Types', 'scode-theme'),
+            'singular_name' => __('Product Type', 'scode-theme'),
+            'search_items' => __('Search Product Types', 'scode-theme'),
+            'all_items' => __('All Product Types', 'scode-theme'),
+            'edit_item' => __('Edit Product Type', 'scode-theme'),
+            'update_item' => __('Update Product Type', 'scode-theme'),
+            'add_new_item' => __('Add New Product Type', 'scode-theme'),
+            'new_item_name' => __('New Product Type Name', 'scode-theme'),
+            'menu_name' => __('Product Types', 'scode-theme'),
+        ),
+        'hierarchical' => true,
+        'show_ui' => true,
+        'show_admin_column' => true,
+        'query_var' => true,
+        'rewrite' => array('slug' => 'type'),
+        'show_in_rest' => true,
+    ));
 }
 add_action('init', 'scode_theme_custom_taxonomies');
+
+/**
+ * Custom Meta Boxes for Slides
+ */
+function scode_theme_slide_meta_boxes() {
+    add_meta_box(
+        'slide_details',
+        'Thông Tin Slide',
+        'scode_theme_slide_meta_box_callback',
+        'slide',
+        'normal',
+        'high'
+    );
+}
+add_action('add_meta_boxes', 'scode_theme_slide_meta_boxes');
+
+function scode_theme_slide_meta_box_callback($post) {
+    wp_nonce_field('scode_theme_save_slide_meta', 'scode_theme_slide_meta_nonce');
+    
+    $slide_button_text = get_post_meta($post->ID, '_slide_button_text', true);
+    $slide_button_url = get_post_meta($post->ID, '_slide_button_url', true);
+    $slide_order = get_post_meta($post->ID, '_slide_order', true);
+    $slide_active = get_post_meta($post->ID, '_slide_active', true);
+    
+    if (empty($slide_order)) $slide_order = 0;
+    if (empty($slide_active)) $slide_active = 'yes';
+    
+    ?>
+    <table class="form-table">
+        <tr>
+            <th scope="row">
+                <label for="slide_button_text">Nút CTA</label>
+            </th>
+            <td>
+                <input type="text" id="slide_button_text" name="slide_button_text" 
+                       value="<?php echo esc_attr($slide_button_text); ?>" class="regular-text" 
+                       placeholder="VD: MUA NGAY, XEM NGAY, KHÁM PHÁ">
+                <p class="description">Văn bản hiển thị trên nút (để trống nếu không muốn hiển thị nút)</p>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">
+                <label for="slide_button_url">Link Nút</label>
+            </th>
+            <td>
+                <input type="url" id="slide_button_url" name="slide_button_url" 
+                       value="<?php echo esc_url($slide_button_url); ?>" class="regular-text" 
+                       placeholder="https://example.com">
+                <p class="description">URL khi click vào nút</p>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">
+                <label for="slide_order">Thứ Tự</label>
+            </th>
+            <td>
+                <input type="number" id="slide_order" name="slide_order" 
+                       value="<?php echo esc_attr($slide_order); ?>" class="small-text" min="0">
+                <p class="description">Thứ tự hiển thị slide (số nhỏ hiển thị trước)</p>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">
+                <label for="slide_active">Trạng Thái</label>
+            </th>
+            <td>
+                <select id="slide_active" name="slide_active">
+                    <option value="yes" <?php selected($slide_active, 'yes'); ?>>Kích hoạt</option>
+                    <option value="no" <?php selected($slide_active, 'no'); ?>>Ẩn</option>
+                </select>
+                <p class="description">Chọn trạng thái hiển thị của slide</p>
+            </td>
+        </tr>
+    </table>
+    <?php
+}
+
+function scode_theme_save_slide_meta($post_id) {
+    if (!isset($_POST['scode_theme_slide_meta_nonce']) || 
+        !wp_verify_nonce($_POST['scode_theme_slide_meta_nonce'], 'scode_theme_save_slide_meta')) {
+        return;
+    }
+    
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+    
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+    
+    if (isset($_POST['slide_button_text'])) {
+        update_post_meta($post_id, '_slide_button_text', sanitize_text_field($_POST['slide_button_text']));
+    }
+    
+    if (isset($_POST['slide_button_url'])) {
+        update_post_meta($post_id, '_slide_button_url', esc_url_raw($_POST['slide_button_url']));
+    }
+    
+    if (isset($_POST['slide_order'])) {
+        update_post_meta($post_id, '_slide_order', intval($_POST['slide_order']));
+    }
+    
+    if (isset($_POST['slide_active'])) {
+        update_post_meta($post_id, '_slide_active', sanitize_text_field($_POST['slide_active']));
+    }
+}
+add_action('save_post', 'scode_theme_save_slide_meta');
+
+/**
+ * Admin Columns for Slides
+ */
+function scode_theme_slide_admin_columns($columns) {
+    $new_columns = array();
+    $new_columns['cb'] = $columns['cb'];
+    $new_columns['thumbnail'] = 'Hình Ảnh';
+    $new_columns['title'] = $columns['title'];
+    $new_columns['slide_order'] = 'Thứ Tự';
+    $new_columns['slide_status'] = 'Trạng Thái';
+    $new_columns['slide_button'] = 'Nút CTA';
+    $new_columns['date'] = $columns['date'];
+    
+    return $new_columns;
+}
+add_filter('manage_slide_posts_columns', 'scode_theme_slide_admin_columns');
+
+function scode_theme_slide_admin_column_content($column, $post_id) {
+    switch ($column) {
+        case 'thumbnail':
+            if (has_post_thumbnail($post_id)) {
+                echo '<img src="' . get_the_post_thumbnail_url($post_id, 'thumbnail') . '" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">';
+            } else {
+                echo '<span style="color: #999;">Không có hình</span>';
+            }
+            break;
+            
+        case 'slide_order':
+            $order = get_post_meta($post_id, '_slide_order', true);
+            echo $order ? $order : '0';
+            break;
+            
+        case 'slide_status':
+            $status = get_post_meta($post_id, '_slide_active', true);
+            if ($status === 'yes') {
+                echo '<span style="color: #46b450; font-weight: bold;">✓ Kích hoạt</span>';
+            } else {
+                echo '<span style="color: #dc3232;">✗ Ẩn</span>';
+            }
+            break;
+            
+        case 'slide_button':
+            $button_text = get_post_meta($post_id, '_slide_button_text', true);
+            $button_url = get_post_meta($post_id, '_slide_button_url', true);
+            if ($button_text && $button_url) {
+                echo '<strong>' . esc_html($button_text) . '</strong><br>';
+                echo '<small style="color: #666;">' . esc_url($button_url) . '</small>';
+            } else {
+                echo '<span style="color: #999;">Không có nút</span>';
+            }
+            break;
+    }
+}
+add_action('manage_slide_posts_custom_column', 'scode_theme_slide_admin_column_content', 10, 2);
+
+/**
+ * Make Slide Order Column Sortable
+ */
+function scode_theme_slide_sortable_columns($columns) {
+    $columns['slide_order'] = 'slide_order';
+    return $columns;
+}
+add_filter('manage_edit-slide_sortable_columns', 'scode_theme_slide_sortable_columns');
+
+/**
+ * Get Slides from Database
+ */
+function scode_theme_get_slides($limit = -1) {
+    $args = array(
+        'post_type' => 'slide',
+        'post_status' => 'publish',
+        'posts_per_page' => $limit,
+        'meta_query' => array(
+            array(
+                'key' => '_slide_active',
+                'value' => 'yes',
+                'compare' => '='
+            )
+        ),
+        'meta_key' => '_slide_order',
+        'orderby' => 'meta_value_num',
+        'order' => 'ASC'
+    );
+    
+    $slides = new WP_Query($args);
+    return $slides;
+}
 
 /**
  * WooCommerce customizations
@@ -253,23 +505,6 @@ add_action('init', 'scode_theme_custom_taxonomies');
 if (class_exists('WooCommerce')) {
     // Remove WooCommerce default styles
     add_filter('woocommerce_enqueue_styles', '__return_empty_array');
-    
-    // Customize WooCommerce pagination
-    function scode_theme_woocommerce_pagination_args($args) {
-        $args['prev_text'] = __('← Trước', 'scode-theme');
-        $args['next_text'] = __('Sau →', 'scode-theme');
-        return $args;
-    }
-    add_filter('woocommerce_pagination_args', 'scode_theme_woocommerce_pagination_args');
-    
-    // Customize WooCommerce breadcrumbs
-    function scode_theme_woocommerce_breadcrumb_defaults($args) {
-        $args['delimiter'] = ' <i class="fas fa-chevron-right"></i> ';
-        $args['wrap_before'] = '<nav class="woocommerce-breadcrumb">';
-        $args['wrap_after'] = '</nav>';
-        return $args;
-    }
-    add_filter('woocommerce_breadcrumb_defaults', 'scode_theme_woocommerce_breadcrumb_defaults');
     
     // AJAX cart count update
     function scode_theme_get_cart_count() {
@@ -280,20 +515,6 @@ if (class_exists('WooCommerce')) {
     }
     add_action('wp_ajax_get_cart_count', 'scode_theme_get_cart_count');
     add_action('wp_ajax_nopriv_get_cart_count', 'scode_theme_get_cart_count');
-    
-    // Add discount percentage to product cards
-    function scode_theme_product_discount_percentage() {
-        global $product;
-        if ($product->is_on_sale()) {
-            $regular_price = $product->get_regular_price();
-            $sale_price = $product->get_sale_price();
-            if ($regular_price && $sale_price) {
-                $percentage = round((1 - $sale_price / $regular_price) * 100);
-                echo '<span class="discount-badge">-' . $percentage . '%</span>';
-            }
-        }
-    }
-    add_action('woocommerce_before_shop_loop_item_title', 'scode_theme_product_discount_percentage');
 }
 
 /**
@@ -343,18 +564,18 @@ function scode_theme_activation() {
     // Set default options
     if (!get_option('scode_theme_options')) {
         update_option('scode_theme_options', array(
-            'primary_color' => '#FF6A00',
+            'primary_color' => '#f26522',
             'secondary_color' => '#1e3a8a',
-            'hero_title' => __('Chào mừng đến với ScodeTheme', 'scode-theme'),
-            'hero_description' => __('Theme WordPress hiện đại, tối ưu cho WooCommerce với thiết kế sạch sẽ và hiệu suất tuyệt vời.', 'scode-theme'),
+            'hero_title' => __('Chào mừng đến với OTNT - ÔNG TRÙM NỘI TRỢ', 'scode-theme'),
+            'hero_description' => __('Cửa hàng công nghệ hàng đầu Việt Nam với các sản phẩm chất lượng cao.', 'scode-theme'),
             'hero_cta_text' => __('Khám phá ngay', 'scode-theme'),
             'hero_cta_url' => home_url('/shop'),
             'product_grid_columns' => '4',
             'show_category_banners' => true,
-            'footer_text' => __('© 2024 ScodeTheme. Tất cả quyền được bảo lưu.', 'scode-theme'),
+            'footer_text' => __('© 2024 OTNT - ÔNG TRÙM NỘI TRỢ. Tất cả quyền được bảo lưu.', 'scode-theme'),
             'hotline' => '+84 123 456 789',
             'address' => '123 Đường ABC, Quận XYZ, TP.HCM',
-            'email' => 'info@scode.com',
+            'email' => 'info@otnt.com',
         ));
     }
 }
