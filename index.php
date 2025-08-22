@@ -54,34 +54,60 @@ get_header(); ?>
                     <?php while ($flash_sale_products->have_posts()) : $flash_sale_products->the_post(); 
                         global $product;
                     ?>
-                        <div class="product-card">
-                            <div class="product-image">
+                        <article class="mi-card">
+                            <div class="mi-media">
+                                <?php 
+                                // Calculate discount percentage
+                                $regular_price = $product->get_regular_price();
+                                $sale_price = $product->get_sale_price();
+                                $discount_percent = 0;
+                                
+                                if ($regular_price && $sale_price && $regular_price > $sale_price) {
+                                    $discount_percent = round((($regular_price - $sale_price) / $regular_price) * 100);
+                                }
+                                
+                                // Check if product has special tags
+                                $has_coupon = has_term('coupon', 'product_tag', $product->get_id()) || 
+                                             has_term('flash-sale', 'product_tag', $product->get_id()) ||
+                                             has_term('khuyen-mai', 'product_tag', $product->get_id());
+                                ?>
+                                
+                                <?php if ($discount_percent > 0) : ?>
+                                    <span class="mi-badge-off"><?php echo $discount_percent; ?>%</span>
+                                <?php endif; ?>
+                                
                                 <?php if (has_post_thumbnail()) : ?>
                                     <a href="<?php the_permalink(); ?>">
                                         <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
                                     </a>
                                 <?php endif; ?>
                                 
-                                <?php echo scode_get_product_badges($product); ?>
+                                <?php if ($has_coupon) : ?>
+                                    <span class="mi-ribbon">MÃ GIẢM GIÁ</span>
+                                <?php endif; ?>
                             </div>
-                            
-                            <div class="product-info">
-                                <h3 class="product-title">
-                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                                </h3>
-                                
-                                <?php echo scode_get_product_price_html($product); ?>
-                                
-                                <div class="product-actions">
-                                    <button class="add-to-cart" data-product-id="<?php echo $product->get_id(); ?>">
-                                        Thêm vào giỏ
-                                    </button>
-                                    <button class="quick-view" data-product-id="<?php echo $product->get_id(); ?>">
-                                        Xem nhanh
-                                    </button>
-                                </div>
+
+                            <h3 class="mi-title">
+                                <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                            </h3>
+
+                            <div class="mi-price">
+                                <?php if ($product->is_on_sale()) : ?>
+                                    <span class="mi-price-sale">
+                                        <?php echo number_format_i18n($sale_price, 0); ?>
+                                        <span class="cur">đ</span>
+                                    </span>
+                                    <span class="mi-price-regular">
+                                        <?php echo number_format_i18n($regular_price, 0); ?>đ
+                                    </span>
+                                <?php else : ?>
+                                    <span class="mi-price-sale">
+                                        <?php echo number_format_i18n($product->get_price(), 0); ?>
+                                        <span class="cur">đ</span>
+                                    </span>
+                                <?php endif; ?>
                             </div>
-                        </div>
+                        </article>
                     <?php endwhile; wp_reset_postdata(); ?>
                 </div>
             <?php else : ?>
@@ -141,93 +167,57 @@ get_header(); ?>
                                 $gift_value = get_post_meta($product_id, '_gift_value', true);
                                 $free_shipping = get_post_meta($product_id, '_free_shipping', true);
                             ?>
-                                <div class="product-card featured">
-                                    <!-- MI VIETNAM.VN Logo -->
-                                    <div class="brand-logo">
-                                        <span>MI VIETNAM.VN</span>
-                                    </div>
-                                    
-                                    <div class="product-image">
+                                <article class="mi-card">
+                                    <div class="mi-media">
+                                        <?php 
+                                        // Calculate discount percentage
+                                        $discount_percent = 0;
+                                        if ($regular_price && $sale_price && $regular_price > $sale_price) {
+                                            $discount_percent = round((($regular_price - $sale_price) / $regular_price) * 100);
+                                        }
+                                        
+                                        // Check if product has special tags
+                                        $has_coupon = has_term('coupon', 'product_tag', $product_id) || 
+                                                     has_term('flash-sale', 'product_tag', $product_id) ||
+                                                     has_term('khuyen-mai', 'product_tag', $product_id);
+                                        ?>
+                                        
+                                        <?php if ($discount_percent > 0) : ?>
+                                            <span class="mi-badge-off"><?php echo $discount_percent; ?>%</span>
+                                        <?php endif; ?>
+                                        
                                         <?php if (has_post_thumbnail()) : ?>
-                                            <img src="<?php echo get_the_post_thumbnail_url($product_id, 'product-thumb'); ?>" 
-                                                 alt="<?php the_title_attribute(); ?>" 
-                                                 class="product-img">
+                                            <a href="<?php the_permalink(); ?>">
+                                                <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
+                                            </a>
                                         <?php endif; ?>
                                         
-                                        <!-- Discount Badge -->
-                                        <?php if ($discount_percentage > 0) : ?>
-                                            <div class="discount-badge">-<?php echo $discount_percentage; ?>%</div>
+                                        <?php if ($has_coupon) : ?>
+                                            <span class="mi-ribbon">MÃ GIẢM GIÁ</span>
                                         <?php endif; ?>
-                                        
-                                        <!-- Additional Badges -->
-                                        <div class="additional-badges">
-                                            <?php if ($is_global) : ?>
-                                                <div class="badge global">Global version</div>
-                                            <?php endif; ?>
-                                            
-                                            <?php if ($is_premium) : ?>
-                                                <div class="badge premium">SẢN PHẨM CAO CẤP</div>
-                                            <?php endif; ?>
-                                        </div>
                                     </div>
-                                    
-                                    <!-- Hot Sale Banner -->
-                                    <div class="hot-sale-banner">
-                                        <span>HOT SALE HÈ RỰC RỠ</span>
-                                    </div>
-                                    
-                                    <!-- Product Info -->
-                                    <div class="product-info">
-                                        <h3 class="product-title">
-                                            <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                                        </h3>
-                                        
-                                        <!-- Product Features List -->
-                                        <?php if (!empty($product_features)) : ?>
-                                            <div class="product-features-list">
-                                                <?php 
-                                                $features_array = explode("\n", $product_features);
-                                                $features_count = 0;
-                                                foreach ($features_array as $feature) {
-                                                    if (trim($feature) && $features_count < 3) {
-                                                        echo '<span class="feature-text">' . esc_html(trim($feature)) . '</span>';
-                                                        $features_count++;
-                                                    }
-                                                }
-                                                ?>
-                                            </div>
+
+                                    <h3 class="mi-title">
+                                        <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                                    </h3>
+
+                                    <div class="mi-price">
+                                        <?php if ($sale_price && $regular_price) : ?>
+                                            <span class="mi-price-sale">
+                                                <?php echo number_format_i18n($sale_price, 0); ?>
+                                                <span class="cur">đ</span>
+                                            </span>
+                                            <span class="mi-price-regular">
+                                                <?php echo number_format_i18n($regular_price, 0); ?>đ
+                                            </span>
+                                        <?php else : ?>
+                                            <span class="mi-price-sale">
+                                                <?php echo number_format_i18n($current_price, 0); ?>
+                                                <span class="cur">đ</span>
+                                            </span>
                                         <?php endif; ?>
-                                        
-                                        <!-- Gift Information -->
-                                        <?php if ($gift_value) : ?>
-                                            <div class="gift-info">
-                                                <span class="gift-text">QUÀ TẶNG <?php echo esc_html($gift_value); ?></span>
-                                            </div>
-                                        <?php endif; ?>
-                                        
-                                        <!-- Product Price -->
-                                        <div class="product-price">
-                                            <?php if ($sale_price && $regular_price) : ?>
-                                                <span class="current-price"><?php echo scode_format_price($sale_price); ?></span>
-                                                <span class="old-price"><?php echo scode_format_price($regular_price); ?></span>
-                                            <?php else : ?>
-                                                <span class="current-price"><?php echo scode_format_price($current_price); ?></span>
-                                            <?php endif; ?>
-                                        </div>
-                                        
-                                        <!-- Product Actions -->
-                                        <div class="product-actions">
-                                            <button class="add-to-cart" data-product-id="<?php echo $product_id; ?>">
-                                                <i class="fas fa-shopping-cart"></i>
-                                                Thêm vào giỏ
-                                            </button>
-                                            <button class="quick-view" data-product-id="<?php echo $product_id; ?>">
-                                                <i class="fas fa-eye"></i>
-                                                Xem nhanh
-                                            </button>
-                                        </div>
                                     </div>
-                                </div>
+                                </article>
                             <?php endwhile; ?>
                         </div>
                         <?php wp_reset_postdata(); ?>
@@ -256,34 +246,60 @@ get_header(); ?>
                     <?php while ($best_sellers->have_posts()) : $best_sellers->the_post(); 
                         global $product;
                     ?>
-                        <div class="product-card">
-                            <div class="product-image">
+                        <article class="mi-card">
+                            <div class="mi-media">
+                                <?php 
+                                // Calculate discount percentage
+                                $regular_price = $product->get_regular_price();
+                                $sale_price = $product->get_sale_price();
+                                $discount_percent = 0;
+                                
+                                if ($regular_price && $sale_price && $regular_price > $sale_price) {
+                                    $discount_percent = round((($regular_price - $sale_price) / $regular_price) * 100);
+                                }
+                                
+                                // Check if product has special tags
+                                $has_coupon = has_term('coupon', 'product_tag', $product->get_id()) || 
+                                             has_term('flash-sale', 'product_tag', $product->get_id()) ||
+                                             has_term('khuyen-mai', 'product_tag', $product->get_id());
+                                ?>
+                                
+                                <?php if ($discount_percent > 0) : ?>
+                                    <span class="mi-badge-off"><?php echo $discount_percent; ?>%</span>
+                                <?php endif; ?>
+                                
                                 <?php if (has_post_thumbnail()) : ?>
                                     <a href="<?php the_permalink(); ?>">
                                         <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
                                     </a>
                                 <?php endif; ?>
                                 
-                                <?php echo scode_get_product_badges($product); ?>
+                                <?php if ($has_coupon) : ?>
+                                    <span class="mi-ribbon">MÃ GIẢM GIÁ</span>
+                                <?php endif; ?>
                             </div>
-                            
-                            <div class="product-info">
-                                <h3 class="product-title">
-                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                                </h3>
-                                
-                                <?php echo scode_get_product_price_html($product); ?>
-                                
-                                <div class="product-actions">
-                                    <button class="add-to-cart" data-product-id="<?php echo $product->get_id(); ?>">
-                                        Thêm vào giỏ
-                                    </button>
-                                    <button class="quick-view" data-product-id="<?php echo $product->get_id(); ?>">
-                                        Xem nhanh
-                                    </button>
-                                </div>
+
+                            <h3 class="mi-title">
+                                <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                            </h3>
+
+                            <div class="mi-price">
+                                <?php if ($product->is_on_sale()) : ?>
+                                    <span class="mi-price-sale">
+                                        <?php echo number_format_i18n($sale_price, 0); ?>
+                                        <span class="cur">đ</span>
+                                    </span>
+                                    <span class="mi-price-regular">
+                                        <?php echo number_format_i18n($regular_price, 0); ?>đ
+                                    </span>
+                                <?php else : ?>
+                                    <span class="mi-price-sale">
+                                        <?php echo number_format_i18n($product->get_price(), 0); ?>
+                                        <span class="cur">đ</span>
+                                    </span>
+                                <?php endif; ?>
                             </div>
-                        </div>
+                        </article>
                     <?php endwhile; wp_reset_postdata(); ?>
                 </div>
             <?php else : ?>
@@ -364,34 +380,60 @@ get_header(); ?>
                     <?php while ($air_purifiers->have_posts()) : $air_purifiers->the_post(); 
                         global $product;
                     ?>
-                        <div class="product-card">
-                            <div class="product-image">
+                        <article class="mi-card">
+                            <div class="mi-media">
+                                <?php 
+                                // Calculate discount percentage
+                                $regular_price = $product->get_regular_price();
+                                $sale_price = $product->get_sale_price();
+                                $discount_percent = 0;
+                                
+                                if ($regular_price && $sale_price && $regular_price > $sale_price) {
+                                    $discount_percent = round((($regular_price - $sale_price) / $regular_price) * 100);
+                                }
+                                
+                                // Check if product has special tags
+                                $has_coupon = has_term('coupon', 'product_tag', $product->get_id()) || 
+                                             has_term('flash-sale', 'product_tag', $product->get_id()) ||
+                                             has_term('khuyen-mai', 'product_tag', $product->get_id());
+                                ?>
+                                
+                                <?php if ($discount_percent > 0) : ?>
+                                    <span class="mi-badge-off"><?php echo $discount_percent; ?>%</span>
+                                <?php endif; ?>
+                                
                                 <?php if (has_post_thumbnail()) : ?>
                                     <a href="<?php the_permalink(); ?>">
                                         <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
                                     </a>
                                 <?php endif; ?>
                                 
-                                <?php echo scode_get_product_badges($product); ?>
+                                <?php if ($has_coupon) : ?>
+                                    <span class="mi-ribbon">MÃ GIẢM GIÁ</span>
+                                <?php endif; ?>
                             </div>
-                            
-                            <div class="product-info">
-                                <h3 class="product-title">
-                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                                </h3>
-                                
-                                <?php echo scode_get_product_price_html($product); ?>
-                                
-                                <div class="product-actions">
-                                    <button class="add-to-cart" data-product-id="<?php echo $product->get_id(); ?>">
-                                        Thêm vào giỏ
-                                    </button>
-                                    <button class="quick-view" data-product-id="<?php echo $product->get_id(); ?>">
-                                        Xem nhanh
-                                    </button>
-                                </div>
+
+                            <h3 class="mi-title">
+                                <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                            </h3>
+
+                            <div class="mi-price">
+                                <?php if ($product->is_on_sale()) : ?>
+                                    <span class="mi-price-sale">
+                                        <?php echo number_format_i18n($sale_price, 0); ?>
+                                        <span class="cur">đ</span>
+                                    </span>
+                                    <span class="mi-price-regular">
+                                        <?php echo number_format_i18n($regular_price, 0); ?>đ
+                                    </span>
+                                <?php else : ?>
+                                    <span class="mi-price-sale">
+                                        <?php echo number_format_i18n($product->get_price(), 0); ?>
+                                        <span class="cur">đ</span>
+                                    </span>
+                                <?php endif; ?>
                             </div>
-                        </div>
+                        </article>
                     <?php endwhile; wp_reset_postdata(); ?>
                 </div>
             <?php else : ?>
@@ -418,34 +460,60 @@ get_header(); ?>
                     <?php while ($water_purifiers->have_posts()) : $water_purifiers->the_post(); 
                         global $product;
                     ?>
-                        <div class="product-card">
-                            <div class="product-image">
+                        <article class="mi-card">
+                            <div class="mi-media">
+                                <?php 
+                                // Calculate discount percentage
+                                $regular_price = $product->get_regular_price();
+                                $sale_price = $product->get_sale_price();
+                                $discount_percent = 0;
+                                
+                                if ($regular_price && $sale_price && $regular_price > $sale_price) {
+                                    $discount_percent = round((($regular_price - $sale_price) / $regular_price) * 100);
+                                }
+                                
+                                // Check if product has special tags
+                                $has_coupon = has_term('coupon', 'product_tag', $product->get_id()) || 
+                                             has_term('flash-sale', 'product_tag', $product->get_id()) ||
+                                             has_term('khuyen-mai', 'product_tag', $product->get_id());
+                                ?>
+                                
+                                <?php if ($discount_percent > 0) : ?>
+                                    <span class="mi-badge-off"><?php echo $discount_percent; ?>%</span>
+                                <?php endif; ?>
+                                
                                 <?php if (has_post_thumbnail()) : ?>
                                     <a href="<?php the_permalink(); ?>">
                                         <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
                                     </a>
                                 <?php endif; ?>
                                 
-                                <?php echo scode_get_product_badges($product); ?>
+                                <?php if ($has_coupon) : ?>
+                                    <span class="mi-ribbon">MÃ GIẢM GIÁ</span>
+                                <?php endif; ?>
                             </div>
-                            
-                            <div class="product-info">
-                                <h3 class="product-title">
-                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                                </h3>
-                                
-                                <?php echo scode_get_product_price_html($product); ?>
-                                
-                                <div class="product-actions">
-                                    <button class="add-to-cart" data-product-id="<?php echo $product->get_id(); ?>">
-                                        Thêm vào giỏ
-                                    </button>
-                                    <button class="quick-view" data-product-id="<?php echo $product->get_id(); ?>">
-                                        Xem nhanh
-                                    </button>
-                                </div>
+
+                            <h3 class="mi-title">
+                                <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                            </h3>
+
+                            <div class="mi-price">
+                                <?php if ($product->is_on_sale()) : ?>
+                                    <span class="mi-price-sale">
+                                        <?php echo number_format_i18n($sale_price, 0); ?>
+                                        <span class="cur">đ</span>
+                                    </span>
+                                    <span class="mi-price-regular">
+                                        <?php echo number_format_i18n($regular_price, 0); ?>đ
+                                    </span>
+                                <?php else : ?>
+                                    <span class="mi-price-sale">
+                                        <?php echo number_format_i18n($product->get_price(), 0); ?>
+                                        <span class="cur">đ</span>
+                                    </span>
+                                <?php endif; ?>
                             </div>
-                        </div>
+                        </article>
                     <?php endwhile; wp_reset_postdata(); ?>
                 </div>
             <?php else : ?>
@@ -482,34 +550,60 @@ get_header(); ?>
                     <?php while ($smartwatch_products->have_posts()) : $smartwatch_products->the_post(); 
                         global $product;
                     ?>
-                        <div class="product-card">
-                            <div class="product-image">
+                        <article class="mi-card">
+                            <div class="mi-media">
+                                <?php 
+                                // Calculate discount percentage
+                                $regular_price = $product->get_regular_price();
+                                $sale_price = $product->get_sale_price();
+                                $discount_percent = 0;
+                                
+                                if ($regular_price && $sale_price && $regular_price > $sale_price) {
+                                    $discount_percent = round((($regular_price - $sale_price) / $regular_price) * 100);
+                                }
+                                
+                                // Check if product has special tags
+                                $has_coupon = has_term('coupon', 'product_tag', $product->get_id()) || 
+                                             has_term('flash-sale', 'product_tag', $product->get_id()) ||
+                                             has_term('khuyen-mai', 'product_tag', $product->get_id());
+                                ?>
+                                
+                                <?php if ($discount_percent > 0) : ?>
+                                    <span class="mi-badge-off"><?php echo $discount_percent; ?>%</span>
+                                <?php endif; ?>
+                                
                                 <?php if (has_post_thumbnail()) : ?>
                                     <a href="<?php the_permalink(); ?>">
                                         <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
                                     </a>
                                 <?php endif; ?>
                                 
-                                <?php echo scode_get_product_badges($product); ?>
+                                <?php if ($has_coupon) : ?>
+                                    <span class="mi-ribbon">MÃ GIẢM GIÁ</span>
+                                <?php endif; ?>
                             </div>
-                            
-                            <div class="product-info">
-                                <h3 class="product-title">
-                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                                </h3>
-                                
-                                <?php echo scode_get_product_price_html($product); ?>
-                                
-                                <div class="product-actions">
-                                    <button class="add-to-cart" data-product-id="<?php echo $product->get_id(); ?>">
-                                        Thêm vào giỏ
-                                    </button>
-                                    <button class="quick-view" data-product-id="<?php echo $product->get_id(); ?>">
-                                        Xem nhanh
-                                    </button>
-                                </div>
+
+                            <h3 class="mi-title">
+                                <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                            </h3>
+
+                            <div class="mi-price">
+                                <?php if ($product->is_on_sale()) : ?>
+                                    <span class="mi-price-sale">
+                                        <?php echo number_format_i18n($sale_price, 0); ?>
+                                        <span class="cur">đ</span>
+                                    </span>
+                                    <span class="mi-price-regular">
+                                        <?php echo number_format_i18n($regular_price, 0); ?>đ
+                                    </span>
+                                <?php else : ?>
+                                    <span class="mi-price-sale">
+                                        <?php echo number_format_i18n($product->get_price(), 0); ?>
+                                        <span class="cur">đ</span>
+                                    </span>
+                                <?php endif; ?>
                             </div>
-                        </div>
+                        </article>
                     <?php endwhile; wp_reset_postdata(); ?>
                 </div>
             <?php else : ?>
@@ -528,7 +622,7 @@ get_header(); ?>
                 <a href="<?php echo home_url('/danh-muc/phu-kien'); ?>" class="view-all">Xem tất cả</a>
             </div>
             
-            <?php
+                        <?php
             $accessories = scode_get_products_by_category('phu-kien', 12);
             if ($accessories->have_posts()) :
             ?>
@@ -536,34 +630,60 @@ get_header(); ?>
                     <?php while ($accessories->have_posts()) : $accessories->the_post(); 
                         global $product;
                     ?>
-                        <div class="product-card">
-                            <div class="product-image">
+                        <article class="mi-card">
+                            <div class="mi-media">
+                                <?php 
+                                // Calculate discount percentage
+                                $regular_price = $product->get_regular_price();
+                                $sale_price = $product->get_sale_price();
+                                $discount_percent = 0;
+                                
+                                if ($regular_price && $sale_price && $regular_price > $sale_price) {
+                                    $discount_percent = round((($regular_price - $sale_price) / $regular_price) * 100);
+                                }
+                                
+                                // Check if product has special tags
+                                $has_coupon = has_term('coupon', 'product_tag', $product->get_id()) || 
+                                             has_term('flash-sale', 'product_tag', $product->get_id()) ||
+                                             has_term('khuyen-mai', 'product_tag', $product->get_id());
+                                ?>
+                                
+                                <?php if ($discount_percent > 0) : ?>
+                                    <span class="mi-badge-off"><?php echo $discount_percent; ?>%</span>
+                                <?php endif; ?>
+                                
                                 <?php if (has_post_thumbnail()) : ?>
                                     <a href="<?php the_permalink(); ?>">
                                         <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
                                     </a>
                                 <?php endif; ?>
                                 
-                                <?php echo scode_get_product_badges($product); ?>
+                                <?php if ($has_coupon) : ?>
+                                    <span class="mi-ribbon">MÃ GIẢM GIÁ</span>
+                                <?php endif; ?>
                             </div>
-                            
-                            <div class="product-info">
-                                <h3 class="product-title">
-                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                                </h3>
-                                
-                                <?php echo scode_get_product_price_html($product); ?>
-                                
-                                <div class="product-actions">
-                                    <button class="add-to-cart" data-product-id="<?php echo $product->get_id(); ?>">
-                                        Thêm vào giỏ
-                                    </button>
-                                    <button class="quick-view" data-product-id="<?php echo $product->get_id(); ?>">
-                                        Xem nhanh
-                                    </button>
-                                </div>
+
+                            <h3 class="mi-title">
+                                <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                            </h3>
+
+                            <div class="mi-price">
+                                <?php if ($product->is_on_sale()) : ?>
+                                    <span class="mi-price-sale">
+                                        <?php echo number_format_i18n($sale_price, 0); ?>
+                                        <span class="cur">đ</span>
+                                    </span>
+                                    <span class="mi-price-regular">
+                                        <?php echo number_format_i18n($regular_price, 0); ?>đ
+                                    </span>
+                                <?php else : ?>
+                                    <span class="mi-price-sale">
+                                        <?php echo number_format_i18n($product->get_price(), 0); ?>
+                                        <span class="cur">đ</span>
+                                    </span>
+                                <?php endif; ?>
                             </div>
-                        </div>
+                        </article>
                     <?php endwhile; wp_reset_postdata(); ?>
                 </div>
             <?php else : ?>
