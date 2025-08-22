@@ -5583,6 +5583,78 @@ body.video-modal-open {
     display: block;
 }
 
+/* Product Description Read More */
+.product-description {
+    position: relative;
+}
+
+.description-content {
+    max-height: 200px;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    position: relative;
+}
+
+.description-content.expanded {
+    max-height: none;
+}
+
+.description-content::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(transparent, #fff);
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.description-content.expanded::after {
+    opacity: 0;
+}
+
+.read-more-section {
+    text-align: center;
+    margin: 20px 0;
+    padding: 16px 0;
+    border-top: 1px solid #f0f0f0;
+}
+
+.read-more-btn {
+    background: linear-gradient(135deg, #f36c21, #ff8c42);
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(243, 108, 33, 0.3);
+}
+
+.read-more-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(243, 108, 33, 0.4);
+}
+
+.read-more-btn:active {
+    transform: translateY(0);
+}
+
+.read-more-btn i {
+    transition: transform 0.3s ease;
+}
+
+.read-more-btn.expanded i {
+    transform: rotate(180deg);
+}
+
 /* Enhanced Sticky Cart Bar */
 .sticky-cart-bar {
     position: fixed;

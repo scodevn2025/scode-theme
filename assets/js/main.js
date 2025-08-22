@@ -1069,4 +1069,55 @@ jQuery(document).ready(function($) {
             }
         `)
         .appendTo('head');
+    
+    // ===== READ MORE FUNCTIONALITY =====
+    function initReadMore() {
+        const $readMoreBtn = $('#read-more-btn');
+        const $descriptionContent = $('#description-content');
+        const $readMoreText = $('.read-more-text');
+        const $readLessText = $('.read-less-text');
+        const $readMoreIcon = $('.read-more-icon');
+        const $readLessIcon = $('.read-less-icon');
+        
+        if ($readMoreBtn.length === 0) return;
+        
+        // Check if content needs read more button
+        const contentHeight = $descriptionContent[0].scrollHeight;
+        const maxHeight = 200; // Same as CSS max-height
+        
+        if (contentHeight <= maxHeight) {
+            $readMoreBtn.hide();
+            return;
+        }
+        
+        $readMoreBtn.on('click', function() {
+            const isExpanded = $descriptionContent.hasClass('expanded');
+            
+            if (isExpanded) {
+                // Collapse content
+                $descriptionContent.removeClass('expanded');
+                $readMoreText.show();
+                $readLessText.hide();
+                $readMoreIcon.show();
+                $readLessIcon.hide();
+                $readMoreBtn.removeClass('expanded');
+                
+                // Smooth scroll to top of description
+                $('html, body').animate({
+                    scrollTop: $descriptionContent.offset().top - 100
+                }, 300);
+            } else {
+                // Expand content
+                $descriptionContent.addClass('expanded');
+                $readMoreText.hide();
+                $readLessText.show();
+                $readMoreIcon.hide();
+                $readLessIcon.show();
+                $readMoreBtn.addClass('expanded');
+            }
+        });
+    }
+    
+    // Initialize read more functionality
+    initReadMore();
 });
