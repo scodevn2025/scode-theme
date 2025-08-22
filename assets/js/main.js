@@ -12,8 +12,6 @@ jQuery(document).ready(function($) {
         const $slider = $('.hero-slider');
         const $slides = $('.hero-slide');
         const $dots = $('.slider-dot');
-        const $prevBtn = $('.slider-arrow.prev');
-        const $nextBtn = $('.slider-arrow.next');
         
         if ($slides.length <= 1) return;
         
@@ -33,10 +31,10 @@ jQuery(document).ready(function($) {
             
             // Add entrance animation
             const $currentSlide = $slides.eq(index);
-            $currentSlide.find('.slide-content-wrapper').addClass('slide-in');
+            $currentSlide.addClass('slide-in');
             
             setTimeout(() => {
-                $currentSlide.find('.slide-content-wrapper').removeClass('slide-in');
+                $currentSlide.removeClass('slide-in');
             }, 1000);
         }
         
@@ -47,7 +45,7 @@ jQuery(document).ready(function($) {
         
         function prevSlide() {
             const prevIndex = (currentSlide - 1 + totalSlides) % totalSlides;
-            showSlide(prevIndex);
+            showSlide(nextIndex);
         }
         
         function startAutoPlay() {
@@ -62,18 +60,6 @@ jQuery(document).ready(function($) {
         $dots.on('click', function() {
             const slideIndex = $(this).data('slide');
             showSlide(slideIndex);
-            stopAutoPlay();
-            startAutoPlay();
-        });
-        
-        $prevBtn.on('click', function() {
-            prevSlide();
-            stopAutoPlay();
-            startAutoPlay();
-        });
-        
-        $nextBtn.on('click', function() {
-            nextSlide();
             stopAutoPlay();
             startAutoPlay();
         });
@@ -127,62 +113,43 @@ jQuery(document).ready(function($) {
         startAutoPlay();
     }
 
-    // ===== MOBILE MENU TOGGLE =====
-    function initMobileMenu() {
-        const $menuToggle = $('.mobile-menu-toggle');
-        const $primaryMenu = $('.primary-menu-wrapper');
-        const $categoryMenu = $('.category-menu-wrapper');
+    // ===== VERTICAL MEGA MENU =====
+    function initVerticalMegaMenu() {
+        const $megaMenuItems = $('.mega-menu-item.has-submenu');
         
-        $menuToggle.on('click', function() {
-            $primaryMenu.toggleClass('active');
-            const isExpanded = $primaryMenu.hasClass('active');
-            $menuToggle.attr('aria-expanded', isExpanded);
+        $megaMenuItems.each(function() {
+            const $item = $(this);
+            const $submenu = $item.find('.submenu-dropdown');
             
-            // Close category menu when mobile menu opens
-            if (isExpanded) {
-                $categoryMenu.removeClass('active');
-            }
+            // Show submenu on hover
+            $item.on('mouseenter', function() {
+                $submenu.addClass('active');
+            });
+            
+            $item.on('mouseleave', function() {
+                $submenu.removeClass('active');
+            });
+            
+            // Keyboard navigation
+            $item.find('.menu-link').on('keydown', function(e) {
+                if (e.keyCode === 13 || e.keyCode === 32) { // Enter or Space
+                    e.preventDefault();
+                    $submenu.toggleClass('active');
+                }
+            });
         });
         
-        // Close menu when clicking outside
+        // Close submenus when clicking outside
         $(document).on('click', function(e) {
-            if (!$(e.target).closest('.main-navigation').length) {
-                $primaryMenu.removeClass('active');
-                $menuToggle.attr('aria-expanded', 'false');
+            if (!$(e.target).closest('.mega-menu-item').length) {
+                $('.submenu-dropdown').removeClass('active');
             }
         });
         
-        // Close menu on escape key
+        // Close submenus on escape key
         $(document).on('keydown', function(e) {
             if (e.keyCode === 27) { // ESC key
-                $primaryMenu.removeClass('active');
-                $menuToggle.attr('aria-expanded', 'false');
-            }
-        });
-    }
-
-    // ===== CATEGORY DROPDOWN =====
-    function initCategoryDropdown() {
-        const $categoryToggle = $('.category-toggle');
-        const $categoryDropdown = $('.category-dropdown');
-        
-        // Show dropdown on click (mobile)
-        $categoryToggle.on('click', function() {
-            $categoryDropdown.toggleClass('active');
-        });
-        
-        // Hide dropdown when clicking outside
-        $(document).on('click', function(e) {
-            if (!$(e.target).closest('.category-menu-wrapper').length) {
-                $categoryDropdown.removeClass('active');
-            }
-        });
-        
-        // Keyboard navigation for category menu
-        $categoryToggle.on('keydown', function(e) {
-            if (e.keyCode === 13 || e.keyCode === 32) { // Enter or Space
-                e.preventDefault();
-                $categoryDropdown.toggleClass('active');
+                $('.submenu-dropdown').removeClass('active');
             }
         });
     }
@@ -509,6 +476,30 @@ jQuery(document).ready(function($) {
         });
     }
 
+    // ===== SHORTCUT CATEGORIES INTERACTION =====
+    function initShortcutCategories() {
+        $('.shortcut-item').on('click', function() {
+            const $item = $(this);
+            const label = $item.find('.shortcut-label').text();
+            
+            // Add click animation
+            $item.addClass('clicked');
+            setTimeout(() => {
+                $item.removeClass('clicked');
+            }, 300);
+            
+            // Log the category clicked (you can implement navigation here)
+            console.log('Category clicked:', label);
+        });
+        
+        // Add hover effects for shortcut badges
+        $('.shortcut-badge').on('mouseenter', function() {
+            $(this).addClass('hover');
+        }).on('mouseleave', function() {
+            $(this).removeClass('hover');
+        });
+    }
+
     // ===== NOTIFICATION SYSTEM =====
     function showNotification(message, type = 'info') {
         const notification = $(`
@@ -559,8 +550,7 @@ jQuery(document).ready(function($) {
     // ===== INITIALIZE ALL FUNCTIONS =====
     function init() {
         initHeroSlider();
-        initMobileMenu();
-        initCategoryDropdown();
+        initVerticalMegaMenu();
         initHeaderScrollEffects();
         initSearchEnhancements();
         initCountdownTimer();
@@ -571,6 +561,7 @@ jQuery(document).ready(function($) {
         initSmoothScroll();
         initLazyLoading();
         initProductHover();
+        initShortcutCategories();
     }
 
     // Start initialization
@@ -652,14 +643,39 @@ jQuery(document).ready(function($) {
                 animation: pulse 0.6s ease-in-out;
             }
             
-            .category-dropdown.active {
+            .submenu-dropdown.active {
                 opacity: 1;
                 visibility: visible;
-                transform: translateY(0);
+                transform: translateX(0);
             }
             
-            .primary-menu-wrapper.active {
-                display: block;
+            .shortcut-item.clicked {
+                transform: scale(0.95);
+            }
+            
+            .shortcut-badge.hover {
+                transform: scale(1.1);
+            }
+            
+            /* Responsive adjustments for mega menu */
+            @media (max-width: 992px) {
+                .submenu-dropdown {
+                    position: static;
+                    opacity: 1;
+                    visibility: visible;
+                    transform: none;
+                    min-width: 100%;
+                    box-shadow: none;
+                    border-top: 1px solid rgba(255, 255, 255, 0.1);
+                }
+                
+                .submenu-content {
+                    padding: 16px;
+                }
+                
+                .submenu-column {
+                    margin-bottom: 16px;
+                }
             }
         `)
         .appendTo('head');

@@ -116,131 +116,299 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Main Navigation -->
-        <nav class="main-navigation">
-            <div class="container">
-                <div class="nav-wrapper">
-                    <!-- Mobile Menu Toggle -->
-                    <button class="mobile-menu-toggle" aria-controls="primary-menu" aria-expanded="false">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    
-                    <!-- Primary Menu -->
-                    <div class="primary-menu-wrapper">
-                        <?php
-                        wp_nav_menu(array(
-                            'theme_location' => 'primary',
-                            'menu_id'        => 'primary-menu',
-                            'menu_class'     => 'primary-menu',
-                            'container'      => false,
-                            'fallback_cb'    => 'scode_fallback_menu',
-                        ));
-                        ?>
-                    </div>
-                    
-                    <!-- Category Menu -->
-                    <div class="category-menu-wrapper">
-                        <button class="category-toggle">
-                            <i class="fas fa-th-large"></i>
-                            <span>Danh mục</span>
-                        </button>
-                        <div class="category-dropdown">
-                            <ul class="category-list">
-                                <li><a href="<?php echo home_url('/danh-muc/gia-dung'); ?>"><i class="fas fa-home"></i> Gia dụng</a></li>
-                                <li><a href="<?php echo home_url('/danh-muc/smart-home'); ?>"><i class="fas fa-cog"></i> Smart Home</a></li>
-                                <li><a href="<?php echo home_url('/danh-muc/suc-khoe'); ?>"><i class="fas fa-heart"></i> Sức khỏe</a></li>
-                                <li><a href="<?php echo home_url('/danh-muc/dien-thoai'); ?>"><i class="fas fa-mobile-alt"></i> Điện thoại</a></li>
-                                <li><a href="<?php echo home_url('/danh-muc/laptop'); ?>"><i class="fas fa-laptop"></i> Laptop</a></li>
-                                <li><a href="<?php echo home_url('/danh-muc/phu-kien'); ?>"><i class="fas fa-headphones"></i> Phụ kiện</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </nav>
     </header>
     
-    <!-- Hero Slider -->
-    <div class="hero-slider">
-        <?php
-        $slides = scode_get_hero_slides(5);
-        if ($slides->have_posts()) :
-            $slide_index = 0;
-            while ($slides->have_posts()) : $slides->the_post();
-                $slide_button_text = get_post_meta(get_the_ID(), 'button_text', true);
-                $slide_button_url = get_post_meta(get_the_ID(), 'button_url', true);
-                $slide_class = ($slide_index === 0) ? 'hero-slide active' : 'hero-slide';
-                ?>
-                
-                <div class="<?php echo esc_attr($slide_class); ?>">
-                    <?php if (has_post_thumbnail()) : ?>
-                        <div class="hero-slide-bg" style="background-image: url('<?php echo get_the_post_thumbnail_url(get_the_ID(), 'slide-large'); ?>');"></div>
-                    <?php endif; ?>
-                    
-                    <div class="hero-slide-overlay"></div>
-                    
-                    <div class="hero-slide-content">
-                        <div class="slide-content-wrapper">
-                            <h1 class="slide-title"><?php the_title(); ?></h1>
-                            <div class="slide-description"><?php the_content(); ?></div>
-                            
-                            <?php if (!empty($slide_button_text) && !empty($slide_button_url)) : ?>
-                                <div class="slide-actions">
-                                    <a href="<?php echo esc_url($slide_button_url); ?>" class="slide-btn primary">
-                                        <?php echo esc_html($slide_button_text); ?>
-                                    </a>
-                                    <a href="<?php echo home_url('/san-pham'); ?>" class="slide-btn secondary">
-                                        Xem tất cả
-                                    </a>
+    <!-- Hero Section with 2-Column Layout -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-grid">
+                <!-- Left Column: Vertical Mega Menu -->
+                <aside class="hero-sidebar">
+                    <nav class="vertical-mega-menu">
+                        <div class="menu-header">
+                            <i class="fas fa-th-large"></i>
+                            <span>DANH MỤC SẢN PHẨM</span>
+                        </div>
+                        
+                        <ul class="mega-menu-list">
+                            <li class="mega-menu-item has-submenu">
+                                <a href="<?php echo home_url('/danh-muc/robot-hut-bui'); ?>" class="menu-link">
+                                    <i class="fas fa-robot"></i>
+                                    <span>ROBOT HÚT BỤI</span>
+                                    <i class="fas fa-chevron-right caret"></i>
+                                </a>
+                                <div class="submenu-dropdown">
+                                    <div class="submenu-content">
+                                        <div class="submenu-column">
+                                            <h4>Thương hiệu</h4>
+                                            <ul>
+                                                <li><a href="<?php echo home_url('/danh-muc/roborock'); ?>">Roborock</a></li>
+                                                <li><a href="<?php echo home_url('/danh-muc/xiaomi'); ?>">Xiaomi</a></li>
+                                                <li><a href="<?php echo home_url('/danh-muc/ecovacs'); ?>">Ecovacs</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="submenu-column">
+                                            <h4>Giá cả</h4>
+                                            <ul>
+                                                <li><a href="<?php echo home_url('/danh-muc/duoi-5-trieu'); ?>">Dưới 5 triệu</a></li>
+                                                <li><a href="<?php echo home_url('/danh-muc/5-10-trieu'); ?>">5-10 triệu</a></li>
+                                                <li><a href="<?php echo home_url('/danh-muc/tren-10-trieu'); ?>">Trên 10 triệu</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
-                            <?php endif; ?>
-                        </div>
+                            </li>
+                            
+                            <li class="mega-menu-item has-submenu">
+                                <a href="<?php echo home_url('/danh-muc/tivi'); ?>" class="menu-link">
+                                    <i class="fas fa-tv"></i>
+                                    <span>TIVI XIAOMI</span>
+                                    <i class="fas fa-chevron-right caret"></i>
+                                </a>
+                                <div class="submenu-dropdown">
+                                    <div class="submenu-content">
+                                        <div class="submenu-column">
+                                            <h4>Kích thước</h4>
+                                            <ul>
+                                                <li><a href="<?php echo home_url('/danh-muc/tivi-32-inch'); ?>">32 inch</a></li>
+                                                <li><a href="<?php echo home_url('/danh-muc/tivi-43-inch'); ?>">43 inch</a></li>
+                                                <li><a href="<?php echo home_url('/danh-muc/tivi-55-inch'); ?>">55 inch</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            
+                            <li class="mega-menu-item has-submenu">
+                                <a href="<?php echo home_url('/danh-muc/may-loc-khong-khi'); ?>" class="menu-link">
+                                    <i class="fas fa-wind"></i>
+                                    <span>MÁY LỌC KHÔNG KHÍ</span>
+                                    <i class="fas fa-chevron-right caret"></i>
+                                </a>
+                            </li>
+                            
+                            <li class="mega-menu-item has-submenu">
+                                <a href="<?php echo home_url('/danh-muc/may-loc-nuoc'); ?>" class="menu-link">
+                                    <i class="fas fa-tint"></i>
+                                    <span>MÁY LỌC NƯỚC</span>
+                                    <i class="fas fa-chevron-right caret"></i>
+                                </a>
+                            </li>
+                            
+                            <li class="mega-menu-item has-submenu">
+                                <a href="<?php echo home_url('/danh-muc/smartwatch'); ?>" class="menu-link">
+                                    <i class="fas fa-clock"></i>
+                                    <span>SMARTWATCH</span>
+                                    <i class="fas fa-chevron-right caret"></i>
+                                </a>
+                            </li>
+                            
+                            <li class="mega-menu-item has-submenu">
+                                <a href="<?php echo home_url('/danh-muc/laptop'); ?>" class="menu-link">
+                                    <i class="fas fa-laptop"></i>
+                                    <span>LAPTOP</span>
+                                    <i class="fas fa-chevron-right caret"></i>
+                                </a>
+                            </li>
+                            
+                            <li class="mega-menu-item has-submenu">
+                                <a href="<?php echo home_url('/danh-muc/dien-thoai'); ?>" class="menu-link">
+                                    <i class="fas fa-mobile-alt"></i>
+                                    <span>ĐIỆN THOẠI</span>
+                                    <i class="fas fa-chevron-right caret"></i>
+                                </a>
+                            </li>
+                            
+                            <li class="mega-menu-item has-submenu">
+                                <a href="<?php echo home_url('/danh-muc/phu-kien'); ?>" class="menu-link">
+                                    <i class="fas fa-headphones"></i>
+                                    <span>PHỤ KIỆN</span>
+                                    <i class="fas fa-chevron-right caret"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </aside>
+                
+                <!-- Right Column: Hero Slider -->
+                <div class="hero-main">
+                    <div class="hero-slider">
+                        <?php
+                        $slides = scode_get_hero_slides(5);
+                        if ($slides->have_posts()) :
+                            $slide_index = 0;
+                            while ($slides->have_posts()) : $slides->the_post();
+                                $slide_button_text = get_post_meta(get_the_ID(), 'button_text', true);
+                                $slide_button_url = get_post_meta(get_the_ID(), 'button_url', true);
+                                $slide_price_original = get_post_meta(get_the_ID(), 'price_original', true);
+                                $slide_price_sale = get_post_meta(get_the_ID(), 'price_sale', true);
+                                $slide_gifts = get_post_meta(get_the_ID(), 'gifts', true);
+                                $slide_class = ($slide_index === 0) ? 'hero-slide active' : 'hero-slide';
+                                ?>
+                                
+                                <div class="<?php echo esc_attr($slide_class); ?>">
+                                    <div class="hero-slide-content">
+                                        <div class="slide-left">
+                                            <div class="slide-brands">
+                                                <img src="<?php echo get_theme_mod('scode_mi_logo', '/wp-content/uploads/mi-logo.png'); ?>" alt="Mi Vietnam" class="brand-logo">
+                                                <img src="<?php echo get_theme_mod('scode_roborock_logo', '/wp-content/uploads/roborock-logo.png'); ?>" alt="Roborock" class="brand-logo">
+                                            </div>
+                                            
+                                            <h1 class="slide-title"><?php the_title(); ?></h1>
+                                            <div class="slide-description"><?php the_content(); ?></div>
+                                            
+                                            <?php if (!empty($slide_price_original) || !empty($slide_price_sale)) : ?>
+                                                <div class="slide-pricing">
+                                                    <?php if (!empty($slide_price_original)) : ?>
+                                                        <div class="price-original"><?php echo esc_html($slide_price_original); ?></div>
+                                                    <?php endif; ?>
+                                                    <?php if (!empty($slide_price_sale)) : ?>
+                                                        <div class="price-sale"><?php echo esc_html($slide_price_sale); ?></div>
+                                                    <?php endif; ?>
+                                                </div>
+                                            <?php endif; ?>
+                                            
+                                            <?php if (!empty($slide_gifts)) : ?>
+                                                <div class="slide-gifts">
+                                                    <div class="gifts-icon">
+                                                        <i class="fas fa-gift"></i>
+                                                    </div>
+                                                    <div class="gifts-content">
+                                                        <h4>QUÀ TẶNG & PHỤ KIỆN</h4>
+                                                        <p><?php echo esc_html($slide_gifts); ?></p>
+                                                    </div>
+                                                </div>
+                                            <?php endif; ?>
+                                            
+                                            <?php if (!empty($slide_button_text) && !empty($slide_button_url)) : ?>
+                                                <div class="slide-actions">
+                                                    <a href="<?php echo esc_url($slide_button_url); ?>" class="slide-btn primary">
+                                                        <?php echo esc_html($slide_button_text); ?>
+                                                    </a>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                        
+                                        <div class="slide-right">
+                                            <?php if (has_post_thumbnail()) : ?>
+                                                <div class="slide-image">
+                                                    <img src="<?php echo get_the_post_thumbnail_url(get_the_ID(), 'slide-large'); ?>" alt="<?php the_title_attribute(); ?>">
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php
+                                $slide_index++;
+                            endwhile;
+                            wp_reset_postdata();
+                            
+                            // Create navigation dots dynamically
+                            if ($slides->post_count > 1) :
+                                ?>
+                                <div class="slider-nav">
+                                    <?php for ($i = 0; $i < $slides->post_count; $i++) : ?>
+                                        <div class="slider-dot <?php echo ($i === 0) ? 'active' : ''; ?>" data-slide="<?php echo $i; ?>"></div>
+                                    <?php endfor; ?>
+                                </div>
+                                <?php
+                            endif;
+                        else :
+                            // Fallback if no slides
+                            ?>
+                            <div class="hero-slide active">
+                                <div class="hero-slide-content">
+                                    <div class="slide-left">
+                                        <div class="slide-brands">
+                                            <div class="brand-logo-placeholder">MI VIETNAM</div>
+                                            <div class="brand-logo-placeholder">ROBOROCK</div>
+                                        </div>
+                                        
+                                        <h1 class="slide-title">QREVO C PRO - ROBOT HÚT BỤI THÔNG MINH</h1>
+                                        <div class="slide-description">Robot hút bụi tự động với công nghệ AI tiên tiến, làm sạch mọi ngóc ngách ngôi nhà của bạn.</div>
+                                        
+                                        <div class="slide-pricing">
+                                            <div class="price-original">15.990.000đ</div>
+                                            <div class="price-sale">12.990.000đ</div>
+                                        </div>
+                                        
+                                        <div class="slide-gifts">
+                                            <div class="gifts-icon">
+                                                <i class="fas fa-gift"></i>
+                                            </div>
+                                            <div class="gifts-content">
+                                                <h4>QUÀ TẶNG & PHỤ KIỆN</h4>
+                                                <p>Bộ phụ kiện thay thế + Bảo hành 2 năm chính hãng</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="slide-actions">
+                                            <a href="<?php echo home_url('/san-pham'); ?>" class="slide-btn primary">ĐẶT NGAY</a>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="slide-right">
+                                        <div class="slide-image-placeholder">
+                                            <i class="fas fa-robot"></i>
+                                            <span>QREVO C PRO</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
                     </div>
-                </div>
-                <?php
-                $slide_index++;
-            endwhile;
-            wp_reset_postdata();
-            
-            // Create navigation dots dynamically
-            if ($slides->post_count > 1) :
-                ?>
-                <div class="slider-nav">
-                    <?php for ($i = 0; $i < $slides->post_count; $i++) : ?>
-                        <div class="slider-dot <?php echo ($i === 0) ? 'active' : ''; ?>" data-slide="<?php echo $i; ?>"></div>
-                    <?php endfor; ?>
-                </div>
-                
-                <!-- Slide Arrows -->
-                <div class="slider-arrow prev">
-                    <i class="fas fa-chevron-left"></i>
-                </div>
-                <div class="slider-arrow next">
-                    <i class="fas fa-chevron-right"></i>
-                </div>
-                <?php
-            endif;
-        else :
-            // Fallback if no slides
-            ?>
-            <div class="hero-slide active">
-                <div class="hero-slide-bg" style="background: linear-gradient(135deg, #f36c21, #ff8c42);"></div>
-                <div class="hero-slide-overlay"></div>
-                
-                <div class="hero-slide-content">
-                    <div class="slide-content-wrapper">
-                        <h1 class="slide-title">Chào mừng đến với OTNT - ÔNG TRÙM NỘI TRỢ</h1>
-                        <div class="slide-description">Cửa hàng công nghệ hàng đầu Việt Nam với các sản phẩm chất lượng cao và dịch vụ chăm sóc khách hàng tốt nhất.</div>
-                        <div class="slide-actions">
-                            <a href="<?php echo home_url('/san-pham'); ?>" class="slide-btn primary">Khám phá ngay</a>
-                            <a href="<?php echo home_url('/khuyen-mai'); ?>" class="slide-btn secondary">Khuyến mãi</a>
+                    
+                    <!-- Shortcut Categories Row -->
+                    <div class="shortcut-categories">
+                        <div class="shortcut-item">
+                            <div class="shortcut-badge">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span class="shortcut-label">NEW</span>
                         </div>
+                        
+                        <div class="shortcut-item">
+                            <div class="shortcut-badge">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                            <span class="shortcut-label">VIP</span>
+                        </div>
+                        
+                        <div class="shortcut-item">
+                            <div class="shortcut-badge">
+                                <i class="fas fa-running"></i>
+                            </div>
+                            <span class="shortcut-label">MÁY CHẠY BỘ</span>
+                        </div>
+                        
+                        <div class="shortcut-item">
+                            <div class="shortcut-badge">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <span class="shortcut-label">ROBOT HÚT BỤI</span>
+                        </div>
+                        
+                        <div class="shortcut-item">
+                            <div class="shortcut-badge">
+                                <i class="fas fa-wind"></i>
+                            </div>
+                            <span class="shortcut-label">MÁY LỌC KHÔNG KHÍ</span>
+                        </div>
+                        
+                        <div class="shortcut-item">
+                            <div class="shortcut-badge">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <span class="shortcut-label">PHỤ KIỆN ROBOT</span>
+                        </div>
+                        
+                        <!-- Vertical divider -->
+                        <div class="shortcut-divider"></div>
                     </div>
                 </div>
             </div>
-        <?php endif; ?>
-    </div>
+        </div>
+    </section>
     
     <!-- Main Content -->
     <main class="main-content" id="main-content">
