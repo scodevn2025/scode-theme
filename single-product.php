@@ -3,7 +3,7 @@
  * Single Product Template - Professional E-commerce Layout
  * 
  * @package SCODE_Theme
- * @version 2.0.0
+ * @version 3.0.0
  */
 
 get_header(); ?>
@@ -15,25 +15,30 @@ get_header(); ?>
             <?php if (class_exists('WooCommerce')) : ?>
                 <?php global $product; ?>
                 
-                <!-- Breadcrumb -->
-                <nav class="breadcrumb">
+                <!-- Breadcrumb Navigation -->
+                <nav class="breadcrumb-navigation">
                     <div class="breadcrumb-container">
-                        <a href="<?php echo home_url(); ?>">Trang chủ</a>
-                        <span class="separator">/</span>
-                        <a href="<?php echo get_permalink(wc_get_page_id('shop')); ?>">Sản phẩm</a>
-                        <span class="separator">/</span>
-                        <span class="current"><?php the_title(); ?></span>
+                        <a href="<?php echo home_url(); ?>" class="breadcrumb-link">
+                            <i class="fas fa-home"></i>
+                            <span>Trang chủ</span>
+                        </a>
+                        <span class="breadcrumb-separator">/</span>
+                        <a href="<?php echo get_permalink(wc_get_page_id('shop')); ?>" class="breadcrumb-link">
+                            <span>Sản phẩm</span>
+                        </a>
+                        <span class="breadcrumb-separator">/</span>
+                        <span class="breadcrumb-current"><?php the_title(); ?></span>
                     </div>
                 </nav>
 
                 <!-- Main Product Layout - 2 Columns -->
                 <div class="product-main-layout">
                     
-                    <!-- Left Column: Media Gallery (60%) -->
+                    <!-- Left Column: Product Media Gallery (60%) -->
                     <div class="product-gallery-column">
                         <div class="product-gallery-wrapper">
                             
-                            <!-- Main Image Display -->
+                            <!-- Main Product Image Display -->
                             <div class="main-image-container">
                                 <?php if (has_post_thumbnail()) : ?>
                                     <div class="main-image active" data-index="0">
@@ -48,12 +53,13 @@ get_header(); ?>
                                         </div>
                                         
                                         <!-- Zoom Icon -->
-                                        <div class="zoom-trigger">
+                                        <div class="zoom-trigger" title="Phóng to ảnh">
                                             <i class="fas fa-search-plus"></i>
                                         </div>
                                     </div>
                                 <?php endif; ?>
                                 
+                                <!-- Additional Product Images -->
                                 <?php
                                 $attachment_ids = $product->get_gallery_image_ids();
                                 $image_index = 1;
@@ -72,7 +78,7 @@ get_header(); ?>
                                         </div>
                                         
                                         <!-- Zoom Icon -->
-                                        <div class="zoom-trigger">
+                                        <div class="zoom-trigger" title="Phóng to ảnh">
                                             <i class="fas fa-search-plus"></i>
                                         </div>
                                     </div>
@@ -81,7 +87,7 @@ get_header(); ?>
                                 endforeach; 
                                 ?>
                                 
-                                <!-- Video Thumbnails from ACF -->
+                                <!-- Product Videos from ACF -->
                                 <?php 
                                 $marketing_media = get_field('marketing_media');
                                 if ($marketing_media && isset($marketing_media['youtube_urls'])) :
@@ -111,9 +117,9 @@ get_header(); ?>
                                 ?>
                             </div>
                             
-                            <!-- Thumbnail Gallery Strip -->
+                            <!-- Thumbnail Gallery Strip with Navigation -->
                             <div class="thumbnail-gallery-strip">
-                                <div class="thumb-nav left">
+                                <div class="thumb-nav left" title="Xem ảnh trước">
                                     <i class="fas fa-chevron-left"></i>
                                 </div>
                                 
@@ -125,6 +131,7 @@ get_header(); ?>
                                         </div>
                                     <?php endif; ?>
                                     
+                                    <!-- Additional Image Thumbnails -->
                                     <?php 
                                     $thumb_index = 1;
                                     foreach ($attachment_ids as $attachment_id) : ?>
@@ -157,7 +164,7 @@ get_header(); ?>
                                     ?>
                                 </div>
                                 
-                                <div class="thumb-nav right">
+                                <div class="thumb-nav right" title="Xem ảnh tiếp">
                                     <i class="fas fa-chevron-right"></i>
                                 </div>
                             </div>
@@ -165,11 +172,11 @@ get_header(); ?>
                         </div>
                     </div>
                     
-                    <!-- Right Column: Purchase Summary (40%) -->
+                    <!-- Right Column: Purchase Information (40%) -->
                     <div class="product-summary-column">
                         <div class="product-summary-wrapper">
                             
-                            <!-- Brand & Series Info -->
+                            <!-- Brand & Series Information -->
                             <div class="brand-series-info">
                                 <?php 
                                 $brand = get_field('brand') ?: 'Thương hiệu: ' . wc_get_product_category_list($product->get_id(), ' | ');
@@ -190,7 +197,7 @@ get_header(); ?>
                             <!-- Product Title -->
                             <h1 class="product-title"><?php the_title(); ?></h1>
                             
-                            <!-- Product Rating -->
+                            <!-- Product Rating Section -->
                             <div class="product-rating-section">
                                 <?php if ($product->get_average_rating()) : ?>
                                     <div class="rating-stars">
@@ -209,7 +216,7 @@ get_header(); ?>
                                 <?php endif; ?>
                             </div>
                             
-                            <!-- Product Badges -->
+                            <!-- Product Badges Section -->
                             <div class="product-badges-section">
                                 <?php
                                 $product_id = $product->get_id();
@@ -224,7 +231,7 @@ get_header(); ?>
                                     <?php endif;
                                 }
                                 
-                                // Custom badges
+                                // Custom product badges
                                 if (get_post_meta($product_id, '_is_new', true)) : ?>
                                     <span class="badge new-badge">MỚI</span>
                                 <?php endif;
@@ -320,18 +327,18 @@ get_header(); ?>
                                         </div>
                                     <?php endforeach;
                                 else : ?>
-                                    <!-- Default policies -->
+                                    <!-- Default trust policies -->
                                     <div class="policy-item">
                                         <i class="fas fa-truck"></i>
-                                        <span>Giao nhanh 2-4h nội thành</span>
+                                        <span>Miễn phí vận chuyển</span>
                                     </div>
                                     <div class="policy-item">
                                         <i class="fas fa-undo"></i>
-                                        <span>Đổi mới 7 ngày</span>
+                                        <span>Đổi trả trong 7 ngày</span>
                                     </div>
                                     <div class="policy-item">
                                         <i class="fas fa-shield-alt"></i>
-                                        <span>Bảo hành tại nhà</span>
+                                        <span>Bảo hành chính hãng</span>
                                     </div>
                                     <div class="policy-item">
                                         <i class="fas fa-credit-card"></i>
@@ -344,7 +351,7 @@ get_header(); ?>
                                 <?php endif; ?>
                             </div>
                             
-                            <!-- Product Form -->
+                            <!-- Product Purchase Form -->
                             <form class="cart" action="<?php echo esc_url(apply_filters('woocommerce_add_to_cart_form_action', $product->get_permalink())); ?>" method="post" enctype='multipart/form-data'>
                                 
                                 <!-- Quantity Section -->
@@ -395,7 +402,8 @@ get_header(); ?>
                                 <div class="consultant-box">
                                     <div class="consultant-avatar">
                                         <?php 
-                                        $hotline_avatar = get_field('hotline_block')['avatar'];
+                                        $hotline_block = get_field('hotline_block');
+                                        $hotline_avatar = $hotline_block['avatar'] ?? null;
                                         if ($hotline_avatar) : ?>
                                             <img src="<?php echo wp_get_attachment_image_url($hotline_avatar, 'thumbnail'); ?>" 
                                                  alt="Tư vấn viên">
@@ -407,11 +415,11 @@ get_header(); ?>
                                     </div>
                                     <div class="consultant-info">
                                         <div class="consultant-name">
-                                            <?php echo get_field('hotline_block')['name'] ?: 'Ms. Thảo'; ?>
+                                            <?php echo $hotline_block['name'] ?? 'Ms. Thảo'; ?>
                                         </div>
                                         <div class="consultant-phone">
                                             <i class="fas fa-phone"></i>
-                                            <span><?php echo get_field('hotline_block')['phone'] ?: '0834.777.111'; ?></span>
+                                            <span><?php echo $hotline_block['phone'] ?? '0834.777.111'; ?></span>
                                         </div>
                                     </div>
                                 </div>
@@ -471,7 +479,59 @@ get_header(); ?>
                     </div>
                 </div>
                 
-                <!-- Full Width Sections Below -->
+                <!-- Full Width Content Sections Below -->
+                
+                <!-- ECOVACS Brand Section -->
+                <div class="brand-section ecovacs-section">
+                    <div class="brand-section-header">
+                        <h2 class="brand-title">ECOVACS</h2>
+                        <p class="brand-description">Thương hiệu robot hút bụi hàng đầu thế giới với công nghệ AI tiên tiến</p>
+                    </div>
+                    <div class="brand-content">
+                        <div class="brand-video-placeholder">
+                            <div class="video-placeholder-content">
+                                <i class="fas fa-play-circle"></i>
+                                <span>Video giới thiệu công nghệ ECOVACS</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- MI VIETNAM.VN Section -->
+                <div class="brand-section mi-vietnam-section">
+                    <div class="brand-section-header">
+                        <h2 class="brand-title">MI VIETNAM.VN</h2>
+                        <p class="brand-description">Hệ thống phân phối chính thức các sản phẩm công nghệ cao cấp</p>
+                    </div>
+                    <div class="brand-content">
+                        <div class="brand-media-grid">
+                            <div class="media-item">
+                                <div class="media-placeholder">
+                                    <i class="fas fa-image"></i>
+                                    <span>Hình ảnh demo 1</span>
+                                </div>
+                            </div>
+                            <div class="media-item">
+                                <div class="media-placeholder">
+                                    <i class="fas fa-video"></i>
+                                    <span>Video demo 2</span>
+                                </div>
+                            </div>
+                            <div class="media-item">
+                                <div class="media-placeholder">
+                                    <i class="fas fa-image"></i>
+                                    <span>Hình ảnh demo 3</span>
+                                </div>
+                            </div>
+                            <div class="media-item">
+                                <div class="media-placeholder">
+                                    <i class="fas fa-video"></i>
+                                    <span>Video demo 4</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
                 <!-- Product Tabs Section -->
                 <div class="product-tabs-section">
