@@ -240,7 +240,7 @@ Theme này được phát triển bởi **Scode** và được cấp phép theo 
 ## 🔄 Changelog
 
 ### Version 2.0.0 (Current)
-- ✨ Thiết kế mới hoàn toàn theo MI VIETNAM.VN
+- ✨ Thiết kế mới hoàn toàn theo 
 - 🎨 Giao diện hiện đại và responsive
 - 🛒 Tích hợp WooCommerce hoàn chỉnh
 - 📱 Responsive design cho mọi thiết bị
@@ -257,4 +257,5 @@ Theme này được phát triển bởi **Scode** và được cấp phép theo 
 
 **OTNT Theme** - Theme WordPress hiện đại cho e-commerce  
 **Tác giả**: Scode | **Liên hệ**: 0582392345  
-**Phiên bản**: 2.0.0 | **Cập nhật**: 2024-12-19
+**Phiên bản**: 2.0.0 | **Cập nhật**: 2025-08-22
+
