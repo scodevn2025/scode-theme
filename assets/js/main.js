@@ -547,6 +547,391 @@ jQuery(document).ready(function($) {
         return emailRegex.test(email);
     }
 
+    // ===== SINGLE PRODUCT PAGE - PROFESSIONAL LAYOUT =====
+    function initSingleProduct() {
+        // Product Gallery Functionality
+        initProductGallery();
+        
+        // Product Tabs
+        initProductTabs();
+        
+        // Quantity Controls
+        initQuantityControls();
+        
+        // Buy Now Button
+        initBuyNow();
+        
+        // Flash Sale Countdown
+        initFlashSaleCountdown();
+        
+        // Sticky Cart Bar
+        initStickyCartBar();
+        
+        // Lightbox Gallery
+        initLightboxGallery();
+        
+        // Video Modal
+        initVideoModal();
+        
+        // Thumbnail Navigation
+        initThumbnailNavigation();
+    }
+    
+    function initProductGallery() {
+        const $thumbnails = $('.thumb-item');
+        const $mainImages = $('.main-image');
+        
+        $thumbnails.on('click', function() {
+            const index = $(this).index();
+            
+            // Update active states
+            $thumbnails.removeClass('active');
+            $(this).addClass('active');
+            
+            $mainImages.removeClass('active');
+            $mainImages.eq(index).addClass('active');
+        });
+        
+        // Keyboard navigation for gallery
+        $(document).on('keydown', function(e) {
+            if (!$('.single-product-page').length) return;
+            
+            const $activeThumbnail = $('.thumb-item.active');
+            let newIndex;
+            
+            if (e.keyCode === 37) { // Left arrow
+                newIndex = Math.max(0, $activeThumbnail.index() - 1);
+                $thumbnails.eq(newIndex).click();
+            } else if (e.keyCode === 39) { // Right arrow
+                newIndex = Math.min($thumbnails.length - 1, $activeThumbnail.index() + 1);
+                $thumbnails.eq(newIndex).click();
+            }
+        });
+    }
+    
+    function initProductTabs() {
+        const $tabBtns = $('.tab-btn');
+        const $tabPanes = $('.tab-pane');
+        
+        $tabBtns.on('click', function() {
+            const tabId = $(this).data('tab');
+            
+            // Update active states
+            $tabBtns.removeClass('active');
+            $(this).addClass('active');
+            
+            $tabPanes.removeClass('active');
+            $('#' + tabId).addClass('active');
+        });
+    }
+    
+    function initQuantityControls() {
+        const $qtyInput = $('.qty');
+        const $minusBtn = $('.qty-btn.minus');
+        const $plusBtn = $('.qty-btn.plus');
+        
+        $minusBtn.on('click', function() {
+            const currentValue = parseInt($qtyInput.val()) || 1;
+            const minValue = parseInt($qtyInput.attr('min')) || 1;
+            
+            if (currentValue > minValue) {
+                $qtyInput.val(currentValue - 1);
+            }
+        });
+        
+        $plusBtn.on('click', function() {
+            const currentValue = parseInt($qtyInput.val()) || 1;
+            const maxValue = parseInt($qtyInput.attr('max')) || 999;
+            
+            if (currentValue < maxValue) {
+                $qtyInput.val(currentValue + 1);
+            }
+        });
+        
+        // Validate quantity input
+        $qtyInput.on('input', function() {
+            let value = parseInt($(this).val()) || 1;
+            const minValue = parseInt($(this).attr('min')) || 1;
+            const maxValue = parseInt($(this).attr('max')) || 999;
+            
+            if (value < minValue) value = minValue;
+            if (value > maxValue) value = maxValue;
+            
+            $(this).val(value);
+        });
+    }
+    
+    function initBuyNow() {
+        $('.btn-buy-now, .sticky-buy-now').on('click', function(e) {
+            e.preventDefault();
+            
+            // Show loading
+            $(this).html('<i class="fas fa-spinner fa-spin"></i> ĐANG XỬ LÝ...').prop('disabled', true);
+            
+            // Simulate processing
+            setTimeout(() => {
+                showNotification('Đang chuyển đến trang thanh toán...', 'info');
+                
+                // Reset button
+                $(this).html('<i class="fas fa-bolt"></i> MUA NGAY').prop('disabled', false);
+                
+                // Here you would redirect to checkout or add to cart and redirect
+                // window.location.href = '/checkout';
+            }, 1500);
+        });
+    }
+    
+    function initFlashSaleCountdown() {
+        const $countdown = $('.flash-sale-countdown');
+        if (!$countdown.length) return;
+        
+        const deadline = new Date($countdown.data('deadline'));
+        
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = deadline.getTime() - now;
+            
+            if (distance < 0) {
+                $countdown.html('<div class="countdown-label">ƯU ĐÃI ĐÃ KẾT THÚC!</div>');
+                return;
+            }
+            
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            $('#countdown-hours').text(hours.toString().padStart(2, '0'));
+            $('#countdown-minutes').text(minutes.toString().padStart(2, '0'));
+            $('#countdown-seconds').text(seconds.toString().padStart(2, '0'));
+            
+            // Add pulse effect when time is running out
+            if (hours === 0 && minutes < 10) {
+                $countdown.addClass('urgent');
+            }
+        }
+        
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    }
+    
+    function initStickyCartBar() {
+        const $stickyBar = $('#sticky-cart-bar');
+        if (!$stickyBar.length) return;
+        
+        const $summary = $('.product-summary-wrapper');
+        const summaryBottom = $summary.offset().top + $summary.outerHeight();
+        
+        function checkScroll() {
+            const scrollTop = $(window).scrollTop();
+            const windowHeight = $(window).height();
+            
+            if (scrollTop + windowHeight > summaryBottom) {
+                $stickyBar.addClass('visible');
+            } else {
+                $stickyBar.removeClass('visible');
+            }
+        }
+        
+        $(window).on('scroll', debounce(checkScroll, 100));
+        checkScroll();
+    }
+    
+    function initLightboxGallery() {
+        const $lightbox = $('#lightbox-modal');
+        const $lightboxImage = $('.lightbox-image');
+        const $closeBtn = $('.lightbox-close');
+        const $prevBtn = $('.lightbox-prev');
+        const $nextBtn = $('.lightbox-next');
+        
+        let currentImageIndex = 0;
+        const totalImages = $('.main-image').length;
+        
+        // Open lightbox on zoom click
+        $('.zoom-trigger').on('click', function() {
+            const $mainImage = $(this).closest('.main-image');
+            currentImageIndex = parseInt($mainImage.data('index'));
+            openLightbox(currentImageIndex);
+        });
+        
+        function openLightbox(index) {
+            const $mainImage = $('.main-image').eq(index);
+            const imageSrc = $mainImage.find('.product-main-img').data('zoom');
+            
+            $lightboxImage.attr('src', imageSrc);
+            $lightbox.addClass('active');
+            $('body').addClass('lightbox-open');
+            
+            currentImageIndex = index;
+        }
+        
+        function closeLightbox() {
+            $lightbox.removeClass('active');
+            $('body').removeClass('lightbox-open');
+        }
+        
+        function showNextImage() {
+            const nextIndex = (currentImageIndex + 1) % totalImages;
+            openLightbox(nextIndex);
+        }
+        
+        function showPrevImage() {
+            const prevIndex = (currentImageIndex - 1 + totalImages) % totalImages;
+            openLightbox(prevIndex);
+        }
+        
+        // Event listeners
+        $closeBtn.on('click', closeLightbox);
+        $nextBtn.on('click', showNextImage);
+        $prevBtn.on('click', showPrevImage);
+        
+        // Close on background click
+        $lightbox.on('click', function(e) {
+            if (e.target === this) {
+                closeLightbox();
+            }
+        });
+        
+        // Keyboard navigation
+        $(document).on('keydown.lightbox', function(e) {
+            if (!$lightbox.hasClass('active')) return;
+            
+            switch(e.keyCode) {
+                case 27: // ESC
+                    closeLightbox();
+                    break;
+                case 37: // Left arrow
+                    showPrevImage();
+                    break;
+                case 39: // Right arrow
+                    showNextImage();
+                    break;
+            }
+        });
+        
+        // Remove event listener when lightbox closes
+        $lightbox.on('close', function() {
+            $(document).off('keydown.lightbox');
+        });
+    }
+    
+    function initVideoModal() {
+        const $videoModal = $('#video-modal');
+        const $videoIframe = $videoModal.find('iframe');
+        const $closeBtn = $('.video-modal-close');
+        
+        // Open video modal on video click
+        $('.video-main, .video-thumb').on('click', function() {
+            const videoUrl = $(this).data('video');
+            if (videoUrl) {
+                const embedUrl = videoUrl.replace('watch?v=', 'embed/');
+                $videoIframe.attr('src', embedUrl);
+                $videoModal.addClass('active');
+                $('body').addClass('video-modal-open');
+            }
+        });
+        
+        function closeVideoModal() {
+            $videoModal.removeClass('active');
+            $('body').removeClass('video-modal-open');
+            $videoIframe.attr('src', ''); // Stop video
+        }
+        
+        $closeBtn.on('click', closeVideoModal);
+        
+        // Close on background click
+        $videoModal.on('click', function(e) {
+            if (e.target === this) {
+                closeVideoModal();
+            }
+        });
+        
+        // Close on ESC key
+        $(document).on('keydown.videomodal', function(e) {
+            if (!$videoModal.hasClass('active')) return;
+            
+            if (e.keyCode === 27) {
+                closeVideoModal();
+            }
+        });
+    }
+    
+    function initThumbnailNavigation() {
+        const $thumbnails = $('.thumb-item');
+        const $mainImages = $('.main-image');
+        const $leftNav = $('.thumb-nav.left');
+        const $rightNav = $('.thumb-nav.right');
+        const $thumbnailsContainer = $('.thumbnails-container');
+        
+        // Thumbnail click
+        $thumbnails.on('click', function() {
+            const index = parseInt($(this).data('index'));
+            showMainImage(index);
+        });
+        
+        function showMainImage(index) {
+            // Update main images
+            $mainImages.removeClass('active');
+            $mainImages.eq(index).addClass('active');
+            
+            // Update thumbnails
+            $thumbnails.removeClass('active');
+            $thumbnails.eq(index).addClass('active');
+            
+            // Scroll thumbnail into view
+            const $activeThumb = $thumbnails.eq(index);
+            const containerWidth = $thumbnailsContainer.width();
+            const thumbWidth = $activeThumb.outerWidth(true);
+            const scrollLeft = $activeThumb.position().left - (containerWidth / 2) + (thumbWidth / 2);
+            
+            $thumbnailsContainer.animate({
+                scrollLeft: scrollLeft
+            }, 300);
+        }
+        
+        // Navigation arrows
+        $leftNav.on('click', function() {
+            const $activeThumb = $('.thumb-item.active');
+            const currentIndex = $activeThumb.index();
+            const prevIndex = Math.max(0, currentIndex - 1);
+            showMainImage(prevIndex);
+        });
+        
+        $rightNav.on('click', function() {
+            const $activeThumb = $('.thumb-item.active');
+            const currentIndex = $activeThumb.index();
+            const nextIndex = Math.min($thumbnails.length - 1, currentIndex + 1);
+            showMainImage(nextIndex);
+        });
+        
+        // Keyboard navigation
+        $(document).on('keydown', function(e) {
+            if (!$('.single-product-page').length) return;
+            
+            const $activeThumb = $('.thumb-item.active');
+            let newIndex;
+            
+            if (e.keyCode === 37) { // Left arrow
+                newIndex = Math.max(0, $activeThumb.index() - 1);
+                showMainImage(newIndex);
+            } else if (e.keyCode === 39) { // Right arrow
+                newIndex = Math.min($thumbnails.length - 1, $activeThumb.index() + 1);
+                showMainImage(newIndex);
+            }
+        });
+        
+        // Show/hide navigation arrows based on scroll position
+        function updateNavArrows() {
+            const scrollLeft = $thumbnailsContainer.scrollLeft();
+            const maxScrollLeft = $thumbnailsContainer[0].scrollWidth - $thumbnailsContainer.width();
+            
+            $leftNav.toggle(scrollLeft > 0);
+            $rightNav.toggle(scrollLeft < maxScrollLeft);
+        }
+        
+        $thumbnailsContainer.on('scroll', updateNavArrows);
+        updateNavArrows();
+    }
+
     // ===== INITIALIZE ALL FUNCTIONS =====
     function init() {
         initHeroSlider();
@@ -562,6 +947,11 @@ jQuery(document).ready(function($) {
         initLazyLoading();
         initProductHover();
         initShortcutCategories();
+        
+        // Initialize single product page functionality if on single product page
+        if ($('.single-product-page').length) {
+            initSingleProduct();
+        }
     }
 
     // Start initialization
