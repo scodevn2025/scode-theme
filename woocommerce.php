@@ -16,8 +16,8 @@ get_header(); ?>
             <?php if (is_product()) : ?>
                 <!-- Single Product Page -->
                 <?php 
-                // Load our custom single product template
-                include get_template_directory() . '/woocommerce/single-product.php';
+                // Load our custom single product template using WooCommerce hooks
+                include get_template_directory() . '/woocommerce/content-single-product.php';
                 ?>
                 
             <?php else : ?>
