@@ -506,12 +506,22 @@ function scode_enqueue_scripts() {
         wp_enqueue_style('scode-custom', get_template_directory_uri() . '/assets/css/custom.css', array(), '1.0.0');
     }
     
+    // Single Product CSS
+    if (file_exists(get_template_directory() . '/assets/css/single-product.css')) {
+        wp_enqueue_style('scode-single-product', get_template_directory_uri() . '/assets/css/single-product.css', array(), '1.0.0');
+    }
+    
     // jQuery (WordPress includes this by default)
     wp_enqueue_script('jquery');
     
     // Main JavaScript
     if (file_exists(get_template_directory() . '/assets/js/main.js')) {
         wp_enqueue_script('scode-main', get_template_directory_uri() . '/assets/js/main.js', array('jquery'), '1.0.0', true);
+    }
+    
+    // Single Product JavaScript
+    if (file_exists(get_template_directory() . '/assets/js/single-product.js')) {
+        wp_enqueue_script('scode-single-product', get_template_directory_uri() . '/assets/js/single-product.js', array('jquery'), '1.0.0', true);
     }
     
     // Localize script for AJAX

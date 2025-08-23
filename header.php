@@ -118,7 +118,8 @@
         </div>
     </header>
     
-    <!-- Hero Section with 2-Column Layout -->
+    <!-- Hero Section with 2-Column Layout (Only on Homepage) -->
+    <?php if (is_home() || is_front_page()) : ?>
     <section class="hero-section">
         <div class="container">
             <div class="hero-grid">
@@ -485,20 +486,10 @@
             </div>
         </div>
     </section>
+    <?php endif; ?>
     
     <!-- Main Content -->
+    <?php if (!is_product()) : ?>
     <main class="main-content" id="main-content">
         <div class="container">
-
-<?php
-// Fallback menu function
-function scode_fallback_menu() {
-    echo '<ul class="primary-menu">';
-    echo '<li><a href="' . home_url('/') . '">Trang chủ</a></li>';
-    echo '<li><a href="' . home_url('/san-pham') . '">Sản phẩm</a></li>';
-    echo '<li><a href="' . home_url('/khuyen-mai') . '">Khuyến mãi</a></li>';
-    echo '<li><a href="' . home_url('/tin-tuc') . '">Tin tức</a></li>';
-    echo '<li><a href="' . home_url('/lien-he') . '">Liên hệ</a></li>';
-    echo '</ul>';
-}
-?>
+    <?php endif; ?>
