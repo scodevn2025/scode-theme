@@ -27,6 +27,8 @@
             this.initStickyBar();
             this.initSmoothAnimations();
             this.initScrollEffects();
+            this.initVariants(); // Add this line
+            this.initSuggestedProducts(); // Add this line
             
             console.log('=== PDP JS INITIALIZED ===');
         },
@@ -353,6 +355,154 @@
             if (summary) {
                 const opacity = Math.max(0.8, 1 - (scrollTop / windowHeight) * 0.2);
                 summary.style.opacity = opacity;
+            }
+        },
+        
+        // Initialize product variants
+        initVariants: function() {
+            const variantBtns = document.querySelectorAll('.otnt-pdp__variant-btn');
+            const optionBtns = document.querySelectorAll('.otnt-pdp__option-btn');
+            
+            if (variantBtns.length === 0) return;
+            
+            console.log('Initializing variants with', variantBtns.length, 'variants');
+            
+            // Handle variant selection
+            variantBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const variant = this.getAttribute('data-variant');
+                    
+                    // Update active variant
+                    variantBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update price based on variant
+                    OTNT_PDP.updatePriceByVariant(variant);
+                    
+                    console.log('Selected variant:', variant);
+                });
+            });
+            
+            // Handle option selection
+            optionBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const option = this.getAttribute('data-option');
+                    
+                    // Toggle active state
+                    this.classList.toggle('active');
+                    
+                    // Update price based on options
+                    OTNT_PDP.updatePriceByOptions();
+                    
+                    console.log('Selected option:', option);
+                });
+            });
+        },
+        
+        // Update price based on selected variant
+        updatePriceByVariant: function(variant) {
+            const priceElement = document.querySelector('.otnt-pdp__price-current');
+            if (!priceElement) return;
+            
+            const variantPrices = {
+                'x8-pro': '17.900.000₫',
+                'x5-pro': '16.500.000₫',
+                't50-pro': '15.400.000₫',
+                't30s-kr': '13.900.000₫',
+                'n30-pro': '9.690.000₫',
+                't30s-combo': '14.900.000₫'
+            };
+            
+            if (variantPrices[variant]) {
+                priceElement.textContent = variantPrices[variant];
+                
+                // Add animation
+                priceElement.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    priceElement.style.transform = 'scale(1)';
+                }, 200);
+            }
+        },
+        
+        // Update price based on selected options
+        updatePriceByOptions: function() {
+            const activeOptions = document.querySelectorAll('.otnt-pdp__option-btn.active');
+            const basePrice = 17900000; // Base price for X8 Pro Omni
+            let additionalCost = 0;
+            
+            activeOptions.forEach(option => {
+                const optionType = option.getAttribute('data-option');
+                
+                // Add costs for different options
+                switch(optionType) {
+                    case 'pump-black':
+                        additionalCost += 500000; // 500K for water pump
+                        break;
+                    case 'standard-demo':
+                        additionalCost -= 2000000; // 2M discount for demo
+                        break;
+                    case 'standard-black':
+                    case 'standard-white':
+                        // No additional cost for standard colors
+                        break;
+                }
+            });
+            
+            const totalPrice = basePrice + additionalCost;
+            const formattedPrice = totalPrice.toLocaleString('vi-VN') + '₫';
+            
+            const priceElement = document.querySelector('.otnt-pdp__price-current');
+            if (priceElement) {
+                priceElement.textContent = formattedPrice;
+            }
+        },
+        
+        // Initialize suggested products
+        initSuggestedProducts: function() {
+            const suggestedBtns = document.querySelectorAll('.otnt-pdp__suggested-btn');
+            
+            if (suggestedBtns.length === 0) return;
+            
+            console.log('Initializing suggested products with', suggestedBtns.length, 'products');
+            
+            suggestedBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-product');
+                    
+                    // Show confirmation dialog
+                    if (confirm('Bạn có muốn chuyển sang sản phẩm này không?')) {
+                        // Redirect to the suggested product
+                        OTNT_PDP.redirectToProduct(productId);
+                    }
+                });
+            });
+        },
+        
+        // Redirect to suggested product
+        redirectToProduct: function(productId) {
+            const productUrls = {
+                'dreame-l10s': '/product/dreame-l10s-ultra/',
+                'roborock-s8': '/product/roborock-s8-pro-ultra/',
+                'irobot-j7': '/product/irobot-roomba-j7-plus/',
+                'tineco-ifloor3': '/product/tineco-ifloor-3/'
+            };
+            
+            const url = productUrls[productId];
+            if (url) {
+                // Add loading state
+                const btn = document.querySelector(`[data-product="${productId}"]`);
+                if (btn) {
+                    btn.textContent = 'Đang chuyển...';
+                    btn.disabled = true;
+                }
+                
+                // Redirect after short delay
+                setTimeout(() => {
+                    window.location.href = url;
+                }, 500);
+            } else {
+                // Fallback to shop page
+                window.location.href = '/shop/';
             }
         },
         
