@@ -5,7 +5,6 @@
  * @package SCODE_Theme
  * @version 1.0.0
  */
-
 // Prevent direct access
 if (!defined('ABSPATH')) {
     exit;
@@ -736,6 +735,11 @@ if (file_exists(get_template_directory() . '/inc/customizer.php')) {
 // Include theme options
 if (file_exists(get_template_directory() . '/inc/theme-options.php')) {
     require get_template_directory() . '/inc/theme-options.php';
+}
+
+// Include PDP hooks
+if (file_exists(get_stylesheet_directory() . '/inc/pdp-hooks.php')) {
+    require_once get_stylesheet_directory() . '/inc/pdp-hooks.php';
 }
 
 // Include WooCommerce overrides (temporarily disabled)
