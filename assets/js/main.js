@@ -1157,24 +1157,24 @@ jQuery(document).ready(function($) {
             const $btn = $(this);
             const productId = $btn.data('product-id');
             const originalText = $btn.html();
-            
+
             // Show loading state
             $btn.html('<i class="fas fa-spinner fa-spin"></i> Đang thêm...').prop('disabled', true);
-            
+
             // Simulate AJAX call to add to cart
             setTimeout(() => {
                 // Show success message
                 showNotification('Đã thêm sản phẩm vào giỏ hàng!', 'success');
-                
+
                 // Reset button
                 $btn.html(originalText).prop('disabled', false);
-                
+
                 // Add success animation
                 $btn.addClass('success');
                 setTimeout(() => {
                     $btn.removeClass('success');
                 }, 2000);
-                
+
                 // Update cart count if exists
                 const $cartCount = $('.cart-count');
                 if ($cartCount.length) {
@@ -1187,4 +1187,139 @@ jQuery(document).ready(function($) {
     
     // Initialize add to cart functionality
     initAddToCart();
+
+    // ===== PRODUCT CARD INTERACTIONS =====
+    function initProductCardInteractions() {
+        // Product image hover effects
+        $('.product-card').hover(
+            function() {
+                $(this).find('.product-img').addClass('hover');
+            },
+            function() {
+                $(this).find('.product-img').removeClass('hover');
+            }
+        );
+
+        // Product title truncation
+        $('.product-title').each(function() {
+            const $title = $(this);
+            const $link = $title.find('a');
+            const text = $link.text();
+            
+            if (text.length > 50) {
+                $link.attr('title', text); // Add full title as tooltip
+            }
+        });
+    }
+
+    // ===== RESPONSIVE GRID ADJUSTMENTS =====
+    function initResponsiveGrid() {
+            function adjustGridColumns() {
+        const windowWidth = $(window).width();
+        const $grids = $('.home-products .products-grid');
+        
+        $grids.each(function() {
+            const $grid = $(this);
+            
+            if (windowWidth <= 480) {
+                $grid.css('grid-template-columns', '1fr');
+            } else if (windowWidth <= 768) {
+                $grid.css('grid-template-columns', 'repeat(2, 1fr)');
+            } else if (windowWidth <= 992) {
+                $grid.css('grid-template-columns', 'repeat(2, 1fr)');
+            } else if (windowWidth <= 1200) {
+                $grid.css('grid-template-columns', 'repeat(4, 1fr)');
+            } else if (windowWidth <= 1400) {
+                $grid.css('grid-template-columns', 'repeat(5, 1fr)');
+            } else {
+                $grid.css('grid-template-columns', 'repeat(6, 1fr)');
+            }
+        });
+    }
+
+        // Initial adjustment
+        adjustGridColumns();
+        
+        // Adjust on window resize
+        $(window).on('resize', adjustGridColumns);
+    }
+
+    // ===== SECTION ANIMATIONS =====
+    function initSectionAnimations() {
+        // Animate sections on scroll
+        $('.home-products').each(function(index) {
+            const $section = $(this);
+            
+            // Add delay for staggered animation
+            setTimeout(() => {
+                $section.addClass('animate-in');
+            }, index * 200);
+        });
+    }
+
+    // ===== PRICE FORMATTING =====
+    function formatPrices() {
+        $('.price-promotional, .price-current, .price-original').each(function() {
+            const $price = $(this);
+            let text = $price.text();
+            
+            // Remove existing formatting
+            text = text.replace(/[^\d]/g, '');
+            
+            // Format with Vietnamese currency
+            if (text) {
+                const number = parseInt(text);
+                const formatted = number.toLocaleString('vi-VN');
+                $price.text(formatted + 'đ');
+            }
+        });
+    }
+
+    // ===== BADGE POSITIONING =====
+    function adjustBadgePositions() {
+        $('.product-card').each(function() {
+            const $card = $(this);
+            const $badges = $card.find('.discount-badge, .badge-new, .badge-premium, .ribbon');
+            
+            $badges.each(function(index) {
+                const $badge = $(this);
+                const top = 12 + (index * 36); // Stack badges vertically
+                
+                if ($badge.hasClass('discount-badge')) {
+                    $badge.css('top', '12px');
+                } else if ($badge.hasClass('badge-new')) {
+                    $badge.css('top', '12px');
+                } else if ($badge.hasClass('badge-premium')) {
+                    $badge.css('top', '48px');
+                } else if ($badge.hasClass('ribbon')) {
+                    $badge.css('top', '12px');
+                }
+            });
+        });
+    }
+
+    // ===== INITIALIZATION =====
+    $(document).ready(function() {
+        // Initialize all functionality
+        initAddToCart();
+        initProductCardInteractions();
+        initResponsiveGrid();
+        initSectionAnimations();
+        
+        // Format prices after DOM is ready
+        setTimeout(formatPrices, 100);
+        
+        // Adjust badge positions
+        setTimeout(adjustBadgePositions, 100);
+        
+        // Add CSS classes for animations
+        $('body').addClass('homepage-loaded');
+    });
+
+    // ===== WINDOW LOAD HANDLERS =====
+    $(window).on('load', function() {
+        // Ensure all images are loaded before final adjustments
+        adjustBadgePositions();
+        formatPrices();
+    });
 });
