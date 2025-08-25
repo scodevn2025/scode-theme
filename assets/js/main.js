@@ -1120,4 +1120,30 @@ jQuery(document).ready(function($) {
     
     // Initialize read more functionality
     initReadMore();
+    
+    // ===== BACK TO TOP BUTTON =====
+    function initBackToTop() {
+        const $backToTopBtn = $('#back-to-top');
+        
+        if ($backToTopBtn.length === 0) return;
+        
+        // Show button when scrolling down
+        $(window).on('scroll', function() {
+            if ($(this).scrollTop() > 300) {
+                $backToTopBtn.addClass('show');
+            } else {
+                $backToTopBtn.removeClass('show');
+            }
+        });
+        
+        // Scroll to top when clicked
+        $backToTopBtn.on('click', function() {
+            $('html, body').animate({
+                scrollTop: 0
+            }, 800);
+        });
+    }
+    
+    // Initialize back to top functionality
+    initBackToTop();
 });

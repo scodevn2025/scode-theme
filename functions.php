@@ -501,8 +501,8 @@ function scode_enqueue_scripts() {
     wp_enqueue_style('scode-style', get_stylesheet_uri(), array(), '1.0.0');
     
     // Custom CSS
-    if (file_exists(get_template_directory() . '/assets/css/custom.css')) {
-        wp_enqueue_style('scode-custom', get_template_directory_uri() . '/assets/css/custom.css', array(), '1.0.0');
+    if (file_exists(get_template_directory() . '/assets/css/main.css')) {
+        wp_enqueue_style('scode-main', get_template_directory_uri() . '/assets/css/main.css', array(), '3.0.0');
     }
     
     // Single Product CSS
@@ -642,6 +642,18 @@ add_action('customize_register', 'scode_customize_register');
 
 // ===== WIDGET AREAS =====
 function scode_widgets_init() {
+    // Main sidebar
+    register_sidebar(array(
+        'name' => __('Main Sidebar', 'scode-theme'),
+        'id' => 'sidebar-1',
+        'description' => __('Main sidebar for pages and posts.', 'scode-theme'),
+        'before_widget' => '<div id="%1$s" class="widget %2$s">',
+        'after_widget' => '</div>',
+        'before_title' => '<h3 class="widget-title">',
+        'after_title' => '</h3>',
+    ));
+    
+    // Footer widgets
     register_sidebar(array(
         'name' => __('Footer Widget 1', 'scode-theme'),
         'id' => 'footer-1',
@@ -794,4 +806,550 @@ function scode_ajax_update_cart_count() {
 }
 add_action('wp_ajax_scode_update_cart_count', 'scode_ajax_update_cart_count');
 add_action('wp_ajax_nopriv_scode_update_cart_count', 'scode_ajax_update_cart_count');
+
+// ===== CUSTOM POST TYPES FOR SECTIONS =====
+function scode_register_section_post_types() {
+    // Hero Section
+    register_post_type('hero_section', array(
+        'labels' => array(
+            'name' => 'Hero Sections',
+            'singular_name' => 'Hero Section',
+            'add_new' => 'Thêm Hero Section',
+            'add_new_item' => 'Thêm Hero Section Mới',
+            'edit_item' => 'Sửa Hero Section',
+            'new_item' => 'Hero Section Mới',
+            'view_item' => 'Xem Hero Section',
+            'search_items' => 'Tìm Hero Section',
+            'not_found' => 'Không tìm thấy Hero Section',
+            'not_found_in_trash' => 'Không có Hero Section nào trong thùng rác'
+        ),
+        'public' => false,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'menu_icon' => 'dashicons-align-wide',
+        'supports' => array('title', 'editor', 'thumbnail'),
+        'has_archive' => false,
+        'rewrite' => false
+    ));
+
+    // Promo Banner
+    register_post_type('promo_banner', array(
+        'labels' => array(
+            'name' => 'Promo Banners',
+            'singular_name' => 'Promo Banner',
+            'add_new' => 'Thêm Banner',
+            'add_new_item' => 'Thêm Banner Mới',
+            'edit_item' => 'Sửa Banner',
+            'new_item' => 'Banner Mới',
+            'view_item' => 'Xem Banner',
+            'search_items' => 'Tìm Banner',
+            'not_found' => 'Không tìm thấy Banner',
+            'not_found_in_trash' => 'Không có Banner nào trong thùng rác'
+        ),
+        'public' => false,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'menu_icon' => 'dashicons-megaphone',
+        'supports' => array('title', 'editor', 'thumbnail'),
+        'has_archive' => false,
+        'rewrite' => false
+    ));
+
+    // Service Icon
+    register_post_type('service_icon', array(
+        'labels' => array(
+            'name' => 'Service Icons',
+            'singular_name' => 'Service Icon',
+            'add_new' => 'Thêm Service Icon',
+            'add_new_item' => 'Thêm Service Icon Mới',
+            'edit_item' => 'Sửa Service Icon',
+            'new_item' => 'Service Icon Mới',
+            'view_item' => 'Xem Service Icon',
+            'search_items' => 'Tìm Service Icon',
+            'not_found' => 'Không tìm thấy Service Icon',
+            'not_found_in_trash' => 'Không có Service Icon nào trong thùng rác'
+        ),
+        'public' => false,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'menu_icon' => 'dashicons-star-filled',
+        'supports' => array('title', 'editor', 'thumbnail'),
+        'has_archive' => false,
+        'rewrite' => false
+    ));
+
+    // Category Item
+    register_post_type('category_item', array(
+        'labels' => array(
+            'name' => 'Category Items',
+            'singular_name' => 'Category Item',
+            'add_new' => 'Thêm Category',
+            'add_new_item' => 'Thêm Category Mới',
+            'edit_item' => 'Sửa Category',
+            'new_item' => 'Category Mới',
+            'view_item' => 'Xem Category',
+            'search_items' => 'Tìm Category',
+            'not_found' => 'Không tìm thấy Category',
+            'not_found_in_trash' => 'Không có Category nào trong thùng rác'
+        ),
+        'public' => false,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'menu_icon' => 'dashicons-category',
+        'supports' => array('title', 'editor', 'thumbnail'),
+        'has_archive' => false,
+        'rewrite' => false
+    ));
+}
+add_action('init', 'scode_register_section_post_types');
+
+// ===== META BOXES FOR SECTIONS =====
+function scode_add_section_meta_boxes() {
+    // Hero Section Meta Box
+    add_meta_box(
+        'hero_section_meta',
+        'Hero Section Settings',
+        'scode_hero_section_meta_callback',
+        'hero_section',
+        'normal',
+        'high'
+    );
+
+    // Promo Banner Meta Box
+    add_meta_box(
+        'promo_banner_meta',
+        'Promo Banner Settings',
+        'scode_promo_banner_meta_callback',
+        'promo_banner',
+        'normal',
+        'high'
+    );
+
+    // Service Icon Meta Box
+    add_meta_box(
+        'service_icon_meta',
+        'Service Icon Settings',
+        'scode_service_icon_meta_callback',
+        'service_icon',
+        'normal',
+        'high'
+    );
+
+    // Category Item Meta Box
+    add_meta_box(
+        'category_item_meta',
+        'Category Item Settings',
+        'scode_category_item_meta_callback',
+        'category_item',
+        'normal',
+        'high'
+    );
+}
+add_action('add_meta_boxes', 'scode_add_section_meta_boxes');
+
+// ===== META BOX CALLBACKS =====
+function scode_hero_section_meta_callback($post) {
+    wp_nonce_field('scode_save_section_meta', 'scode_section_meta_nonce');
+    
+    $hero_title = get_post_meta($post->ID, '_hero_title', true);
+    $hero_subtitle = get_post_meta($post->ID, '_hero_subtitle', true);
+    $hero_button_text = get_post_meta($post->ID, '_hero_button_text', true);
+    $hero_button_url = get_post_meta($post->ID, '_hero_button_url', true);
+    $hero_background_color = get_post_meta($post->ID, '_hero_background_color', true);
+    $hero_text_color = get_post_meta($post->ID, '_hero_text_color', true);
+    $hero_order = get_post_meta($post->ID, '_hero_order', true);
+    $hero_active = get_post_meta($post->ID, '_hero_active', true);
+    
+    ?>
+    <table class="form-table">
+        <tr>
+            <th><label for="hero_title">Tiêu đề chính</label></th>
+            <td><input type="text" id="hero_title" name="hero_title" value="<?php echo esc_attr($hero_title); ?>" class="regular-text" /></td>
+        </tr>
+        <tr>
+            <th><label for="hero_subtitle">Tiêu đề phụ</label></th>
+            <td><input type="text" id="hero_subtitle" name="hero_subtitle" value="<?php echo esc_attr($hero_subtitle); ?>" class="regular-text" /></td>
+        </tr>
+        <tr>
+            <th><label for="hero_button_text">Text nút</label></th>
+            <td><input type="text" id="hero_button_text" name="hero_button_text" value="<?php echo esc_attr($hero_button_text); ?>" class="regular-text" /></td>
+        </tr>
+        <tr>
+            <th><label for="hero_button_url">URL nút</label></th>
+            <td><input type="url" id="hero_button_url" name="hero_button_url" value="<?php echo esc_attr($hero_button_url); ?>" class="regular-text" /></td>
+        </tr>
+        <tr>
+            <th><label for="hero_background_color">Màu nền</label></th>
+            <td><input type="color" id="hero_background_color" name="hero_background_color" value="<?php echo esc_attr($hero_background_color); ?>" /></td>
+        </tr>
+        <tr>
+            <th><label for="hero_text_color">Màu chữ</label></th>
+            <td><input type="color" id="hero_text_color" name="hero_text_color" value="<?php echo esc_attr($hero_text_color); ?>" /></td>
+        </tr>
+        <tr>
+            <th><label for="hero_order">Thứ tự</label></th>
+            <td><input type="number" id="hero_order" name="hero_order" value="<?php echo esc_attr($hero_order); ?>" min="1" class="small-text" /></td>
+        </tr>
+        <tr>
+            <th><label for="hero_active">Kích hoạt</label></th>
+            <td><input type="checkbox" id="hero_active" name="hero_active" value="1" <?php checked($hero_active, '1'); ?> /></td>
+        </tr>
+    </table>
+    <?php
+}
+
+function scode_promo_banner_meta_callback($post) {
+    wp_nonce_field('scode_save_section_meta', 'scode_section_meta_nonce');
+    
+    $banner_title = get_post_meta($post->ID, '_banner_title', true);
+    $banner_description = get_post_meta($post->ID, '_banner_description', true);
+    $banner_button_text = get_post_meta($post->ID, '_banner_button_text', true);
+    $banner_button_url = get_post_meta($post->ID, '_banner_button_url', true);
+    $banner_background_color = get_post_meta($post->ID, '_banner_background_color', true);
+    $banner_text_color = get_post_meta($post->ID, '_banner_text_color', true);
+    $banner_order = get_post_meta($post->ID, '_banner_order', true);
+    $banner_active = get_post_meta($post->ID, '_banner_active', true);
+    
+    ?>
+    <table class="form-table">
+        <tr>
+            <th><label for="banner_title">Tiêu đề</label></th>
+            <td><input type="text" id="banner_title" name="banner_title" value="<?php echo esc_attr($banner_title); ?>" class="regular-text" /></td>
+        </tr>
+        <tr>
+            <th><label for="banner_description">Mô tả</label></th>
+            <td><textarea id="banner_description" name="banner_description" rows="3" class="large-text"><?php echo esc_textarea($banner_description); ?></textarea></td>
+        </tr>
+        <tr>
+            <th><label for="banner_button_text">Text nút</label></th>
+            <td><input type="text" id="banner_button_text" name="banner_button_text" value="<?php echo esc_attr($banner_button_text); ?>" class="regular-text" /></td>
+        </tr>
+        <tr>
+            <th><label for="banner_button_url">URL nút</label></th>
+            <td><input type="url" id="banner_button_url" name="banner_button_url" value="<?php echo esc_attr($banner_button_url); ?>" class="regular-text" /></td>
+        </tr>
+        <tr>
+            <th><label for="banner_background_color">Màu nền</label></th>
+            <td><input type="color" id="banner_background_color" name="banner_background_color" value="<?php echo esc_attr($banner_background_color); ?>" /></td>
+        </tr>
+        <tr>
+            <th><label for="banner_text_color">Màu chữ</label></th>
+            <td><input type="color" id="banner_text_color" name="banner_text_color" value="<?php echo esc_attr($banner_text_color); ?>" /></td>
+        </tr>
+        <tr>
+            <th><label for="banner_order">Thứ tự</label></th>
+            <td><input type="number" id="banner_order" name="banner_order" value="<?php echo esc_attr($banner_order); ?>" min="1" class="small-text" /></td>
+        </tr>
+        <tr>
+            <th><label for="banner_active">Kích hoạt</label></th>
+            <td><input type="checkbox" id="banner_active" name="banner_active" value="1" <?php checked($banner_active, '1'); ?> /></td>
+        </tr>
+    </table>
+    <?php
+}
+
+function scode_service_icon_meta_callback($post) {
+    wp_nonce_field('scode_save_section_meta', 'scode_section_meta_nonce');
+    
+    $service_title = get_post_meta($post->ID, '_service_title', true);
+    $service_description = get_post_meta($post->ID, '_service_description', true);
+    $service_icon = get_post_meta($post->ID, '_service_icon', true);
+    $service_button_text = get_post_meta($post->ID, '_service_button_text', true);
+    $service_button_url = get_post_meta($post->ID, '_service_button_url', true);
+    $service_background_color = get_post_meta($post->ID, '_service_background_color', true);
+    $service_icon_color = get_post_meta($post->ID, '_service_icon_color', true);
+    $service_order = get_post_meta($post->ID, '_service_order', true);
+    $service_active = get_post_meta($post->ID, '_service_active', true);
+    
+    ?>
+    <table class="form-table">
+        <tr>
+            <th><label for="service_title">Tiêu đề</label></th>
+            <td><input type="text" id="service_title" name="service_title" value="<?php echo esc_attr($service_title); ?>" class="regular-text" /></td>
+        </tr>
+        <tr>
+            <th><label for="service_description">Mô tả</label></th>
+            <td><textarea id="service_description" name="service_description" rows="3" class="large-text"><?php echo esc_textarea($service_description); ?></textarea></td>
+        </tr>
+        <tr>
+            <th><label for="service_icon">Icon (FontAwesome class)</label></th>
+            <td><input type="text" id="service_icon" name="service_icon" value="<?php echo esc_attr($service_icon); ?>" class="regular-text" placeholder="fas fa-truck" /></td>
+        </tr>
+        <tr>
+            <th><label for="service_button_text">Text nút</label></th>
+            <td><input type="text" id="service_button_text" name="service_button_text" value="<?php echo esc_attr($service_button_text); ?>" class="regular-text" /></td>
+        </tr>
+        <tr>
+            <th><label for="service_button_url">URL nút</label></th>
+            <td><input type="url" id="service_button_url" name="service_button_url" value="<?php echo esc_attr($service_button_url); ?>" class="regular-text" /></td>
+        </tr>
+        <tr>
+            <th><label for="service_background_color">Màu nền icon</label></th>
+            <td><input type="color" id="service_background_color" name="service_background_color" value="<?php echo esc_attr($service_background_color); ?>" /></td>
+        </tr>
+        <tr>
+            <th><label for="service_icon_color">Màu icon</label></th>
+            <td><input type="color" id="service_icon_color" name="service_icon_color" value="<?php echo esc_attr($service_icon_color); ?>" /></td>
+        </tr>
+        <tr>
+            <th><label for="service_order">Thứ tự</label></th>
+            <td><input type="number" id="service_order" name="service_order" value="<?php echo esc_attr($service_order); ?>" min="1" class="small-text" /></td>
+        </tr>
+        <tr>
+            <th><label for="service_active">Kích hoạt</label></th>
+            <td><input type="checkbox" id="service_active" name="service_active" value="1" <?php checked($service_active, '1'); ?> /></td>
+        </tr>
+    </table>
+    <?php
+}
+
+function scode_category_item_meta_callback($post) {
+    wp_nonce_field('scode_save_section_meta', 'scode_section_meta_nonce');
+    
+    $category_title = get_post_meta($post->ID, '_category_title', true);
+    $category_description = get_post_meta($post->ID, '_category_description', true);
+    $category_icon = get_post_meta($post->ID, '_category_icon', true);
+    $category_url = get_post_meta($post->ID, '_category_url', true);
+    $category_background_color = get_post_meta($post->ID, '_category_background_color', true);
+    $category_icon_color = get_post_meta($post->ID, '_category_icon_color', true);
+    $category_order = get_post_meta($post->ID, '_category_order', true);
+    $category_active = get_post_meta($post->ID, '_category_active', true);
+    
+    ?>
+    <table class="form-table">
+        <tr>
+            <th><label for="category_title">Tiêu đề</label></th>
+            <td><input type="text" id="category_title" name="category_title" value="<?php echo esc_attr($category_title); ?>" class="regular-text" /></td>
+        </tr>
+        <tr>
+            <th><label for="category_description">Mô tả</label></th>
+            <td><textarea id="category_description" name="category_description" rows="3" class="large-text"><?php echo esc_textarea($category_description); ?></textarea></td>
+        </tr>
+        <tr>
+            <th><label for="category_icon">Icon (FontAwesome class)</label></th>
+            <td><input type="text" id="category_icon" name="category_icon" value="<?php echo esc_attr($category_icon); ?>" class="regular-text" placeholder="fas fa-robot" /></td>
+        </tr>
+        <tr>
+            <th><label for="category_url">URL danh mục</label></th>
+            <td><input type="url" id="category_url" name="category_url" value="<?php echo esc_attr($category_url); ?>" class="regular-text" /></td>
+        </tr>
+        <tr>
+            <th><label for="category_background_color">Màu nền</label></th>
+            <td><input type="color" id="category_background_color" name="category_background_color" value="<?php echo esc_attr($category_background_color); ?>" /></td>
+        </tr>
+        <tr>
+            <th><label for="category_icon_color">Màu icon</label></th>
+            <td><input type="color" id="category_icon_color" name="category_icon_color" value="<?php echo esc_attr($category_icon_color); ?>" /></td>
+        </tr>
+        <tr>
+            <th><label for="category_order">Thứ tự</label></th>
+            <td><input type="number" id="category_order" name="category_order" value="<?php echo esc_attr($category_order); ?>" min="1" class="small-text" /></td>
+        </tr>
+        <tr>
+            <th><label for="category_active">Kích hoạt</label></th>
+            <td><input type="checkbox" id="category_active" name="category_active" value="1" <?php checked($category_active, '1'); ?> /></td>
+        </tr>
+    </table>
+    <?php
+}
+
+// ===== SAVE META DATA =====
+function scode_save_section_meta($post_id) {
+    if (!isset($_POST['scode_section_meta_nonce']) || !wp_verify_nonce($_POST['scode_section_meta_nonce'], 'scode_save_section_meta')) {
+        return;
+    }
+    
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+    
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+    
+    // Save Hero Section Meta
+    if (isset($_POST['hero_title'])) {
+        update_post_meta($post_id, '_hero_title', sanitize_text_field($_POST['hero_title']));
+    }
+    if (isset($_POST['hero_subtitle'])) {
+        update_post_meta($post_id, '_hero_subtitle', sanitize_text_field($_POST['hero_subtitle']));
+    }
+    if (isset($_POST['hero_button_text'])) {
+        update_post_meta($post_id, '_hero_button_text', sanitize_text_field($_POST['hero_button_text']));
+    }
+    if (isset($_POST['hero_button_url'])) {
+        update_post_meta($post_id, '_hero_button_url', esc_url_raw($_POST['hero_button_url']));
+    }
+    if (isset($_POST['hero_background_color'])) {
+        update_post_meta($post_id, '_hero_background_color', sanitize_hex_color($_POST['hero_background_color']));
+    }
+    if (isset($_POST['hero_text_color'])) {
+        update_post_meta($post_id, '_hero_text_color', sanitize_hex_color($_POST['hero_text_color']));
+    }
+    if (isset($_POST['hero_order'])) {
+        update_post_meta($post_id, '_hero_order', intval($_POST['hero_order']));
+    }
+    if (isset($_POST['hero_active'])) {
+        update_post_meta($post_id, '_hero_active', '1');
+    } else {
+        delete_post_meta($post_id, '_hero_active');
+    }
+    
+    // Save Promo Banner Meta
+    if (isset($_POST['banner_title'])) {
+        update_post_meta($post_id, '_banner_title', sanitize_text_field($_POST['banner_title']));
+    }
+    if (isset($_POST['banner_description'])) {
+        update_post_meta($post_id, '_banner_description', sanitize_textarea_field($_POST['banner_description']));
+    }
+    if (isset($_POST['banner_button_text'])) {
+        update_post_meta($post_id, '_banner_button_text', sanitize_text_field($_POST['banner_button_text']));
+    }
+    if (isset($_POST['banner_button_url'])) {
+        update_post_meta($post_id, '_banner_button_url', esc_url_raw($_POST['banner_button_url']));
+    }
+    if (isset($_POST['banner_background_color'])) {
+        update_post_meta($post_id, '_banner_background_color', sanitize_hex_color($_POST['banner_background_color']));
+    }
+    if (isset($_POST['banner_text_color'])) {
+        update_post_meta($post_id, '_banner_text_color', sanitize_hex_color($_POST['banner_text_color']));
+    }
+    if (isset($_POST['banner_order'])) {
+        update_post_meta($post_id, '_banner_order', intval($_POST['banner_order']));
+    }
+    if (isset($_POST['banner_active'])) {
+        update_post_meta($post_id, '_banner_active', '1');
+    } else {
+        delete_post_meta($post_id, '_banner_active');
+    }
+    
+    // Save Service Icon Meta
+    if (isset($_POST['service_title'])) {
+        update_post_meta($post_id, '_service_title', sanitize_text_field($_POST['service_title']));
+    }
+    if (isset($_POST['service_description'])) {
+        update_post_meta($post_id, '_service_description', sanitize_textarea_field($_POST['service_description']));
+    }
+    if (isset($_POST['service_icon'])) {
+        update_post_meta($post_id, '_service_icon', sanitize_text_field($_POST['service_icon']));
+    }
+    if (isset($_POST['service_button_text'])) {
+        update_post_meta($post_id, '_service_button_text', sanitize_text_field($_POST['service_button_text']));
+    }
+    if (isset($_POST['service_button_url'])) {
+        update_post_meta($post_id, '_service_button_url', esc_url_raw($_POST['service_button_url']));
+    }
+    if (isset($_POST['service_background_color'])) {
+        update_post_meta($post_id, '_service_background_color', sanitize_hex_color($_POST['service_background_color']));
+    }
+    if (isset($_POST['service_icon_color'])) {
+        update_post_meta($post_id, '_service_icon_color', sanitize_hex_color($_POST['service_icon_color']));
+    }
+    if (isset($_POST['service_order'])) {
+        update_post_meta($post_id, '_service_order', intval($_POST['service_order']));
+    }
+    if (isset($_POST['service_active'])) {
+        update_post_meta($post_id, '_service_active', '1');
+    } else {
+        delete_post_meta($post_id, '_service_active');
+    }
+    
+    // Save Category Item Meta
+    if (isset($_POST['category_title'])) {
+        update_post_meta($post_id, '_category_title', sanitize_text_field($_POST['category_title']));
+    }
+    if (isset($_POST['category_description'])) {
+        update_post_meta($post_id, '_category_description', sanitize_textarea_field($_POST['category_description']));
+    }
+    if (isset($_POST['category_icon'])) {
+        update_post_meta($post_id, '_category_icon', sanitize_text_field($_POST['category_icon']));
+    }
+    if (isset($_POST['category_url'])) {
+        update_post_meta($post_id, '_category_url', esc_url_raw($_POST['category_url']));
+    }
+    if (isset($_POST['category_background_color'])) {
+        update_post_meta($post_id, '_category_background_color', sanitize_hex_color($_POST['category_background_color']));
+    }
+    if (isset($_POST['category_icon_color'])) {
+        update_post_meta($post_id, '_category_icon_color', sanitize_hex_color($_POST['category_icon_color']));
+    }
+    if (isset($_POST['category_order'])) {
+        update_post_meta($post_id, '_category_order', intval($_POST['category_order']));
+    }
+    if (isset($_POST['category_active'])) {
+        update_post_meta($post_id, '_category_active', '1');
+    } else {
+        delete_post_meta($post_id, '_category_active');
+    }
+}
+add_action('save_post', 'scode_save_section_meta');
+
+// ===== HELPER FUNCTIONS =====
+function scode_get_hero_sections($limit = -1) {
+    return get_posts(array(
+        'post_type' => 'hero_section',
+        'posts_per_page' => $limit,
+        'meta_key' => '_hero_order',
+        'orderby' => 'meta_value_num',
+        'order' => 'ASC',
+        'meta_query' => array(
+            array(
+                'key' => '_hero_active',
+                'value' => '1',
+                'compare' => '='
+            )
+        )
+    ));
+}
+
+function scode_get_promo_banners($limit = -1) {
+    return get_posts(array(
+        'post_type' => 'promo_banner',
+        'posts_per_page' => $limit,
+        'meta_key' => '_banner_order',
+        'orderby' => 'meta_value_num',
+        'order' => 'ASC',
+        'meta_query' => array(
+            array(
+                'key' => '_banner_active',
+                'value' => '1',
+                'compare' => '='
+            )
+        )
+    ));
+}
+
+function scode_get_service_icons($limit = -1) {
+    return get_posts(array(
+        'post_type' => 'service_icon',
+        'posts_per_page' => $limit,
+        'meta_key' => '_service_order',
+        'orderby' => 'meta_value_num',
+        'order' => 'ASC',
+        'meta_query' => array(
+            array(
+                'key' => '_service_active',
+                'value' => '1',
+                'compare' => '='
+            )
+        )
+    ));
+}
+
+function scode_get_category_items($limit = -1) {
+    return get_posts(array(
+        'post_type' => 'category_item',
+        'posts_per_page' => $limit,
+        'meta_key' => '_category_order',
+        'orderby' => 'meta_value_num',
+        'order' => 'ASC',
+        'meta_query' => array(
+            array(
+                'key' => '_category_active',
+                'value' => '1',
+                'compare' => '='
+            )
+        )
+    ));
+}
 

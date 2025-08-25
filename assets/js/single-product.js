@@ -1,573 +1,705 @@
 /**
- * Single Product Page JavaScript
+ * Optimized Single Product JavaScript - SCODE Theme
+ * Consolidated from pdp.js + single-product.js with error handling
  * 
- * @package ScodeTheme
+ * @package SCODE_Theme
+ * @version 3.0.0
  */
 
-console.log('=== SINGLE PRODUCT JS LOADED ===');
-
-jQuery(document).ready(function($) {
+(function($) {
     'use strict';
     
-    console.log('=== JQUERY READY ===');
-    console.log('Body classes:', $('body').attr('class'));
-    console.log('Single product elements:', $('.single-product-page').length);
-    console.log('WooCommerce elements:', $('.woocommerce').length);
+    // ===== GLOBAL VARIABLES =====
+    const PDP = {
+        currentImageIndex: 0,
+        totalImages: 0,
+        isZoomEnabled: false,
+        isVideoPlaying: false,
+        isStickyCartVisible: false,
+        scrollThreshold: 300,
+        animationDuration: 300,
+        errorRetryAttempts: 3,
+        errorRetryDelay: 1000
+    };
 
-    // ===== PRODUCT GALLERY FUNCTIONALITY =====
-    function initProductGallery() {
-        const $thumbnails = $('.thumb-item');
-        const $mainImages = $('.main-image');
-        const $leftNav = $('.thumb-nav.left');
-        const $rightNav = $('.thumb-nav.right');
-        const $thumbnailsContainer = $('.thumbnails-container');
-        
-        // Thumbnail click
-        $thumbnails.on('click', function() {
-            const index = parseInt($(this).data('index'));
-            showMainImage(index);
-        });
-        
-        function showMainImage(index) {
-            // Update main images
-            $mainImages.removeClass('active');
-            $mainImages.eq(index).addClass('active');
-            
-            // Update thumbnails
-            $thumbnails.removeClass('active');
-            $thumbnails.eq(index).addClass('active');
-            
-            // Scroll thumbnail into view
-            const $activeThumb = $thumbnails.eq(index);
-            const containerWidth = $thumbnailsContainer.width();
-            const thumbWidth = $activeThumb.outerWidth(true);
-            const scrollLeft = $activeThumb.position().left - (containerWidth / 2) + (thumbWidth / 2);
-            
-            $thumbnailsContainer.animate({
-                scrollLeft: scrollLeft
-            }, 300);
+    // ===== ERROR HANDLING UTILITIES =====
+    const ErrorHandler = {
+        log: function(message, error = null) {
+            if (window.console && console.error) {
+                console.error(`[PDP Error] ${message}`, error);
+            }
+        },
+
+        retry: function(fn, maxAttempts = 3, delay = 1000) {
+            return new Promise((resolve, reject) => {
+                let attempts = 0;
+                
+                const attempt = () => {
+                    attempts++;
+                    try {
+                        const result = fn();
+                        resolve(result);
+                    } catch (error) {
+                        if (attempts < maxAttempts) {
+                            setTimeout(attempt, delay);
+                        } else {
+                            reject(error);
+                        }
+                    }
+                };
+                
+                attempt();
+            });
+        },
+
+        safeExecute: function(fn, fallback = null) {
+            try {
+                return fn();
+            } catch (error) {
+                this.log('Function execution failed', error);
+                return fallback;
+            }
         }
+    };
+
+    // ===== IMAGE GALLERY MANAGEMENT =====
+    const ImageGallery = {
+        init: function() {
+            try {
+                this.bindEvents();
+                this.setupThumbnails();
+                this.updateNavigationState();
+            } catch (error) {
+                ErrorHandler.log('Image gallery initialization failed', error);
+            }
+        },
+
+        bindEvents: function() {
+            // Thumbnail click events
+            $(document).on('click', '.otnt-pdp__thumb-item', function(e) {
+                e.preventDefault();
+                const index = parseInt($(this).data('index')) || 0;
+                ImageGallery.showImage(index);
+            });
         
         // Navigation arrows
-        $leftNav.on('click', function() {
-            const $activeThumb = $('.thumb-item.active');
-            const currentIndex = $activeThumb.index();
-            const prevIndex = Math.max(0, currentIndex - 1);
-            showMainImage(prevIndex);
-        });
-        
-        $rightNav.on('click', function() {
-            const $activeThumb = $('.thumb-item.active');
-            const currentIndex = $activeThumb.index();
-            const nextIndex = Math.min($thumbnails.length - 1, currentIndex + 1);
-            showMainImage(nextIndex);
+            $(document).on('click', '.otnt-pdp__nav-prev', function(e) {
+                e.preventDefault();
+                ImageGallery.showPreviousImage();
+            });
+
+            $(document).on('click', '.otnt-pdp__nav-next', function(e) {
+                e.preventDefault();
+                ImageGallery.showNextImage();
         });
         
         // Keyboard navigation
         $(document).on('keydown', function(e) {
-            if (!$('.single-product-page').length) return;
-            
-            const $activeThumb = $('.thumb-item.active');
-            let newIndex;
-            
-            if (e.keyCode === 37) { // Left arrow
-                newIndex = Math.max(0, $activeThumb.index() - 1);
-                showMainImage(newIndex);
-            } else if (e.keyCode === 39) { // Right arrow
-                newIndex = Math.min($thumbnails.length - 1, $activeThumb.index() + 1);
-                showMainImage(newIndex);
+                if (e.key === 'ArrowLeft') {
+                    ImageGallery.showPreviousImage();
+                } else if (e.key === 'ArrowRight') {
+                    ImageGallery.showNextImage();
+                }
+            });
+        },
+
+        setupThumbnails: function() {
+            try {
+                const thumbnails = $('.otnt-pdp__thumb-item');
+                PDP.totalImages = thumbnails.length;
+                
+                if (PDP.totalImages > 0) {
+                    this.updateThumbnailStates();
+                }
+            } catch (error) {
+                ErrorHandler.log('Thumbnail setup failed', error);
             }
-        });
-        
-        // Show/hide navigation arrows based on scroll position
-        function updateNavArrows() {
-            const scrollLeft = $thumbnailsContainer.scrollLeft();
-            const maxScrollLeft = $thumbnailsContainer[0].scrollWidth - $thumbnailsContainer.width();
-            
-            $leftNav.toggle(scrollLeft > 0);
-            $rightNav.toggle(scrollLeft < maxScrollLeft);
+        },
+
+        showImage: function(index) {
+            try {
+                if (index < 0 || index >= PDP.totalImages) {
+                    return;
+                }
+
+                PDP.currentImageIndex = index;
+                
+                // Update main image
+                const thumbnail = $(`.otnt-pdp__thumb-item[data-index="${index}"]`);
+                const mainImage = $('.otnt-pdp__main-img');
+                
+                if (thumbnail.length && mainImage.length) {
+                    const imgSrc = thumbnail.find('img').attr('src');
+                    if (imgSrc) {
+                        mainImage.attr('src', imgSrc);
+                        this.updateThumbnailStates();
+                        this.updateNavigationState();
+                    }
+                }
+            } catch (error) {
+                ErrorHandler.log('Image display failed', error);
+            }
+        },
+
+        showPreviousImage: function() {
+            const newIndex = PDP.currentImageIndex > 0 ? PDP.currentImageIndex - 1 : PDP.totalImages - 1;
+            this.showImage(newIndex);
+        },
+
+        showNextImage: function() {
+            const newIndex = PDP.currentImageIndex < PDP.totalImages - 1 ? PDP.currentImageIndex + 1 : 0;
+            this.showImage(newIndex);
+        },
+
+        updateThumbnailStates: function() {
+            try {
+                $('.otnt-pdp__thumb-item').removeClass('active');
+                $(`.otnt-pdp__thumb-item[data-index="${PDP.currentImageIndex}"]`).addClass('active');
+            } catch (error) {
+                ErrorHandler.log('Thumbnail state update failed', error);
+            }
+        },
+
+        updateNavigationState: function() {
+            try {
+                const prevBtn = $('.otnt-pdp__nav-prev');
+                const nextBtn = $('.otnt-pdp__nav-next');
+                
+                if (PDP.totalImages <= 1) {
+                    prevBtn.hide();
+                    nextBtn.hide();
+                } else {
+                    prevBtn.show();
+                    nextBtn.show();
+                }
+            } catch (error) {
+                ErrorHandler.log('Navigation state update failed', error);
+            }
         }
-        
-        $thumbnailsContainer.on('scroll', updateNavArrows);
-        updateNavArrows();
-    }
+    };
 
-    // ===== PRODUCT TABS =====
-    function initProductTabs() {
-        const $tabBtns = $('.tab-btn');
-        const $tabPanes = $('.tab-pane');
-        
-        $tabBtns.on('click', function() {
-            const tabId = $(this).data('tab');
-            
-            // Update active states
-            $tabBtns.removeClass('active');
-            $(this).addClass('active');
-            
-            $tabPanes.removeClass('active');
-            $('#' + tabId).addClass('active');
-        });
-    }
-
-    // ===== QUANTITY CONTROLS =====
-    function initQuantityControls() {
-        const $qtyInput = $('.qty');
-        const $minusBtn = $('.qty-btn.minus');
-        const $plusBtn = $('.qty-btn.plus');
-        
-        $minusBtn.on('click', function() {
-            const currentValue = parseInt($qtyInput.val()) || 1;
-            const minValue = parseInt($qtyInput.attr('min')) || 1;
-            
-            if (currentValue > minValue) {
-                $qtyInput.val(currentValue - 1);
+    // ===== TAB SYSTEM =====
+    const TabSystem = {
+        init: function() {
+            try {
+                this.bindEvents();
+                this.initializeTabs();
+            } catch (error) {
+                ErrorHandler.log('Tab system initialization failed', error);
             }
-        });
-        
-        $plusBtn.on('click', function() {
-            const currentValue = parseInt($qtyInput.val()) || 1;
-            const maxValue = parseInt($qtyInput.attr('max')) || 999;
-            
-            if (currentValue < maxValue) {
-                $qtyInput.val(currentValue + 1);
-            }
-        });
-        
-        // Validate quantity input
-        $qtyInput.on('input', function() {
-            let value = parseInt($(this).val()) || 1;
-            const minValue = parseInt($(this).attr('min')) || 1;
-            const maxValue = parseInt($(this).attr('max')) || 999;
-            
-            if (value < minValue) value = minValue;
-            if (value > maxValue) value = maxValue;
-            
-            $(this).val(value);
-        });
-    }
+        },
 
-    // ===== BUY NOW BUTTON =====
-    function initBuyNow() {
-        $('.btn-buy-now, .sticky-buy-now').on('click', function(e) {
+        bindEvents: function() {
+            $(document).on('click', '.otnt-pdp__tab-btn', function(e) {
             e.preventDefault();
-            
-            // Show loading
-            $(this).html('<i class="fas fa-spinner fa-spin"></i> ĐANG XỬ LÝ...').prop('disabled', true);
-            
-            // Simulate processing
-            setTimeout(() => {
-                showNotification('Đang chuyển đến trang thanh toán...', 'info');
-                
-                // Reset button
-                $(this).html('<i class="fas fa-bolt"></i> MUA NGAY').prop('disabled', false);
-                
-                // Here you would redirect to checkout or add to cart and redirect
-                // window.location.href = '/checkout';
-            }, 1500);
-        });
-    }
+                const tabId = $(this).data('tab');
+                TabSystem.switchTab(tabId);
+            });
+        },
 
-    // ===== FLASH SALE COUNTDOWN =====
-    function initFlashSaleCountdown() {
-        const $countdown = $('.flash-sale-countdown');
-        if (!$countdown.length) return;
-        
-        const deadline = new Date($countdown.data('deadline'));
-        
-        function updateCountdown() {
-            const now = new Date().getTime();
-            const distance = deadline.getTime() - now;
-            
-            if (distance < 0) {
-                $countdown.html('<div class="countdown-label">ƯU ĐÃI ĐÃ KẾT THÚC!</div>');
-                return;
+        initializeTabs: function() {
+            try {
+                const firstTab = $('.otnt-pdp__tab-btn').first();
+                if (firstTab.length) {
+                    const tabId = firstTab.data('tab');
+                    this.switchTab(tabId);
+                }
+            } catch (error) {
+                ErrorHandler.log('Tab initialization failed', error);
             }
-            
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            
-            $('#countdown-hours').text(hours.toString().padStart(2, '0'));
-            $('#countdown-minutes').text(minutes.toString().padStart(2, '0'));
-            $('#countdown-seconds').text(seconds.toString().padStart(2, '0'));
-            
-            // Add pulse effect when time is running out
-            if (hours === 0 && minutes < 10) {
-                $countdown.addClass('urgent');
+        },
+
+        switchTab: function(tabId) {
+            try {
+                // Update tab buttons
+                $('.otnt-pdp__tab-btn').removeClass('active');
+                $(`.otnt-pdp__tab-btn[data-tab="${tabId}"]`).addClass('active');
+
+                // Update tab content
+                $('.otnt-pdp__tab-pane').removeClass('active');
+                $(`#${tabId}`).addClass('active');
+
+                // Trigger custom event
+                $(document).trigger('tabChanged', [tabId]);
+            } catch (error) {
+                ErrorHandler.log('Tab switching failed', error);
             }
         }
-        
-        updateCountdown();
-        setInterval(updateCountdown, 1000);
-    }
+    };
 
     // ===== STICKY CART BAR =====
-    function initStickyCartBar() {
-        const $stickyBar = $('#sticky-cart-bar');
-        if (!$stickyBar.length) return;
-        
-        const $summary = $('.product-summary-wrapper');
-        const summaryBottom = $summary.offset().top + $summary.outerHeight();
-        
-        function checkScroll() {
+    const StickyCart = {
+        init: function() {
+            try {
+                this.bindEvents();
+                this.checkScrollPosition();
+            } catch (error) {
+                ErrorHandler.log('Sticky cart initialization failed', error);
+            }
+        },
+
+        bindEvents: function() {
+            $(window).on('scroll', $.throttle(100, () => {
+                this.checkScrollPosition();
+            }));
+
+            // Add to cart button in sticky bar
+            $(document).on('click', '.sticky-add-to-cart', function(e) {
+                e.preventDefault();
+                $('.single_add_to_cart_button').click();
+            });
+
+            // Buy now button in sticky bar
+            $(document).on('click', '.sticky-buy-now', function(e) {
+                e.preventDefault();
+                // Implement buy now functionality
+                console.log('Buy now clicked');
+            });
+        },
+
+        checkScrollPosition: function() {
+            try {
             const scrollTop = $(window).scrollTop();
-            const windowHeight = $(window).height();
-            
-            if (scrollTop + windowHeight > summaryBottom) {
-                $stickyBar.addClass('visible');
+                const shouldShow = scrollTop > PDP.scrollThreshold;
+                
+                if (shouldShow !== PDP.isStickyCartVisible) {
+                    this.toggleStickyCart(shouldShow);
+                }
+            } catch (error) {
+                ErrorHandler.log('Scroll position check failed', error);
+            }
+        },
+
+        toggleStickyCart: function(show) {
+            try {
+                PDP.isStickyCartVisible = show;
+                const stickyBar = $('.sticky-cart-bar');
+                
+                if (show) {
+                    stickyBar.addClass('visible');
             } else {
-                $stickyBar.removeClass('visible');
+                    stickyBar.removeClass('visible');
+                }
+            } catch (error) {
+                ErrorHandler.log('Sticky cart toggle failed', error);
             }
         }
-        
-        $(window).on('scroll', debounce(checkScroll, 100));
-        checkScroll();
-    }
+    };
 
-    // ===== LIGHTBOX GALLERY =====
-    function initLightboxGallery() {
-        const $lightbox = $('#lightbox-modal');
-        const $lightboxImage = $('.lightbox-image');
-        const $closeBtn = $('.lightbox-close');
-        const $prevBtn = $('.lightbox-prev');
-        const $nextBtn = $('.lightbox-next');
-        
-        let currentImageIndex = 0;
-        const totalImages = $('.main-image').length;
-        
-        // Open lightbox on zoom click
-        $('.zoom-trigger').on('click', function() {
-            const $mainImage = $(this).closest('.main-image');
-            currentImageIndex = parseInt($mainImage.data('index'));
-            openLightbox(currentImageIndex);
-        });
-        
-        function openLightbox(index) {
-            const $mainImage = $('.main-image').eq(index);
-            const imageSrc = $mainImage.find('.product-main-img').data('zoom');
-            
-            $lightboxImage.attr('src', imageSrc);
-            $lightbox.addClass('active');
-            $('body').addClass('lightbox-open');
-            
-            currentImageIndex = index;
-        }
-        
-        function closeLightbox() {
-            $lightbox.removeClass('active');
-            $('body').removeClass('lightbox-open');
-        }
-        
-        function showNextImage() {
-            const nextIndex = (currentImageIndex + 1) % totalImages;
-            openLightbox(nextIndex);
-        }
-        
-        function showPrevImage() {
-            const prevIndex = (currentImageIndex - 1 + totalImages) % totalImages;
-            openLightbox(prevIndex);
-        }
-        
-        // Event listeners
-        $closeBtn.on('click', closeLightbox);
-        $nextBtn.on('click', showNextImage);
-        $prevBtn.on('click', showPrevImage);
-        
-        // Close on background click
-        $lightbox.on('click', function(e) {
-            if (e.target === this) {
-                closeLightbox();
+    // ===== PRODUCT FORM ENHANCEMENTS =====
+    const ProductForm = {
+        init: function() {
+            try {
+                this.bindEvents();
+                this.initializeQuantityControls();
+                this.setupVariationHandling();
+            } catch (error) {
+                ErrorHandler.log('Product form initialization failed', error);
             }
-        });
-        
-        // Keyboard navigation
-        $(document).on('keydown.lightbox', function(e) {
-            if (!$lightbox.hasClass('active')) return;
-            
-            switch(e.keyCode) {
-                case 27: // ESC
-                    closeLightbox();
-                    break;
-                case 37: // Left arrow
-                    showPrevImage();
-                    break;
-                case 39: // Right arrow
-                    showNextImage();
-                    break;
-            }
-        });
-        
-        // Remove event listener when lightbox closes
-        $lightbox.on('close', function() {
-            $(document).off('keydown.lightbox');
-        });
-    }
+        },
 
-    // ===== VIDEO MODAL =====
-    function initVideoModal() {
-        const $videoModal = $('#video-modal');
-        const $videoIframe = $videoModal.find('iframe');
-        const $closeBtn = $('.video-modal-close');
-        
-        // Open video modal on video click
-        $('.video-main, .video-thumb').on('click', function() {
-            const videoUrl = $(this).data('video');
-            if (videoUrl) {
-                const embedUrl = videoUrl.replace('watch?v=', 'embed/');
-                $videoIframe.attr('src', embedUrl);
-                $videoModal.addClass('active');
-                $('body').addClass('video-modal-open');
-            }
-        });
-        
-        function closeVideoModal() {
-            $videoModal.removeClass('active');
-            $('body').removeClass('video-modal-open');
-            $videoIframe.attr('src', ''); // Stop video
-        }
-        
-        $closeBtn.on('click', closeVideoModal);
-        
-        // Close on background click
-        $videoModal.on('click', function(e) {
-            if (e.target === this) {
-                closeVideoModal();
-            }
-        });
-        
-        // Close on ESC key
-        $(document).on('keydown.videomodal', function(e) {
-            if (!$videoModal.hasClass('active')) return;
-            
-            if (e.keyCode === 27) {
-                closeVideoModal();
-            }
-        });
-    }
-
-    // ===== READ MORE FUNCTIONALITY =====
-    function initReadMore() {
-        console.log('=== INIT READ MORE START ===');
-        
-        const $readMoreBtn = $('#read-more-btn');
-        const $descriptionContent = $('#description-content');
-        
-        console.log('Elements found:', {
-            readMoreBtn: $readMoreBtn.length,
-            descriptionContent: $descriptionContent.length
-        });
-        
-        if ($readMoreBtn.length === 0) {
-            console.error('Read more button not found!');
-            return;
-        }
-        
-        if ($descriptionContent.length === 0) {
-            console.error('Description content not found!');
-            return;
-        }
-        
-        // Always show button initially
-        $readMoreBtn.show();
-        console.log('Button shown initially');
-        
-        // Check content height after delay
-        setTimeout(() => {
-            const contentHeight = $descriptionContent[0].scrollHeight;
-            const containerHeight = $descriptionContent.outerHeight();
-            
-            console.log('Height check:', {
-                scrollHeight: contentHeight,
-                containerHeight: containerHeight,
-                maxHeight: 200
+        bindEvents: function() {
+            // Quantity controls
+            $(document).on('click', '.qty-btn', function(e) {
+                e.preventDefault();
+                const action = $(this).data('action');
+                ProductForm.changeQuantity(action);
             });
-            
-            // Show button if content is long
-            if (contentHeight > 250) {
-                $readMoreBtn.show();
-                console.log('Content is long, showing button');
-            } else {
-                $readMoreBtn.hide();
-                console.log('Content is short, hiding button');
-            }
-        }, 1000);
-        
-        // Click handler
-        $readMoreBtn.on('click', function(e) {
-            e.preventDefault();
-            console.log('Button clicked!');
-            
-            const isExpanded = $descriptionContent.hasClass('expanded');
-            console.log('Current state:', { isExpanded });
-            
-            if (isExpanded) {
-                // Collapse
-                $descriptionContent.removeClass('expanded');
-                $('.read-more-text').show();
-                $('.read-less-text').hide();
-                $('.read-more-icon').show();
-                $('.read-less-icon').hide();
-                $readMoreBtn.removeClass('expanded');
-                console.log('Content collapsed');
-            } else {
-                // Expand
-                $descriptionContent.addClass('expanded');
-                $('.read-more-text').hide();
-                $('.read-less-text').show();
-                $('.read-more-icon').hide();
-                $('.read-less-icon').show();
-                $readMoreBtn.addClass('expanded');
-                console.log('Content expanded');
-            }
-        });
-        
-        console.log('=== INIT READ MORE COMPLETE ===');
-    }
 
-    // ===== ADD TO CART FUNCTIONALITY =====
-    function initAddToCart() {
-        $('.add-to-cart-btn, .sticky-add-to-cart').on('click', function(e) {
-            e.preventDefault();
-            
-            const $btn = $(this);
-            const productId = $btn.data('product-id');
-            const quantity = parseInt($('#quantity').val()) || 1;
-            
-            // Show loading
-            $btn.html('<i class="fas fa-spinner fa-spin"></i> ĐANG THÊM...').prop('disabled', true);
-            
-            // Simulate AJAX call
-            setTimeout(() => {
-                showNotification('Đã thêm sản phẩm vào giỏ hàng!', 'success');
+            // Add to cart form submission
+            $(document).on('submit', '.cart', function(e) {
+                return ProductForm.validateForm(e);
+            });
+
+            // Variation change events
+            $(document).on('change', '.variations select', function() {
+                ProductForm.handleVariationChange();
+            });
+        },
+
+        initializeQuantityControls: function() {
+            try {
+                const quantityInput = $('.quantity input');
+                if (quantityInput.length) {
+                    const currentValue = parseInt(quantityInput.val()) || 1;
+                    this.updateQuantityDisplay(currentValue);
+                }
+            } catch (error) {
+                ErrorHandler.log('Quantity controls initialization failed', error);
+            }
+        },
+
+        changeQuantity: function(action) {
+            try {
+                const quantityInput = $('.quantity input');
+                let currentValue = parseInt(quantityInput.val()) || 1;
                 
-                // Reset button
-                $btn.html('<i class="fas fa-shopping-cart"></i> THÊM VÀO GIỎ').prop('disabled', false);
+                if (action === 'increase') {
+                    currentValue++;
+                } else if (action === 'decrease' && currentValue > 1) {
+                    currentValue--;
+                }
                 
-                // Update cart count if exists
-                updateCartCount();
+                quantityInput.val(currentValue);
+                this.updateQuantityDisplay(currentValue);
+            } catch (error) {
+                ErrorHandler.log('Quantity change failed', error);
+            }
+        },
+
+        updateQuantityDisplay: function(quantity) {
+            try {
+                // Update any quantity-dependent displays
+                $('.quantity-display').text(quantity);
+            } catch (error) {
+                ErrorHandler.log('Quantity display update failed', error);
+            }
+        },
+
+        setupVariationHandling: function() {
+            try {
+                // Initialize WooCommerce variation form
+                if (typeof wc_add_to_cart_variation_params !== 'undefined') {
+                    $(document.body).trigger('wc_variation_form');
+                }
+            } catch (error) {
+                ErrorHandler.log('Variation handling setup failed', error);
+            }
+        },
+
+        handleVariationChange: function() {
+            try {
+                // Handle variation changes
+                $(document.body).trigger('woocommerce_variation_select_change');
+            } catch (error) {
+                ErrorHandler.log('Variation change handling failed', error);
+            }
+        },
+
+        validateForm: function(e) {
+            try {
+                const form = $(e.target);
+                const requiredFields = form.find('[required]');
+                let isValid = true;
+
+                requiredFields.each(function() {
+                    const field = $(this);
+                    if (!field.val().trim()) {
+                        field.addClass('error');
+                        isValid = false;
+                    } else {
+                        field.removeClass('error');
+                    }
+                });
+
+                if (!isValid) {
+                    e.preventDefault();
+                    this.showErrorMessage('Vui lòng điền đầy đủ thông tin bắt buộc');
+                }
+
+                return isValid;
+            } catch (error) {
+                ErrorHandler.log('Form validation failed', error);
+                return false;
+            }
+        },
+
+        showErrorMessage: function(message) {
+            try {
+                const errorDiv = $('<div class="form-error-message">').text(message);
+                $('.cart').prepend(errorDiv);
                 
-                // Add success animation
-                $btn.addClass('success');
                 setTimeout(() => {
-                    $btn.removeClass('success');
-                }, 2000);
-            }, 1000);
+                    errorDiv.fadeOut(() => errorDiv.remove());
+                }, 5000);
+            } catch (error) {
+                ErrorHandler.log('Error message display failed', error);
+            }
+        }
+    };
+
+    // ===== PERFORMANCE OPTIMIZATION =====
+    const PerformanceOptimizer = {
+        init: function() {
+            try {
+                this.setupLazyLoading();
+                this.optimizeImages();
+                this.setupIntersectionObserver();
+            } catch (error) {
+                ErrorHandler.log('Performance optimization failed', error);
+            }
+        },
+
+        setupLazyLoading: function() {
+            try {
+                if ('IntersectionObserver' in window) {
+                    const imageObserver = new IntersectionObserver((entries, observer) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                const img = entry.target;
+                                img.src = img.dataset.src;
+                                img.classList.remove('lazy');
+                                observer.unobserve(img);
+                            }
+                        });
+                    });
+
+                    document.querySelectorAll('img[data-src]').forEach(img => {
+                        imageObserver.observe(img);
+                    });
+                }
+            } catch (error) {
+                ErrorHandler.log('Lazy loading setup failed', error);
+            }
+        },
+
+        optimizeImages: function() {
+            try {
+                // Convert images to WebP if supported
+                if (this.supportsWebP()) {
+                    $('img').each(function() {
+                        const img = $(this);
+                        const src = img.attr('src');
+                        if (src && !src.includes('.webp')) {
+                            const webpSrc = src.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+                            img.attr('src', webpSrc);
+            }
         });
     }
+            } catch (error) {
+                ErrorHandler.log('Image optimization failed', error);
+            }
+        },
 
-    // ===== NOTIFICATION SYSTEM =====
-    function showNotification(message, type = 'info') {
-        const notification = $(`
-            <div class="notification notification-${type}" style="
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
-                color: white;
-                padding: 15px 20px;
-                border-radius: 5px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                z-index: 10001;
-                max-width: 300px;
-                animation: slideInRight 0.3s ease;
-            ">
-                ${message}
-            </div>
-        `);
-        
-        $('body').append(notification);
-        
-        setTimeout(() => {
-            notification.fadeOut(300, function() {
-                $(this).remove();
-            });
-        }, 3000);
-    }
+        supportsWebP: function() {
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = 1;
+                canvas.height = 1;
+                return canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+            } catch (error) {
+                return false;
+            }
+        },
+
+        setupIntersectionObserver: function() {
+            try {
+                if ('IntersectionObserver' in window) {
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('animate-in');
+                            }
+                        });
+                    }, { threshold: 0.1 });
+
+                    document.querySelectorAll('.otnt-pdp__main-section, .otnt-pdp__tabs-section').forEach(el => {
+                        observer.observe(el);
+                    });
+                }
+            } catch (error) {
+                ErrorHandler.log('Intersection observer setup failed', error);
+            }
+        }
+    };
+
+    // ===== ANALYTICS AND TRACKING =====
+    const Analytics = {
+        init: function() {
+            try {
+                this.trackProductViews();
+                this.trackUserInteractions();
+            } catch (error) {
+                ErrorHandler.log('Analytics initialization failed', error);
+            }
+        },
+
+        trackProductViews: function() {
+            try {
+                const productId = $('.otnt-pdp').attr('id')?.replace('product-', '');
+                if (productId) {
+                    // Track product view
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'view_item', {
+                            'items': [{
+                                'id': productId,
+                                'name': $('.otnt-pdp__product-title').text(),
+                                'category': $('.otnt-pdp__product-categories a').first().text()
+                            }]
+                        });
+                    }
+                }
+            } catch (error) {
+                ErrorHandler.log('Product view tracking failed', error);
+            }
+        },
+
+        trackUserInteractions: function() {
+            try {
+                // Track image gallery interactions
+                $(document).on('click', '.otnt-pdp__thumb-item', function() {
+                    Analytics.trackEvent('gallery_image_click', {
+                        'image_index': $(this).data('index')
+                    });
+                });
+
+                // Track tab interactions
+                $(document).on('click', '.otnt-pdp__tab-btn', function() {
+                    Analytics.trackEvent('tab_click', {
+                        'tab_name': $(this).data('tab')
+                    });
+                });
+            } catch (error) {
+                ErrorHandler.log('User interaction tracking failed', error);
+            }
+        },
+
+        trackEvent: function(eventName, parameters = {}) {
+            try {
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', eventName, parameters);
+                }
+            } catch (error) {
+                ErrorHandler.log('Event tracking failed', error);
+            }
+        }
+    };
+
+    // ===== MAIN INITIALIZATION =====
+    const PDPInitializer = {
+        init: function() {
+            try {
+                // Wait for DOM to be ready
+                $(document).ready(() => {
+                    this.initializeComponents();
+                    this.setupErrorBoundaries();
+                });
+
+                // Handle page load events
+                $(window).on('load', () => {
+                    this.onPageLoad();
+                });
+
+                // Handle before unload
+                $(window).on('beforeunload', () => {
+                    this.onBeforeUnload();
+                });
+            } catch (error) {
+                ErrorHandler.log('PDP initialization failed', error);
+            }
+        },
+
+        initializeComponents: function() {
+            try {
+                // Initialize all components
+                ImageGallery.init();
+                TabSystem.init();
+                StickyCart.init();
+                ProductForm.init();
+                PerformanceOptimizer.init();
+                Analytics.init();
+
+                // Trigger custom event
+                $(document).trigger('pdpInitialized');
+            } catch (error) {
+                ErrorHandler.log('Component initialization failed', error);
+            }
+        },
+
+        setupErrorBoundaries: function() {
+            try {
+                // Global error handler
+                window.addEventListener('error', (event) => {
+                    ErrorHandler.log('Global error occurred', event.error);
+                });
+
+                // Unhandled promise rejection handler
+                window.addEventListener('unhandledrejection', (event) => {
+                    ErrorHandler.log('Unhandled promise rejection', event.reason);
+                });
+            } catch (error) {
+                ErrorHandler.log('Error boundary setup failed', error);
+            }
+        },
+
+        onPageLoad: function() {
+            try {
+                // Remove loading states
+                $('.otnt-pdp__loading').removeClass('otnt-pdp__loading');
+                
+                // Trigger custom event
+                $(document).trigger('pdpPageLoaded');
+            } catch (error) {
+                ErrorHandler.log('Page load handling failed', error);
+            }
+        },
+
+        onBeforeUnload: function() {
+            try {
+                // Cleanup any resources
+                $(document).trigger('pdpBeforeUnload');
+            } catch (error) {
+                ErrorHandler.log('Before unload handling failed', error);
+            }
+        }
+    };
 
     // ===== UTILITY FUNCTIONS =====
-    function debounce(func, wait) {
+    const Utils = {
+        debounce: function(func, wait, immediate) {
         let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
+            return function executedFunction() {
+                const context = this;
+                const args = arguments;
+                const later = function() {
+                    timeout = null;
+                    if (!immediate) func.apply(context, args);
+                };
+                const callNow = immediate && !timeout;
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);
-        };
-    }
+                if (callNow) func.apply(context, args);
+            };
+        },
 
-    function updateCartCount() {
-        const $cartCount = $('.cart-count');
-        if ($cartCount.length) {
-            const currentCount = parseInt($cartCount.text()) || 0;
-            $cartCount.text(currentCount + 1);
-            
-            // Add pulse animation
-            $cartCount.addClass('pulse');
-            setTimeout(() => {
-                $cartCount.removeClass('pulse');
-            }, 1000);
+        throttle: function(func, limit) {
+            let inThrottle;
+            return function() {
+                const args = arguments;
+                const context = this;
+                if (!inThrottle) {
+                    func.apply(context, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            };
+        },
+
+        formatPrice: function(price) {
+            try {
+                return new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND'
+                }).format(price);
+            } catch (error) {
+                return price + '₫';
+            }
         }
-    }
+    };
 
-    // ===== INITIALIZE ALL FUNCTIONS =====
-    function init() {
-        console.log('=== INIT FUNCTION START ===');
-        console.log('Single product page elements:', $('.single-product-page').length);
-        console.log('Body classes:', $('body')[0].className);
-        
-        // Initialize on any page that might be a product page
-        console.log('Initializing single product functionality...');
-        
-        initProductGallery();
-        initProductTabs();
-        initQuantityControls();
-        initBuyNow();
-        initFlashSaleCountdown();
-        initStickyCartBar();
-        initLightboxGallery();
-        initVideoModal();
-        initReadMore();
-        initAddToCart();
-        
-        console.log('=== INIT FUNCTION COMPLETE ===');
-    }
+    // ===== START INITIALIZATION =====
+    PDPInitializer.init();
 
-    // Start initialization
-    init();
+    // ===== EXPOSE TO GLOBAL SCOPE =====
+    window.ScodePDP = {
+        ImageGallery,
+        TabSystem,
+        StickyCart,
+        ProductForm,
+        PerformanceOptimizer,
+        Analytics,
+        Utils,
+        ErrorHandler
+    };
 
-    // Add CSS animations
-    $('<style>')
-        .prop('type', 'text/css')
-        .html(`
-            @keyframes slideInRight {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            
-            .notification {
-                z-index: 10001;
-            }
-            
-            .add-to-cart-btn.success {
-                background-color: #28a745 !important;
-                transform: scale(1.05);
-            }
-            
-            .cart-count.pulse {
-                animation: pulse 0.6s ease-in-out;
-            }
-            
-            .flash-sale-countdown.urgent {
-                animation: pulse 1s infinite;
-            }
-            
-            @keyframes pulse {
-                0% { transform: scale(1); }
-                50% { transform: scale(1.05); }
-                100% { transform: scale(1); }
-            }
-        `)
-        .appendTo('head');
-});
+})(jQuery);

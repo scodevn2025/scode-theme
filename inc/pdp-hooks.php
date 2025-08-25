@@ -59,8 +59,8 @@ class OTNT_PDP_Hooks {
         if (!is_product()) return;
         
         $u = get_stylesheet_directory_uri();
-        wp_enqueue_style('otnt-pdp', $u . '/assets/css/pdp.css', [], '2.0');
-        wp_enqueue_script('otnt-pdp', $u . '/assets/js/pdp.js', [], '2.0', true);
+            wp_enqueue_style('otnt-single-product', $u . '/assets/css/single-product.css', [], '3.0.0');
+    wp_enqueue_script('otnt-single-product', $u . '/assets/js/single-product.js', [], '3.0.0', true);
     }
     
     /**
