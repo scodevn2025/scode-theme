@@ -1,10 +1,11 @@
 <?php
 /**
- * SCODE Theme Functions - Simplified Version
+ * SCODE Theme Functions - Complete Version
  * 
  * @package SCODE_Theme
- * @version 1.0.0
+ * @version 3.0.0
  */
+
 // Prevent direct access
 if (!defined('ABSPATH')) {
     exit;
@@ -41,6 +42,10 @@ function scode_theme_setup() {
     add_image_size('banner-medium', 600, 200, true);
     add_image_size('product-thumb', 300, 300, true);
     add_image_size('product-large', 600, 600, true);
+    add_image_size('product-medium', 400, 400, true);
+    add_image_size('thumbnail', 150, 150, true);
+    add_image_size('medium', 300, 300, false);
+    add_image_size('large', 1024, 1024, false);
 }
 add_action('after_setup_theme', 'scode_theme_setup');
 
@@ -71,8 +76,55 @@ function scode_woocommerce_setup() {
     
     // Add custom product meta display
     add_action('woocommerce_single_product_summary', 'scode_display_custom_product_fields', 25);
+    
+    // Fix image display issues
+    add_filter('woocommerce_product_get_image', 'scode_fix_product_image', 10, 2);
+    add_filter('woocommerce_single_product_image_thumbnail_html', 'scode_fix_single_product_image', 10, 2);
 }
 add_action('after_setup_theme', 'scode_woocommerce_setup');
+
+// ===== FIX IMAGE DISPLAY ISSUES =====
+function scode_fix_product_image($image, $product) {
+    if (!$product || !is_object($product)) {
+        return $image;
+    }
+    
+    $product_id = $product->get_id();
+    if (has_post_thumbnail($product_id)) {
+        $thumbnail_id = get_post_thumbnail_id($product_id);
+        $image_url = wp_get_attachment_image_url($thumbnail_id, 'product-thumb');
+        $image_alt = get_post_meta($thumbnail_id, '_wp_attachment_image_alt', true);
+        
+        if ($image_url) {
+            return sprintf(
+                '<img src="%s" alt="%s" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" loading="lazy" width="300" height="300">',
+                esc_url($image_url),
+                esc_attr($image_alt)
+            );
+        }
+    }
+    
+    return $image;
+}
+
+function scode_fix_single_product_image($html, $attachment_id) {
+    if (!$attachment_id) {
+        return $html;
+    }
+    
+    $image_url = wp_get_attachment_image_url($attachment_id, 'product-large');
+    $image_alt = get_post_meta($attachment_id, '_wp_attachment_image_alt', true);
+    
+    if ($image_url) {
+        return sprintf(
+            '<img src="%s" alt="%s" class="wp-post-image" loading="lazy">',
+            esc_url($image_url),
+            esc_attr($image_alt)
+        );
+    }
+    
+    return $html;
+}
 
 // WooCommerce wrapper functions
 function scode_woocommerce_wrapper_start() {
@@ -148,33 +200,23 @@ function scode_add_custom_product_fields() {
         'placeholder' => '4.990K'
     ));
     
-    woocommerce_wp_checkbox(array(
-        'id' => '_free_shipping',
-        'label' => __('Free Shipping', 'scode-theme'),
-        'description' => __('Check if this product has free shipping', 'scode-theme')
-    ));
-    
-    // Product Video
-    echo '<h4 style="margin: 20px 0 10px; padding: 10px; background: #f1f1f1; border-left: 4px solid #0073aa;">Product Video</h4>';
-    
     woocommerce_wp_text_input(array(
-        'id' => '_product_video',
-        'label' => __('Product Video URL', 'scode-theme'),
-        'description' => __('Enter YouTube or Vimeo video URL', 'scode-theme'),
-        'placeholder' => 'https://www.youtube.com/watch?v=...'
+        'id' => '_gift_description',
+        'label' => __('Gift Description', 'scode-theme'),
+        'description' => __('Enter gift description', 'scode-theme'),
+        'placeholder' => 'Máy hút bụi Tineco iFloor 2 Max'
     ));
     
     echo '</div>';
 }
 
-// Save custom product fields
 function scode_save_custom_product_fields($post_id) {
     // Only run if WooCommerce is active
     if (!class_exists('WooCommerce')) {
         return;
     }
     
-    // Product Badges
+    // Save product badges
     $is_new = isset($_POST['_is_new']) ? 'yes' : 'no';
     update_post_meta($post_id, '_is_new', $is_new);
     
@@ -187,7 +229,7 @@ function scode_save_custom_product_fields($post_id) {
     $is_genuine = isset($_POST['_is_genuine']) ? 'yes' : 'no';
     update_post_meta($post_id, '_is_genuine', $is_genuine);
     
-    // Product Features
+    // Save product features
     if (isset($_POST['_product_features'])) {
         update_post_meta($post_id, '_product_features', sanitize_textarea_field($_POST['_product_features']));
     }
@@ -196,16 +238,11 @@ function scode_save_custom_product_fields($post_id) {
         update_post_meta($post_id, '_gift_value', sanitize_text_field($_POST['_gift_value']));
     }
     
-    $free_shipping = isset($_POST['_free_shipping']) ? 'yes' : 'no';
-    update_post_meta($post_id, '_free_shipping', $free_shipping);
-    
-    // Product Video
-    if (isset($_POST['_product_video'])) {
-        update_post_meta($post_id, '_product_video', esc_url_raw($_POST['_product_video']));
+    if (isset($_POST['_gift_description'])) {
+        update_post_meta($post_id, '_gift_description', sanitize_text_field($_POST['_gift_description']));
     }
 }
 
-// Display custom product fields on single product page
 function scode_display_custom_product_fields() {
     // Only run if WooCommerce is active
     if (!class_exists('WooCommerce')) {
@@ -213,15 +250,43 @@ function scode_display_custom_product_fields() {
     }
     
     global $product;
+    if (!$product) return;
+    
     $product_id = $product->get_id();
     
-    // Product Features
-    $product_features = get_post_meta($product_id, '_product_features', true);
-    if (!empty($product_features)) {
+    // Display product badges
+    $badges = array();
+    if (get_post_meta($product_id, '_is_new', true) === 'yes') {
+        $badges[] = '<span class="badge new">NEW</span>';
+    }
+    if (get_post_meta($product_id, '_is_premium', true) === 'yes') {
+        $badges[] = '<span class="badge premium">PREMIUM</span>';
+    }
+    if (get_post_meta($product_id, '_is_global', true) === 'yes') {
+        $badges[] = '<span class="badge global">GLOBAL</span>';
+    }
+    if (get_post_meta($product_id, '_is_genuine', true) === 'yes') {
+        $badges[] = '<span class="badge genuine">100% GENUINE</span>';
+    }
+    
+    if (!empty($badges)) {
+        echo '<div class="product-badges-section">';
+        echo '<h4>Sản phẩm của chúng tôi</h4>';
+        echo '<div class="badges-container">';
+        foreach ($badges as $badge) {
+            echo $badge;
+        }
+        echo '</div>';
+        echo '</div>';
+    }
+    
+    // Display product features
+    $features = get_post_meta($product_id, '_product_features', true);
+    if (!empty($features)) {
         echo '<div class="product-features-display">';
         echo '<h3>Đặc điểm nổi bật</h3>';
         echo '<ul>';
-        $features_array = explode("\n", $product_features);
+        $features_array = explode("\n", $features);
         foreach ($features_array as $feature) {
             if (trim($feature)) {
                 echo '<li>' . esc_html(trim($feature)) . '</li>';
@@ -231,48 +296,27 @@ function scode_display_custom_product_fields() {
         echo '</div>';
     }
     
-    // Gift Information
+    // Display gift information
     $gift_value = get_post_meta($product_id, '_gift_value', true);
-    if (!empty($gift_value)) {
-        echo '<div class="product-gift-info">';
-        echo '<div class="gift-badge">QUÀ TẶNG ' . esc_html($gift_value) . '</div>';
-        echo '</div>';
-    }
+    $gift_description = get_post_meta($product_id, '_gift_description', true);
     
-    // Product Video
-    $product_video = get_post_meta($product_id, '_product_video', true);
-    if (!empty($product_video)) {
-        echo '<div class="product-video">';
-        echo '<h3>Video sản phẩm</h3>';
-        echo '<div class="video-container">';
-        
-        // Check if it's YouTube
-        if (strpos($product_video, 'youtube.com') !== false || strpos($product_video, 'youtu.be') !== false) {
-            $video_id = '';
-            if (preg_match('/youtube\.com\/watch\?v=([^&]+)/', $product_video, $matches)) {
-                $video_id = $matches[1];
-            } elseif (preg_match('/youtu\.be\/([^?]+)/', $product_video, $matches)) {
-                $video_id = $matches[1];
-            }
-            
-            if ($video_id) {
-                echo '<iframe width="100%" height="315" src="https://www.youtube.com/embed/' . esc_attr($video_id) . '" frameborder="0" allowfullscreen></iframe>';
-            }
-        }
-        // Check if it's Vimeo
-        elseif (strpos($product_video, 'vimeo.com') !== false) {
-            if (preg_match('/vimeo\.com\/(\d+)/', $product_video, $matches)) {
-                $video_id = $matches[1];
-                echo '<iframe width="100%" height="315" src="https://player.vimeo.com/video/' . esc_attr($video_id) . '" frameborder="0" allowfullscreen></iframe>';
-            }
-        }
-        
+    if (!empty($gift_value) || !empty($gift_description)) {
+        echo '<div class="product-gift-info">';
+        echo '<div class="gift-badge">';
+        echo '<i class="fas fa-gift"></i>';
+        echo '<span>QUÀ TẶNG</span>';
         echo '</div>';
+        if (!empty($gift_description)) {
+            echo '<p class="gift-text">' . esc_html($gift_description);
+            if (!empty($gift_value)) {
+                echo ' - Giá trị: ' . esc_html($gift_value);
+            }
+            echo '</p>';
+        }
         echo '</div>';
     }
 }
 
-// Customize add to cart text
 function scode_customize_add_to_cart_text($text, $product) {
     // Only run if WooCommerce is active
     if (!class_exists('WooCommerce')) {
@@ -282,7 +326,7 @@ function scode_customize_add_to_cart_text($text, $product) {
     if ($product->is_type('simple')) {
         return __('Thêm vào giỏ', 'scode-theme');
     } elseif ($product->is_type('variable')) {
-        return __('Chọn tùy chọn', 'scode-theme');
+        return __('Chọn mua', 'scode-theme');
     } elseif ($product->is_type('grouped')) {
         return __('Xem sản phẩm', 'scode-theme');
     } elseif ($product->is_type('external')) {
@@ -292,64 +336,51 @@ function scode_customize_add_to_cart_text($text, $product) {
     return $text;
 }
 
-// ===== CUSTOM POST TYPE: SLIDES =====
+// ===== CUSTOM POST TYPES =====
 function scode_register_slides_post_type() {
     $labels = array(
-        'name' => 'Slides',
-        'singular_name' => 'Slide',
-        'menu_name' => 'Slides',
-        'add_new' => 'Thêm Slide mới',
-        'add_new_item' => 'Thêm Slide mới',
-        'edit_item' => 'Sửa Slide',
-        'new_item' => 'Slide mới',
-        'view_item' => 'Xem Slide',
-        'search_items' => 'Tìm kiếm Slides',
-        'not_found' => 'Không tìm thấy Slides',
-        'not_found_in_trash' => 'Không có Slides nào trong thùng rác'
+        'name' => 'Hero Slides',
+        'singular_name' => 'Hero Slide',
+        'menu_name' => 'Hero Slides',
+        'add_new' => 'Add New Slide',
+        'add_new_item' => 'Add New Hero Slide',
+        'edit_item' => 'Edit Hero Slide',
+        'new_item' => 'New Hero Slide',
+        'view_item' => 'View Hero Slide',
+        'search_items' => 'Search Hero Slides',
+        'not_found' => 'No hero slides found',
+        'not_found_in_trash' => 'No hero slides found in trash'
     );
     
     $args = array(
         'labels' => $labels,
-        'public' => true,
-        'publicly_queryable' => false,
+        'public' => false,
         'show_ui' => true,
         'show_in_menu' => true,
-        'query_var' => true,
-        'rewrite' => array('slug' => 'slide'),
         'capability_type' => 'post',
-        'has_archive' => false,
         'hierarchical' => false,
-        'menu_position' => 20,
-        'menu_icon' => 'dashicons-images-alt2',
-        'supports' => array('title', 'editor', 'thumbnail'),
-        'show_in_rest' => true,
+        'rewrite' => false,
+        'supports' => array('title', 'editor', 'thumbnail', 'custom-fields'),
+        'menu_icon' => 'dashicons-slides'
     );
     
-    register_post_type('slides', $args);
+    register_post_type('hero_slide', $args);
 }
 add_action('init', 'scode_register_slides_post_type');
 
-// Function to get hero slides
+// ===== HELPER FUNCTIONS =====
 function scode_get_hero_slides($limit = 5) {
     $args = array(
-        'post_type' => 'slides',
+        'post_type' => 'hero_slide',
         'post_status' => 'publish',
         'posts_per_page' => $limit,
-        'meta_key' => 'slide_order',
-        'orderby' => 'meta_value_num',
-        'order' => 'ASC',
-        'meta_query' => array(
-            array(
-                'key' => 'slide_order',
-                'compare' => 'EXISTS',
-            ),
-        ),
+        'orderby' => 'menu_order',
+        'order' => 'ASC'
     );
     
     return new WP_Query($args);
 }
 
-// ===== PRODUCT FUNCTIONS =====
 function scode_get_featured_products($limit = 12) {
     if (!class_exists('WooCommerce')) {
         return new WP_Query(array('post__in' => array(0))); // Return empty query
@@ -474,18 +505,21 @@ function scode_get_product_badges($product) {
     
     // Sale badge
     if ($product->is_on_sale()) {
-        $badges[] = '<span class="product-badge sale">Giảm giá</span>';
+        $regular_price = $product->get_regular_price();
+        $sale_price = $product->get_sale_price();
+        if ($regular_price && $sale_price) {
+            $percentage = round((($regular_price - $sale_price) / $regular_price) * 100);
+            $badges[] = sprintf('<span class="product-badge sale">-%s%%</span>', $percentage);
+        }
     }
     
-    // New badge (products created in last 30 days)
-    $days_ago = (time() - strtotime($product->get_date_created())) / DAY_IN_SECONDS;
-    if ($days_ago <= 30) {
-        $badges[] = '<span class="product-badge new">Mới</span>';
+    // Custom badges
+    $product_id = $product->get_id();
+    if (get_post_meta($product_id, '_is_new', true) === 'yes') {
+        $badges[] = '<span class="product-badge new">NEW</span>';
     }
-    
-    // Featured badge
-    if ($product->get_meta('_featured') === 'yes') {
-        $badges[] = '<span class="product-badge featured">Nổi bật</span>';
+    if (get_post_meta($product_id, '_is_premium', true) === 'yes') {
+        $badges[] = '<span class="product-badge featured">PREMIUM</span>';
     }
     
     if (!empty($badges)) {
@@ -495,10 +529,41 @@ function scode_get_product_badges($product) {
     return '';
 }
 
-// ===== ENQUEUE SCRIPTS & STYLES =====
+function scode_get_product_rating($product) {
+    if (!$product || !class_exists('WooCommerce')) return '';
+    
+    $rating = $product->get_average_rating();
+    $count = $product->get_review_count();
+    
+    if ($rating > 0) {
+        $stars = '';
+        for ($i = 1; $i <= 5; $i++) {
+            if ($i <= $rating) {
+                $stars .= '<i class="fas fa-star"></i>';
+            } elseif ($i - $rating < 1) {
+                $stars .= '<i class="fas fa-star-half-alt"></i>';
+            } else {
+                $stars .= '<i class="far fa-star"></i>';
+            }
+        }
+        
+        return sprintf(
+            '<div class="product-rating">
+                <div class="rating-stars">%s</div>
+                <div class="rating-count">(%s)</div>
+            </div>',
+            $stars,
+            $count
+        );
+    }
+    
+    return '';
+}
+
+// ===== ENQUEUE SCRIPTS AND STYLES =====
 function scode_enqueue_scripts() {
     // Theme stylesheet
-    wp_enqueue_style('scode-style', get_stylesheet_uri(), array(), '1.0.0');
+    wp_enqueue_style('scode-style', get_stylesheet_uri(), array(), '3.0.0');
     
     // Custom CSS
     if (file_exists(get_template_directory() . '/assets/css/main.css')) {
@@ -515,7 +580,7 @@ function scode_enqueue_scripts() {
     
     // Main JavaScript
     if (file_exists(get_template_directory() . '/assets/js/main.js')) {
-        wp_enqueue_script('scode-main', get_template_directory_uri() . '/assets/js/main.js', array('jquery'), '1.0.0', true);
+        wp_enqueue_script('scode-main', get_template_directory_uri() . '/assets/js/main.js', array('jquery'), '3.0.0', true);
     }
     
     // Single Product JavaScript
@@ -599,7 +664,7 @@ function scode_customize_register($wp_customize) {
     // Contact section
     $wp_customize->add_section('scode_contact', array(
         'title' => __('Contact Information', 'scode-theme'),
-        'priority' => 40,
+        'priority' => 35,
     ));
     
     // Hotline
@@ -609,7 +674,7 @@ function scode_customize_register($wp_customize) {
     ));
     
     $wp_customize->add_control('scode_hotline', array(
-        'label' => __('Hotline', 'scode-theme'),
+        'label' => __('Hotline Number', 'scode-theme'),
         'section' => 'scode_contact',
         'type' => 'text',
     ));
@@ -621,14 +686,14 @@ function scode_customize_register($wp_customize) {
     ));
     
     $wp_customize->add_control('scode_email', array(
-        'label' => __('Email', 'scode-theme'),
+        'label' => __('Email Address', 'scode-theme'),
         'section' => 'scode_contact',
         'type' => 'email',
     ));
     
     // Address
     $wp_customize->add_setting('scode_address', array(
-        'default' => '123 Đường ABC, Quận XYZ, TP.HCM',
+        'default' => 'Tp.HCM: Số 334 Nguyễn Văn Công, Phường 3, Quận Gò Vấp, Tp.Hồ Chí Minh',
         'sanitize_callback' => 'sanitize_textarea_field',
     ));
     
@@ -637,23 +702,63 @@ function scode_customize_register($wp_customize) {
         'section' => 'scode_contact',
         'type' => 'textarea',
     ));
+    
+    // Social Media section
+    $wp_customize->add_section('scode_social', array(
+        'title' => __('Social Media', 'scode-theme'),
+        'priority' => 40,
+    ));
+    
+    // Facebook
+    $wp_customize->add_setting('scode_social_facebook', array(
+        'default' => '',
+        'sanitize_callback' => 'esc_url_raw',
+    ));
+    
+    $wp_customize->add_control('scode_social_facebook', array(
+        'label' => __('Facebook URL', 'scode-theme'),
+        'section' => 'scode_social',
+        'type' => 'url',
+    ));
+    
+    // Instagram
+    $wp_customize->add_setting('scode_social_instagram', array(
+        'default' => '',
+        'sanitize_callback' => 'esc_url_raw',
+    ));
+    
+    $wp_customize->add_control('scode_social_instagram', array(
+        'label' => __('Instagram URL', 'scode-theme'),
+        'section' => 'scode_social',
+        'type' => 'url',
+    ));
+    
+    // YouTube
+    $wp_customize->add_setting('scode_social_youtube', array(
+        'default' => '',
+        'sanitize_callback' => 'esc_url_raw',
+    ));
+    
+    $wp_customize->add_control('scode_social_youtube', array(
+        'label' => __('YouTube URL', 'scode-theme'),
+        'section' => 'scode_social',
+        'type' => 'url',
+    ));
 }
 add_action('customize_register', 'scode_customize_register');
 
-// ===== WIDGET AREAS =====
+// ===== WIDGETS INITIALIZATION =====
 function scode_widgets_init() {
-    // Main sidebar
     register_sidebar(array(
-        'name' => __('Main Sidebar', 'scode-theme'),
+        'name' => __('Sidebar', 'scode-theme'),
         'id' => 'sidebar-1',
-        'description' => __('Main sidebar for pages and posts.', 'scode-theme'),
-        'before_widget' => '<div id="%1$s" class="widget %2$s">',
-        'after_widget' => '</div>',
-        'before_title' => '<h3 class="widget-title">',
-        'after_title' => '</h3>',
+        'description' => __('Add widgets here.', 'scode-theme'),
+        'before_widget' => '<section id="%1$s" class="widget %2$s">',
+        'after_widget' => '</section>',
+        'before_title' => '<h2 class="widget-title">',
+        'after_title' => '</h2>',
     ));
     
-    // Footer widgets
     register_sidebar(array(
         'name' => __('Footer Widget 1', 'scode-theme'),
         'id' => 'footer-1',
@@ -700,656 +805,459 @@ add_action('widgets_init', 'scode_widgets_init');
 function scode_get_theme_option($key, $default = '') {
     return get_theme_mod($key, $default);
 }
+
 function scode_format_price($price) {
-    if (class_exists('WooCommerce')) {
-        return wc_price($price);
+    if (!class_exists('WooCommerce')) {
+        return number_format($price, 0, ',', '.') . '₫';
     }
-    return number_format($price, 0, ',', '.') . 'đ';
+    return wc_price($price);
 }
-
-function scode_get_product_rating($product) {
-    if (!$product || !class_exists('WooCommerce')) return '';
-    
-    $rating = $product->get_average_rating();
-    $count = $product->get_review_count();
-    
-    if ($rating > 0) {
-        $stars = '';
-        for ($i = 1; $i <= 5; $i++) {
-            if ($i <= $rating) {
-                $stars .= '<i class="fas fa-star"></i>';
-            } elseif ($i - $rating < 1) {
-                $stars .= '<i class="fas fa-star-half-alt"></i>';
-            } else {
-                $stars .= '<i class="far fa-star"></i>';
-            }
-        }
-        
-        return sprintf(
-            '<div class="product-rating">
-                <div class="stars">%s</div>
-                <span class="rating-text">(%s đánh giá)</span>
-            </div>',
-            $stars,
-            $count
-        );
-    }
-    
-    return '';
-}
-
-// ===== INCLUDES =====
-// Include customizer
-if (file_exists(get_template_directory() . '/inc/customizer.php')) {
-    require get_template_directory() . '/inc/customizer.php';
-}
-
-// Include theme options
-if (file_exists(get_template_directory() . '/inc/theme-options.php')) {
-    require get_template_directory() . '/inc/theme-options.php';
-}
-
-// Include PDP hooks
-if (file_exists(get_stylesheet_directory() . '/inc/pdp-hooks.php')) {
-    require_once get_stylesheet_directory() . '/inc/pdp-hooks.php';
-}
-
-// Include WooCommerce overrides (temporarily disabled)
-// if (file_exists(get_template_directory() . '/inc/woocommerce-overrides.php')) {
-//     require get_template_directory() . '/inc/woocommerce-overrides.php';
-// }
 
 // ===== AJAX FUNCTIONS =====
 function scode_ajax_add_to_cart() {
-    // Check if WooCommerce is active
-    if (!class_exists('WooCommerce') || !function_exists('WC')) {
-        wp_send_json_error('WooCommerce not available');
-        return;
+    // Verify nonce
+    if (!wp_verify_nonce($_POST['nonce'], 'scode_nonce')) {
+        wp_die('Security check failed');
     }
     
-    // Check nonce for security
-    if (!wp_verify_nonce($_POST['nonce'], 'scode_nonce')) {
-        wp_send_json_error('Security check failed');
-        return;
+    // Check if WooCommerce is active
+    if (!class_exists('WooCommerce')) {
+        wp_send_json_error('WooCommerce is not active');
     }
     
     $product_id = intval($_POST['product_id']);
-    $quantity = isset($_POST['quantity']) ? intval($_POST['quantity']) : 1;
+    $quantity = intval($_POST['quantity']);
     
-    if ($product_id > 0) {
-        $result = WC()->cart->add_to_cart($product_id, $quantity);
-        
-        if ($result) {
-            wp_send_json_success(array(
-                'message' => 'Đã thêm sản phẩm vào giỏ hàng!',
-                'cart_count' => WC()->cart->get_cart_contents_count()
-            ));
-        } else {
-            wp_send_json_error('Không thể thêm sản phẩm vào giỏ hàng.');
-        }
+    if ($product_id <= 0 || $quantity <= 0) {
+        wp_send_json_error('Invalid product or quantity');
+    }
+    
+    // Add to cart
+    $cart_item_key = WC()->cart->add_to_cart($product_id, $quantity);
+    
+    if ($cart_item_key) {
+        wp_send_json_success(array(
+            'message' => 'Product added to cart successfully',
+            'cart_count' => WC()->cart->get_cart_contents_count()
+        ));
     } else {
-        wp_send_json_error('ID sản phẩm không hợp lệ.');
+        wp_send_json_error('Failed to add product to cart');
     }
 }
 add_action('wp_ajax_scode_add_to_cart', 'scode_ajax_add_to_cart');
 add_action('wp_ajax_nopriv_scode_add_to_cart', 'scode_ajax_add_to_cart');
 
-// AJAX update cart count
 function scode_ajax_update_cart_count() {
-    if (class_exists('WooCommerce') && function_exists('WC')) {
-        wp_send_json_success(array(
-            'cart_count' => WC()->cart->get_cart_contents_count()
-        ));
-    } else {
-        wp_send_json_error('WooCommerce not available');
+    if (!class_exists('WooCommerce')) {
+        wp_send_json_error('WooCommerce is not active');
     }
+    
+    wp_send_json_success(array(
+        'cart_count' => WC()->cart->get_cart_contents_count()
+    ));
 }
 add_action('wp_ajax_scode_update_cart_count', 'scode_ajax_update_cart_count');
 add_action('wp_ajax_nopriv_scode_update_cart_count', 'scode_ajax_update_cart_count');
 
-// ===== CUSTOM POST TYPES FOR SECTIONS =====
-function scode_register_section_post_types() {
-    // Hero Section
-    register_post_type('hero_section', array(
-        'labels' => array(
-            'name' => 'Hero Sections',
-            'singular_name' => 'Hero Section',
-            'add_new' => 'Thêm Hero Section',
-            'add_new_item' => 'Thêm Hero Section Mới',
-            'edit_item' => 'Sửa Hero Section',
-            'new_item' => 'Hero Section Mới',
-            'view_item' => 'Xem Hero Section',
-            'search_items' => 'Tìm Hero Section',
-            'not_found' => 'Không tìm thấy Hero Section',
-            'not_found_in_trash' => 'Không có Hero Section nào trong thùng rác'
-        ),
-        'public' => false,
-        'show_ui' => true,
-        'show_in_menu' => true,
-        'menu_icon' => 'dashicons-align-wide',
-        'supports' => array('title', 'editor', 'thumbnail'),
-        'has_archive' => false,
-        'rewrite' => false
-    ));
-
-    // Promo Banner
-    register_post_type('promo_banner', array(
-        'labels' => array(
-            'name' => 'Promo Banners',
-            'singular_name' => 'Promo Banner',
-            'add_new' => 'Thêm Banner',
-            'add_new_item' => 'Thêm Banner Mới',
-            'edit_item' => 'Sửa Banner',
-            'new_item' => 'Banner Mới',
-            'view_item' => 'Xem Banner',
-            'search_items' => 'Tìm Banner',
-            'not_found' => 'Không tìm thấy Banner',
-            'not_found_in_trash' => 'Không có Banner nào trong thùng rác'
-        ),
-        'public' => false,
-        'show_ui' => true,
-        'show_in_menu' => true,
-        'menu_icon' => 'dashicons-megaphone',
-        'supports' => array('title', 'editor', 'thumbnail'),
-        'has_archive' => false,
-        'rewrite' => false
-    ));
-
-    // Service Icon
-    register_post_type('service_icon', array(
-        'labels' => array(
-            'name' => 'Service Icons',
-            'singular_name' => 'Service Icon',
-            'add_new' => 'Thêm Service Icon',
-            'add_new_item' => 'Thêm Service Icon Mới',
-            'edit_item' => 'Sửa Service Icon',
-            'new_item' => 'Service Icon Mới',
-            'view_item' => 'Xem Service Icon',
-            'search_items' => 'Tìm Service Icon',
-            'not_found' => 'Không tìm thấy Service Icon',
-            'not_found_in_trash' => 'Không có Service Icon nào trong thùng rác'
-        ),
-        'public' => false,
-        'show_ui' => true,
-        'show_in_menu' => true,
-        'menu_icon' => 'dashicons-star-filled',
-        'supports' => array('title', 'editor', 'thumbnail'),
-        'has_archive' => false,
-        'rewrite' => false
-    ));
-
-    // Category Item
-    register_post_type('category_item', array(
-        'labels' => array(
-            'name' => 'Category Items',
-            'singular_name' => 'Category Item',
-            'add_new' => 'Thêm Category',
-            'add_new_item' => 'Thêm Category Mới',
-            'edit_item' => 'Sửa Category',
-            'new_item' => 'Category Mới',
-            'view_item' => 'Xem Category',
-            'search_items' => 'Tìm Category',
-            'not_found' => 'Không tìm thấy Category',
-            'not_found_in_trash' => 'Không có Category nào trong thùng rác'
-        ),
-        'public' => false,
-        'show_ui' => true,
-        'show_in_menu' => true,
-        'menu_icon' => 'dashicons-category',
-        'supports' => array('title', 'editor', 'thumbnail'),
-        'has_archive' => false,
-        'rewrite' => false
-    ));
+// ===== PERFORMANCE OPTIMIZATIONS =====
+function scode_optimize_images() {
+    // Add image optimization hooks
+    add_filter('wp_get_attachment_image_src', 'scode_optimize_image_src', 10, 4);
+    add_filter('wp_calculate_image_srcset', 'scode_optimize_image_srcset', 10, 5);
 }
-add_action('init', 'scode_register_section_post_types');
 
-// ===== META BOXES FOR SECTIONS =====
-function scode_add_section_meta_boxes() {
-    // Hero Section Meta Box
-    add_meta_box(
-        'hero_section_meta',
-        'Hero Section Settings',
-        'scode_hero_section_meta_callback',
-        'hero_section',
-        'normal',
-        'high'
+function scode_optimize_image_src($image, $attachment_id, $size, $icon) {
+    // Optimize image loading
+    if (is_array($image) && isset($image[0])) {
+        $image[0] = esc_url($image[0]);
+    }
+    return $image;
+}
+
+function scode_optimize_image_srcset($sources, $size_array, $image_src, $image_meta, $attachment_id) {
+    // Optimize srcset for better performance
+    return $sources;
+}
+
+add_action('init', 'scode_optimize_images');
+
+// ===== SECURITY ENHANCEMENTS =====
+function scode_security_headers() {
+    // Add security headers
+    if (!is_admin()) {
+        header('X-Content-Type-Options: nosniff');
+        header('X-Frame-Options: SAMEORIGIN');
+        header('X-XSS-Protection: 1; mode=block');
+    }
+}
+add_action('send_headers', 'scode_security_headers');
+
+// ===== DEBUG MODE =====
+if (defined('WP_DEBUG') && WP_DEBUG) {
+    // Enable error logging for debugging
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+}
+
+// ===== THEME ACTIVATION HOOK =====
+function scode_theme_activation() {
+    // Flush rewrite rules
+    flush_rewrite_rules();
+    
+    // Create default pages if they don't exist
+    scode_create_default_pages();
+}
+add_action('after_switch_theme', 'scode_theme_activation');
+
+function scode_create_default_pages() {
+    // Create default pages
+    $pages = array(
+        'home' => array(
+            'title' => 'Trang chủ',
+            'content' => 'Đây là trang chủ của website.'
+        ),
+        'about' => array(
+            'title' => 'Giới thiệu',
+            'content' => 'Thông tin về công ty chúng tôi.'
+        ),
+        'contact' => array(
+            'title' => 'Liên hệ',
+            'content' => 'Thông tin liên hệ của chúng tôi.'
+        )
     );
+    
+    foreach ($pages as $slug => $page_data) {
+        if (!get_page_by_path($slug)) {
+            wp_insert_post(array(
+                'post_title' => $page_data['title'],
+                'post_content' => $page_data['content'],
+                'post_status' => 'publish',
+                'post_type' => 'page',
+                'post_name' => $slug
+            ));
+        }
+    }
+}
 
-    // Promo Banner Meta Box
-    add_meta_box(
-        'promo_banner_meta',
-        'Promo Banner Settings',
-        'scode_promo_banner_meta_callback',
-        'promo_banner',
-        'normal',
-        'high'
-    );
-
-    // Service Icon Meta Box
-    add_meta_box(
-        'service_icon_meta',
-        'Service Icon Settings',
-        'scode_service_icon_meta_callback',
-        'service_icon',
-        'normal',
-        'high'
-    );
-
-    // Category Item Meta Box
-    add_meta_box(
-        'category_item_meta',
-        'Category Item Settings',
-        'scode_category_item_meta_callback',
-        'category_item',
-        'normal',
-        'high'
+// ===== SIMPLE WOOCOMMERCE IMAGE LOADER =====
+function scode_get_simple_product_image($product_id, $size = 'product-thumb', $class = 'product-img') {
+    // Check if product has thumbnail
+    if (has_post_thumbnail($product_id)) {
+        $thumbnail_id = get_post_thumbnail_id($product_id);
+        $image_url = wp_get_attachment_image_url($thumbnail_id, $size);
+        
+        if ($image_url) {
+            $image_alt = get_post_meta($thumbnail_id, '_wp_attachment_image_alt', true);
+            if (empty($image_alt)) {
+                $image_alt = get_the_title($product_id);
+            }
+            
+            // Simple image tag without JavaScript error handling
+            return sprintf(
+                '<img src="%s" alt="%s" class="%s" loading="lazy">',
+                esc_url($image_url),
+                esc_attr($image_alt),
+                esc_attr($class)
+            );
+        }
+    }
+    
+    // Simple fallback - use WooCommerce default placeholder
+    if (class_exists('WooCommerce')) {
+        $placeholder_url = wc_placeholder_img_src($size);
+        return sprintf(
+            '<img src="%s" alt="%s" class="%s placeholder-image" loading="lazy">',
+            esc_url($placeholder_url),
+            esc_attr(get_the_title($product_id)),
+            esc_attr($class)
+        );
+    }
+    
+    // Last resort - simple text placeholder
+    return sprintf(
+        '<div class="%s" style="width: 100%%; height: 200px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #999; font-size: 14px; border: 1px dashed #ccc;">
+            <span>%s</span>
+        </div>',
+        esc_attr($class),
+        esc_html(get_the_title($product_id))
     );
 }
-add_action('add_meta_boxes', 'scode_add_section_meta_boxes');
 
-// ===== META BOX CALLBACKS =====
-function scode_hero_section_meta_callback($post) {
-    wp_nonce_field('scode_save_section_meta', 'scode_section_meta_nonce');
+// ===== FIX PRODUCT IMAGE DISPLAY ISSUES =====
+function scode_get_product_image_fallback($product_id, $size = 'product-thumb', $class = '') {
+    // Check if product has thumbnail
+    if (has_post_thumbnail($product_id)) {
+        $thumbnail_id = get_post_thumbnail_id($product_id);
+        $image_url = wp_get_attachment_image_url($thumbnail_id, $size);
+        
+        if ($image_url) {
+            $image_alt = get_post_meta($thumbnail_id, '_wp_attachment_image_alt', true);
+            if (empty($image_alt)) {
+                $image_alt = get_the_title($product_id);
+            }
+            
+            return sprintf(
+                '<img src="%s" alt="%s" class="%s" loading="lazy" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';">',
+                esc_url($image_url),
+                esc_attr($image_alt),
+                esc_attr($class)
+            );
+        }
+    }
     
-    $hero_title = get_post_meta($post->ID, '_hero_title', true);
-    $hero_subtitle = get_post_meta($post->ID, '_hero_subtitle', true);
-    $hero_button_text = get_post_meta($post->ID, '_hero_button_text', true);
-    $hero_button_url = get_post_meta($post->ID, '_hero_button_url', true);
-    $hero_background_color = get_post_meta($post->ID, '_hero_background_color', true);
-    $hero_text_color = get_post_meta($post->ID, '_hero_text_color', true);
-    $hero_order = get_post_meta($post->ID, '_hero_order', true);
-    $hero_active = get_post_meta($post->ID, '_hero_active', true);
+    // Fallback to placeholder image
+    $placeholder_url = get_template_directory_uri() . '/assets/images/placeholder-product.jpg';
     
-    ?>
-    <table class="form-table">
-        <tr>
-            <th><label for="hero_title">Tiêu đề chính</label></th>
-            <td><input type="text" id="hero_title" name="hero_title" value="<?php echo esc_attr($hero_title); ?>" class="regular-text" /></td>
-        </tr>
-        <tr>
-            <th><label for="hero_subtitle">Tiêu đề phụ</label></th>
-            <td><input type="text" id="hero_subtitle" name="hero_subtitle" value="<?php echo esc_attr($hero_subtitle); ?>" class="regular-text" /></td>
-        </tr>
-        <tr>
-            <th><label for="hero_button_text">Text nút</label></th>
-            <td><input type="text" id="hero_button_text" name="hero_button_text" value="<?php echo esc_attr($hero_button_text); ?>" class="regular-text" /></td>
-        </tr>
-        <tr>
-            <th><label for="hero_button_url">URL nút</label></th>
-            <td><input type="url" id="hero_button_url" name="hero_button_url" value="<?php echo esc_attr($hero_button_url); ?>" class="regular-text" /></td>
-        </tr>
-        <tr>
-            <th><label for="hero_background_color">Màu nền</label></th>
-            <td><input type="color" id="hero_background_color" name="hero_background_color" value="<?php echo esc_attr($hero_background_color); ?>" /></td>
-        </tr>
-        <tr>
-            <th><label for="hero_text_color">Màu chữ</label></th>
-            <td><input type="color" id="hero_text_color" name="hero_text_color" value="<?php echo esc_attr($hero_text_color); ?>" /></td>
-        </tr>
-        <tr>
-            <th><label for="hero_order">Thứ tự</label></th>
-            <td><input type="number" id="hero_order" name="hero_order" value="<?php echo esc_attr($hero_order); ?>" min="1" class="small-text" /></td>
-        </tr>
-        <tr>
-            <th><label for="hero_active">Kích hoạt</label></th>
-            <td><input type="checkbox" id="hero_active" name="hero_active" value="1" <?php checked($hero_active, '1'); ?> /></td>
-        </tr>
-    </table>
-    <?php
+    // Check if placeholder exists, if not use default WooCommerce placeholder
+    if (!file_exists(get_template_directory() . '/assets/images/placeholder-product.jpg')) {
+        if (class_exists('WooCommerce')) {
+            $placeholder_url = wc_placeholder_img_src($size);
+        } else {
+            // Create a simple SVG placeholder if no WooCommerce
+            $placeholder_url = 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><rect width="300" height="300" fill="#f0f0f0"/><text x="150" y="150" text-anchor="middle" dy=".3em" fill="#999" font-family="Arial" font-size="16">No Image</text></svg>');
+        }
+    }
+    
+    return sprintf(
+        '<img src="%s" alt="%s" class="%s placeholder-image" loading="lazy" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';">
+        <div class="image-placeholder" style="display: none; width: 100%%; height: 250px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #999; font-size: 14px;">
+            <i class="fas fa-image" style="font-size: 32px; margin-right: 10px;"></i>
+            <span>%s</span>
+        </div>',
+        esc_url($placeholder_url),
+        esc_attr(get_the_title($product_id)),
+        esc_attr($class),
+        esc_html(get_the_title($product_id))
+    );
 }
 
-function scode_promo_banner_meta_callback($post) {
-    wp_nonce_field('scode_save_section_meta', 'scode_section_meta_nonce');
-    
-    $banner_title = get_post_meta($post->ID, '_banner_title', true);
-    $banner_description = get_post_meta($post->ID, '_banner_description', true);
-    $banner_button_text = get_post_meta($post->ID, '_banner_button_text', true);
-    $banner_button_url = get_post_meta($post->ID, '_banner_button_url', true);
-    $banner_background_color = get_post_meta($post->ID, '_banner_background_color', true);
-    $banner_text_color = get_post_meta($post->ID, '_banner_text_color', true);
-    $banner_order = get_post_meta($post->ID, '_banner_order', true);
-    $banner_active = get_post_meta($post->ID, '_banner_active', true);
-    
-    ?>
-    <table class="form-table">
-        <tr>
-            <th><label for="banner_title">Tiêu đề</label></th>
-            <td><input type="text" id="banner_title" name="banner_title" value="<?php echo esc_attr($banner_title); ?>" class="regular-text" /></td>
-        </tr>
-        <tr>
-            <th><label for="banner_description">Mô tả</label></th>
-            <td><textarea id="banner_description" name="banner_description" rows="3" class="large-text"><?php echo esc_textarea($banner_description); ?></textarea></td>
-        </tr>
-        <tr>
-            <th><label for="banner_button_text">Text nút</label></th>
-            <td><input type="text" id="banner_button_text" name="banner_button_text" value="<?php echo esc_attr($banner_button_text); ?>" class="regular-text" /></td>
-        </tr>
-        <tr>
-            <th><label for="banner_button_url">URL nút</label></th>
-            <td><input type="url" id="banner_button_url" name="banner_button_url" value="<?php echo esc_attr($banner_button_url); ?>" class="regular-text" /></td>
-        </tr>
-        <tr>
-            <th><label for="banner_background_color">Màu nền</label></th>
-            <td><input type="color" id="banner_background_color" name="banner_background_color" value="<?php echo esc_attr($banner_background_color); ?>" /></td>
-        </tr>
-        <tr>
-            <th><label for="banner_text_color">Màu chữ</label></th>
-            <td><input type="color" id="banner_text_color" name="banner_text_color" value="<?php echo esc_attr($banner_text_color); ?>" /></td>
-        </tr>
-        <tr>
-            <th><label for="banner_order">Thứ tự</label></th>
-            <td><input type="number" id="banner_order" name="banner_order" value="<?php echo esc_attr($banner_order); ?>" min="1" class="small-text" /></td>
-        </tr>
-        <tr>
-            <th><label for="banner_active">Kích hoạt</label></th>
-            <td><input type="checkbox" id="banner_active" name="banner_active" value="1" <?php checked($banner_active, '1'); ?> /></td>
-        </tr>
-    </table>
-    <?php
+// Enhanced product image function for homepage
+function scode_get_homepage_product_image($product_id, $class = 'product-img') {
+    return scode_get_product_image_fallback($product_id, 'product-thumb', $class);
 }
 
-function scode_service_icon_meta_callback($post) {
-    wp_nonce_field('scode_save_section_meta', 'scode_section_meta_nonce');
-    
-    $service_title = get_post_meta($post->ID, '_service_title', true);
-    $service_description = get_post_meta($post->ID, '_service_description', true);
-    $service_icon = get_post_meta($post->ID, '_service_icon', true);
-    $service_button_text = get_post_meta($post->ID, '_service_button_text', true);
-    $service_button_url = get_post_meta($post->ID, '_service_button_url', true);
-    $service_background_color = get_post_meta($post->ID, '_service_background_color', true);
-    $service_icon_color = get_post_meta($post->ID, '_service_icon_color', true);
-    $service_order = get_post_meta($post->ID, '_service_order', true);
-    $service_active = get_post_meta($post->ID, '_service_active', true);
-    
-    ?>
-    <table class="form-table">
-        <tr>
-            <th><label for="service_title">Tiêu đề</label></th>
-            <td><input type="text" id="service_title" name="service_title" value="<?php echo esc_attr($service_title); ?>" class="regular-text" /></td>
-        </tr>
-        <tr>
-            <th><label for="service_description">Mô tả</label></th>
-            <td><textarea id="service_description" name="service_description" rows="3" class="large-text"><?php echo esc_textarea($service_description); ?></textarea></td>
-        </tr>
-        <tr>
-            <th><label for="service_icon">Icon (FontAwesome class)</label></th>
-            <td><input type="text" id="service_icon" name="service_icon" value="<?php echo esc_attr($service_icon); ?>" class="regular-text" placeholder="fas fa-truck" /></td>
-        </tr>
-        <tr>
-            <th><label for="service_button_text">Text nút</label></th>
-            <td><input type="text" id="service_button_text" name="service_button_text" value="<?php echo esc_attr($service_button_text); ?>" class="regular-text" /></td>
-        </tr>
-        <tr>
-            <th><label for="service_button_url">URL nút</label></th>
-            <td><input type="url" id="service_button_url" name="service_button_url" value="<?php echo esc_attr($service_button_url); ?>" class="regular-text" /></td>
-        </tr>
-        <tr>
-            <th><label for="service_background_color">Màu nền icon</label></th>
-            <td><input type="color" id="service_background_color" name="service_background_color" value="<?php echo esc_attr($service_background_color); ?>" /></td>
-        </tr>
-        <tr>
-            <th><label for="service_icon_color">Màu icon</label></th>
-            <td><input type="color" id="service_icon_color" name="service_icon_color" value="<?php echo esc_attr($service_icon_color); ?>" /></td>
-        </tr>
-        <tr>
-            <th><label for="service_order">Thứ tự</label></th>
-            <td><input type="number" id="service_order" name="service_order" value="<?php echo esc_attr($service_order); ?>" min="1" class="small-text" /></td>
-        </tr>
-        <tr>
-            <th><label for="service_active">Kích hoạt</label></th>
-            <td><input type="checkbox" id="service_active" name="service_active" value="1" <?php checked($service_active, '1'); ?> /></td>
-        </tr>
-    </table>
-    <?php
+// Force regenerate thumbnails on theme activation
+function scode_regenerate_thumbnails() {
+    if (class_exists('WooCommerce')) {
+        // Get all products
+        $products = get_posts(array(
+            'post_type' => 'product',
+            'numberposts' => -1,
+            'post_status' => 'publish'
+        ));
+        
+        foreach ($products as $product) {
+            $thumbnail_id = get_post_thumbnail_id($product->ID);
+            if ($thumbnail_id) {
+                // Force regenerate thumbnails
+                $full_size_path = get_attached_file($thumbnail_id);
+                if ($full_size_path && file_exists($full_size_path)) {
+                    $metadata = wp_generate_attachment_metadata($thumbnail_id, $full_size_path);
+                    wp_update_attachment_metadata($thumbnail_id, $metadata);
+                }
+            }
+        }
+    }
 }
 
-function scode_category_item_meta_callback($post) {
-    wp_nonce_field('scode_save_section_meta', 'scode_section_meta_nonce');
+// Add this to theme activation
+add_action('after_switch_theme', 'scode_regenerate_thumbnails');
+
+// Debug function to check image issues
+function scode_debug_product_images() {
+    if (current_user_can('administrator') && isset($_GET['debug_images'])) {
+        echo '<div style="background: #f0f0f0; padding: 20px; margin: 20px; border: 1px solid #ccc;">';
+        echo '<h3>Debug Product Images</h3>';
+        
+        if (class_exists('WooCommerce')) {
+            $products = get_posts(array(
+                'post_type' => 'product',
+                'numberposts' => 5,
+                'post_status' => 'publish'
+            ));
+            
+            foreach ($products as $product) {
+                echo '<h4>' . $product->post_title . '</h4>';
+                echo '<p>Product ID: ' . $product->ID . '</p>';
+                echo '<p>Has thumbnail: ' . (has_post_thumbnail($product->ID) ? 'Yes' : 'No') . '</p>';
+                
+                if (has_post_thumbnail($product->ID)) {
+                    $thumbnail_id = get_post_thumbnail_id($product->ID);
+                    $image_url = wp_get_attachment_image_url($thumbnail_id, 'product-thumb');
+                    echo '<p>Thumbnail URL: ' . ($image_url ? $image_url : 'NULL') . '</p>';
+                    echo '<p>Thumbnail ID: ' . $thumbnail_id . '</p>';
+                    
+                    // Check if file exists
+                    $upload_dir = wp_upload_dir();
+                    $file_path = str_replace($upload_dir['baseurl'], $upload_dir['basedir'], $image_url);
+                    echo '<p>File exists: ' . (file_exists($file_path) ? 'Yes' : 'No') . '</p>';
+                    echo '<p>File path: ' . $file_path . '</p>';
+                }
+                echo '<hr>';
+            }
+        }
+        echo '</div>';
+    }
+}
+add_action('wp_footer', 'scode_debug_product_images');
+
+// Add debug info to admin bar
+function scode_add_debug_admin_bar($wp_admin_bar) {
+    if (current_user_can('administrator')) {
+        $wp_admin_bar->add_node(array(
+            'id' => 'debug-images',
+            'title' => 'Debug Images',
+            'href' => add_query_arg('debug_images', '1', home_url())
+        ));
+    }
+}
+add_action('admin_bar_menu', 'scode_add_debug_admin_bar', 999);
+
+// Function to fix image display issues
+function scode_fix_image_display_issues() {
+    // Remove any CSS that might hide images
+    add_action('wp_head', function() {
+        echo '<style>
+        /* Force all product images to be visible */
+        .product-img,
+        .product-image img,
+        .attachment-woocommerce_thumbnail,
+        .wp-post-image,
+        .placeholder-image,
+        .product-card img,
+        .product-image-wrapper img,
+        .featured-products img {
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            max-width: 100% !important;
+            height: auto !important;
+        }
+        
+        /* Override any JavaScript hiding */
+        .product-img[style*="display: none"],
+        .product-image img[style*="display: none"] {
+            display: block !important;
+        }
+        
+        /* Debug borders */
+        .product-img,
+        .product-image img {
+            border: 2px solid #ff0000 !important;
+        }
+        </style>';
+    });
     
-    $category_title = get_post_meta($post->ID, '_category_title', true);
-    $category_description = get_post_meta($post->ID, '_category_description', true);
-    $category_icon = get_post_meta($post->ID, '_category_icon', true);
-    $category_url = get_post_meta($post->ID, '_category_url', true);
-    $category_background_color = get_post_meta($post->ID, '_category_background_color', true);
-    $category_icon_color = get_post_meta($post->ID, '_category_icon_color', true);
-    $category_order = get_post_meta($post->ID, '_category_order', true);
-    $category_active = get_post_meta($post->ID, '_category_active', true);
-    
-    ?>
-    <table class="form-table">
-        <tr>
-            <th><label for="category_title">Tiêu đề</label></th>
-            <td><input type="text" id="category_title" name="category_title" value="<?php echo esc_attr($category_title); ?>" class="regular-text" /></td>
-        </tr>
-        <tr>
-            <th><label for="category_description">Mô tả</label></th>
-            <td><textarea id="category_description" name="category_description" rows="3" class="large-text"><?php echo esc_textarea($category_description); ?></textarea></td>
-        </tr>
-        <tr>
-            <th><label for="category_icon">Icon (FontAwesome class)</label></th>
-            <td><input type="text" id="category_icon" name="category_icon" value="<?php echo esc_attr($category_icon); ?>" class="regular-text" placeholder="fas fa-robot" /></td>
-        </tr>
-        <tr>
-            <th><label for="category_url">URL danh mục</label></th>
-            <td><input type="url" id="category_url" name="category_url" value="<?php echo esc_attr($category_url); ?>" class="regular-text" /></td>
-        </tr>
-        <tr>
-            <th><label for="category_background_color">Màu nền</label></th>
-            <td><input type="color" id="category_background_color" name="category_background_color" value="<?php echo esc_attr($category_background_color); ?>" /></td>
-        </tr>
-        <tr>
-            <th><label for="category_icon_color">Màu icon</label></th>
-            <td><input type="color" id="category_icon_color" name="category_icon_color" value="<?php echo esc_attr($category_icon_color); ?>" /></td>
-        </tr>
-        <tr>
-            <th><label for="category_order">Thứ tự</label></th>
-            <td><input type="number" id="category_order" name="category_order" value="<?php echo esc_attr($category_order); ?>" min="1" class="small-text" /></td>
-        </tr>
-        <tr>
-            <th><label for="category_active">Kích hoạt</label></th>
-            <td><input type="checkbox" id="category_active" name="category_active" value="1" <?php checked($category_active, '1'); ?> /></td>
-        </tr>
-    </table>
-    <?php
+    // Add JavaScript to prevent images from being hidden and handle errors
+    add_action('wp_footer', function() {
+        echo '<script>
+        jQuery(document).ready(function($) {
+            // Force all images to be visible
+            function forceImageVisibility() {
+                $(".product-img, .product-image img, .attachment-woocommerce_thumbnail, .wp-post-image").each(function() {
+                    $(this).css({
+                        "display": "block",
+                        "opacity": "1",
+                        "visibility": "visible"
+                    });
+                });
+            }
+            
+            // Handle broken images
+            function handleBrokenImages() {
+                $("img").each(function() {
+                    const $img = $(this);
+                    const $placeholder = $img.next(".image-placeholder");
+                    
+                    // Check if image is broken
+                    if ($img[0].naturalWidth === 0 || $img[0].complete === false) {
+                        $img.hide();
+                        if ($placeholder.length) {
+                            $placeholder.show();
+                        }
+                    }
+                });
+            }
+            
+            // Run immediately
+            forceImageVisibility();
+            handleBrokenImages();
+            
+            // Run after a delay to catch any late changes
+            setTimeout(function() {
+                forceImageVisibility();
+                handleBrokenImages();
+            }, 1000);
+            
+            setTimeout(function() {
+                forceImageVisibility();
+                handleBrokenImages();
+            }, 3000);
+            
+            // Monitor for changes
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === "attributes" && mutation.attributeName === "style") {
+                        forceImageVisibility();
+                    }
+                });
+            });
+            
+            // Observe all product images
+            $(".product-img, .product-image img").each(function() {
+                observer.observe(this, { attributes: true });
+            });
+            
+            // Handle image load errors
+            $(document).on("error", "img", function() {
+                const $img = $(this);
+                const $placeholder = $img.next(".image-placeholder");
+                
+                $img.hide();
+                if ($placeholder.length) {
+                    $placeholder.show();
+                } else {
+                    // Create placeholder if none exists
+                    const placeholder = $("<div>")
+                        .addClass("image-placeholder")
+                        .html("<i class=\"fas fa-image\"></i><span>Ảnh không khả dụng</span>");
+                    $img.after(placeholder);
+                }
+            });
+        });
+        </script>';
+    });
 }
 
-// ===== SAVE META DATA =====
-function scode_save_section_meta($post_id) {
-    if (!isset($_POST['scode_section_meta_nonce']) || !wp_verify_nonce($_POST['scode_section_meta_nonce'], 'scode_save_section_meta')) {
-        return;
-    }
-    
-    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-        return;
-    }
-    
-    if (!current_user_can('edit_post', $post_id)) {
-        return;
-    }
-    
-    // Save Hero Section Meta
-    if (isset($_POST['hero_title'])) {
-        update_post_meta($post_id, '_hero_title', sanitize_text_field($_POST['hero_title']));
-    }
-    if (isset($_POST['hero_subtitle'])) {
-        update_post_meta($post_id, '_hero_subtitle', sanitize_text_field($_POST['hero_subtitle']));
-    }
-    if (isset($_POST['hero_button_text'])) {
-        update_post_meta($post_id, '_hero_button_text', sanitize_text_field($_POST['hero_button_text']));
-    }
-    if (isset($_POST['hero_button_url'])) {
-        update_post_meta($post_id, '_hero_button_url', esc_url_raw($_POST['hero_button_url']));
-    }
-    if (isset($_POST['hero_background_color'])) {
-        update_post_meta($post_id, '_hero_background_color', sanitize_hex_color($_POST['hero_background_color']));
-    }
-    if (isset($_POST['hero_text_color'])) {
-        update_post_meta($post_id, '_hero_text_color', sanitize_hex_color($_POST['hero_text_color']));
-    }
-    if (isset($_POST['hero_order'])) {
-        update_post_meta($post_id, '_hero_order', intval($_POST['hero_order']));
-    }
-    if (isset($_POST['hero_active'])) {
-        update_post_meta($post_id, '_hero_active', '1');
-    } else {
-        delete_post_meta($post_id, '_hero_active');
-    }
-    
-    // Save Promo Banner Meta
-    if (isset($_POST['banner_title'])) {
-        update_post_meta($post_id, '_banner_title', sanitize_text_field($_POST['banner_title']));
-    }
-    if (isset($_POST['banner_description'])) {
-        update_post_meta($post_id, '_banner_description', sanitize_textarea_field($_POST['banner_description']));
-    }
-    if (isset($_POST['banner_button_text'])) {
-        update_post_meta($post_id, '_banner_button_text', sanitize_text_field($_POST['banner_button_text']));
-    }
-    if (isset($_POST['banner_button_url'])) {
-        update_post_meta($post_id, '_banner_button_url', esc_url_raw($_POST['banner_button_url']));
-    }
-    if (isset($_POST['banner_background_color'])) {
-        update_post_meta($post_id, '_banner_background_color', sanitize_hex_color($_POST['banner_background_color']));
-    }
-    if (isset($_POST['banner_text_color'])) {
-        update_post_meta($post_id, '_banner_text_color', sanitize_hex_color($_POST['banner_text_color']));
-    }
-    if (isset($_POST['banner_order'])) {
-        update_post_meta($post_id, '_banner_order', intval($_POST['banner_order']));
-    }
-    if (isset($_POST['banner_active'])) {
-        update_post_meta($post_id, '_banner_active', '1');
-    } else {
-        delete_post_meta($post_id, '_banner_active');
-    }
-    
-    // Save Service Icon Meta
-    if (isset($_POST['service_title'])) {
-        update_post_meta($post_id, '_service_title', sanitize_text_field($_POST['service_title']));
-    }
-    if (isset($_POST['service_description'])) {
-        update_post_meta($post_id, '_service_description', sanitize_textarea_field($_POST['service_description']));
-    }
-    if (isset($_POST['service_icon'])) {
-        update_post_meta($post_id, '_service_icon', sanitize_text_field($_POST['service_icon']));
-    }
-    if (isset($_POST['service_button_text'])) {
-        update_post_meta($post_id, '_service_button_text', sanitize_text_field($_POST['service_button_text']));
-    }
-    if (isset($_POST['service_button_url'])) {
-        update_post_meta($post_id, '_service_button_url', esc_url_raw($_POST['service_button_url']));
-    }
-    if (isset($_POST['service_background_color'])) {
-        update_post_meta($post_id, '_service_background_color', sanitize_hex_color($_POST['service_background_color']));
-    }
-    if (isset($_POST['service_icon_color'])) {
-        update_post_meta($post_id, '_service_icon_color', sanitize_hex_color($_POST['service_icon_color']));
-    }
-    if (isset($_POST['service_order'])) {
-        update_post_meta($post_id, '_service_order', intval($_POST['service_order']));
-    }
-    if (isset($_POST['service_active'])) {
-        update_post_meta($post_id, '_service_active', '1');
-    } else {
-        delete_post_meta($post_id, '_service_active');
-    }
-    
-    // Save Category Item Meta
-    if (isset($_POST['category_title'])) {
-        update_post_meta($post_id, '_category_title', sanitize_text_field($_POST['category_title']));
-    }
-    if (isset($_POST['category_description'])) {
-        update_post_meta($post_id, '_category_description', sanitize_textarea_field($_POST['category_description']));
-    }
-    if (isset($_POST['category_icon'])) {
-        update_post_meta($post_id, '_category_icon', sanitize_text_field($_POST['category_icon']));
-    }
-    if (isset($_POST['category_url'])) {
-        update_post_meta($post_id, '_category_url', esc_url_raw($_POST['category_url']));
-    }
-    if (isset($_POST['category_background_color'])) {
-        update_post_meta($post_id, '_category_background_color', sanitize_hex_color($_POST['category_background_color']));
-    }
-    if (isset($_POST['category_icon_color'])) {
-        update_post_meta($post_id, '_category_icon_color', sanitize_hex_color($_POST['category_icon_color']));
-    }
-    if (isset($_POST['category_order'])) {
-        update_post_meta($post_id, '_category_order', intval($_POST['category_order']));
-    }
-    if (isset($_POST['category_active'])) {
-        update_post_meta($post_id, '_category_active', '1');
-    } else {
-        delete_post_meta($post_id, '_category_active');
-    }
-}
-add_action('save_post', 'scode_save_section_meta');
+// Run the fix
+scode_fix_image_display_issues();
 
-// ===== HELPER FUNCTIONS =====
-function scode_get_hero_sections($limit = -1) {
-    return get_posts(array(
-        'post_type' => 'hero_section',
-        'posts_per_page' => $limit,
-        'meta_key' => '_hero_order',
-        'orderby' => 'meta_value_num',
-        'order' => 'ASC',
-        'meta_query' => array(
-            array(
-                'key' => '_hero_active',
-                'value' => '1',
-                'compare' => '='
-            )
-        )
-    ));
+// Create SVG placeholder if image file doesn't exist
+function scode_create_svg_placeholder() {
+    $placeholder_path = get_template_directory() . '/assets/images/placeholder-product.jpg';
+    
+    if (!file_exists($placeholder_path)) {
+        $svg_content = '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+            <rect width="300" height="300" fill="#f8f9fa"/>
+            <rect x="10" y="10" width="280" height="280" fill="#e9ecef" stroke="#dee2e6" stroke-width="2" stroke-dasharray="5,5"/>
+            <circle cx="150" cy="120" r="30" fill="#adb5bd"/>
+            <rect x="100" y="170" width="100" height="15" fill="#adb5bd" rx="2"/>
+            <rect x="120" y="190" width="60" height="10" fill="#adb5bd" rx="2"/>
+            <rect x="130" y="205" width="40" height="10" fill="#adb5bd" rx="2"/>
+            <text x="150" y="250" text-anchor="middle" fill="#6c757d" font-family="Arial" font-size="12">No Image Available</text>
+        </svg>';
+        
+        // Create directory if it doesn't exist
+        $dir = dirname($placeholder_path);
+        if (!is_dir($dir)) {
+            wp_mkdir_p($dir);
+        }
+        
+        // Write SVG content
+        file_put_contents($placeholder_path, $svg_content);
+    }
 }
 
-function scode_get_promo_banners($limit = -1) {
-    return get_posts(array(
-        'post_type' => 'promo_banner',
-        'posts_per_page' => $limit,
-        'meta_key' => '_banner_order',
-        'orderby' => 'meta_value_num',
-        'order' => 'ASC',
-        'meta_query' => array(
-            array(
-                'key' => '_banner_active',
-                'value' => '1',
-                'compare' => '='
-            )
-        )
-    ));
-}
-
-function scode_get_service_icons($limit = -1) {
-    return get_posts(array(
-        'post_type' => 'service_icon',
-        'posts_per_page' => $limit,
-        'meta_key' => '_service_order',
-        'orderby' => 'meta_value_num',
-        'order' => 'ASC',
-        'meta_query' => array(
-            array(
-                'key' => '_service_active',
-                'value' => '1',
-                'compare' => '='
-            )
-        )
-    ));
-}
-
-function scode_get_category_items($limit = -1) {
-    return get_posts(array(
-        'post_type' => 'category_item',
-        'posts_per_page' => $limit,
-        'meta_key' => '_category_order',
-        'orderby' => 'meta_value_num',
-        'order' => 'ASC',
-        'meta_query' => array(
-            array(
-                'key' => '_category_active',
-                'value' => '1',
-                'compare' => '='
-            )
-        )
-    ));
-}
+// Run on theme init
+add_action('init', 'scode_create_svg_placeholder');
 

@@ -498,22 +498,13 @@ while (have_posts()) : the_post();
                         
                         <script>
                         jQuery(document).ready(function($) {
-                            console.log('=== INLINE JS TEST ===');
-                            
                             const $btn = $('#read-more-btn');
                             const $content = $('#description-content');
                             
-                            console.log('Inline elements:', {
-                                button: $btn.length,
-                                content: $content.length
-                            });
-                            
                             $btn.on('click', function(e) {
                                 e.preventDefault();
-                                console.log('Inline button clicked!');
                                 
                                 const isExpanded = $content.hasClass('expanded');
-                                console.log('Current state:', { isExpanded });
                                 
                                 if (isExpanded) {
                                     // Collapse
@@ -523,7 +514,6 @@ while (have_posts()) : the_post();
                                     $('.read-more-icon').show();
                                     $('.read-less-icon').hide();
                                     $btn.removeClass('expanded');
-                                    console.log('Content collapsed');
                                 } else {
                                     // Expand
                                     $content.addClass('expanded');
@@ -532,13 +522,12 @@ while (have_posts()) : the_post();
                                     $('.read-more-icon').hide();
                                     $('.read-less-icon').show();
                                     $btn.addClass('expanded');
-                                    console.log('Content expanded');
                                     
                                     // Force reflow to ensure content is visible
                                     setTimeout(() => {
                                         $content.css('max-height', 'none');
+                                        $content.css('max-height', 'none');
                                         $content.css('overflow', 'visible');
-                                        console.log('Content forced to expand');
                                     }, 100);
                                 }
                             });

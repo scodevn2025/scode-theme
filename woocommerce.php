@@ -1,6 +1,6 @@
 <?php
 /**
- * WooCommerce Template - Main WooCommerce Template File
+ * WooCommerce Template
  * 
  * @package SCODE_Theme
  * @version 1.0.0
@@ -8,34 +8,31 @@
 
 get_header(); ?>
 
-<main class="main-content woocommerce-page" id="main-content">
+<div class="woocommerce-wrapper">
     <div class="container">
-        
         <?php if (is_woocommerce()) : ?>
-            
-            <?php if (is_product()) : ?>
-                <!-- Single Product Page -->
-                <?php 
-                // Load our custom single product template using WooCommerce hooks
-                include get_template_directory() . '/woocommerce/content-single-product.php';
-                ?>
-                
-            <?php else : ?>
-                <!-- Other WooCommerce Pages -->
-                <div class="woocommerce-other-wrapper">
-                    <?php woocommerce_content(); ?>
-                </div>
-                
-            <?php endif; ?>
-            
+            <?php woocommerce_content(); ?>
         <?php else : ?>
-            <!-- Not a WooCommerce page -->
-            <div class="not-woocommerce-page">
-                <p>Trang này không phải là trang WooCommerce.</p>
-            </div>
+            <?php if (have_posts()) : ?>
+                <?php while (have_posts()) : the_post(); ?>
+                    <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+                        <header class="entry-header">
+                            <h1 class="entry-title"><?php the_title(); ?></h1>
+                        </header>
+
+                        <div class="entry-content">
+                            <?php the_content(); ?>
+                        </div>
+                    </article>
+                <?php endwhile; ?>
+            <?php else : ?>
+                <div class="no-content">
+                    <h2>Không tìm thấy nội dung</h2>
+                    <p>Xin lỗi, không có nội dung nào được tìm thấy.</p>
+                </div>
+            <?php endif; ?>
         <?php endif; ?>
-        
     </div>
-</main>
+</div>
 
 <?php get_footer(); ?>

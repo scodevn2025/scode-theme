@@ -448,6 +448,8 @@ jQuery(document).ready(function($) {
     }
 
     // ===== LAZY LOADING =====
+    // Commented out to avoid conflict with HTML5 lazy loading
+    /*
     function initLazyLoading() {
         if ('IntersectionObserver' in window) {
             const imageObserver = new IntersectionObserver((entries, observer) => {
@@ -466,6 +468,7 @@ jQuery(document).ready(function($) {
             });
         }
     }
+    */
 
     // ===== PRODUCT HOVER EFFECTS =====
     function initProductHover() {
@@ -944,7 +947,7 @@ jQuery(document).ready(function($) {
         initBackToTop();
         initNewsletter();
         initSmoothScroll();
-        initLazyLoading();
+        // initLazyLoading(); // Commented out to avoid conflict with HTML5 lazy loading
         initProductHover();
         initShortcutCategories();
         

@@ -289,8 +289,17 @@
                                     <div class="hero-slide-content">
                                         <div class="slide-left">
                                             <div class="slide-brands">
-                                                <img src="<?php echo get_theme_mod('scode_mi_logo', '/wp-content/uploads/mi-logo.png'); ?>" alt="Mi Vietnam" class="brand-logo">
-                                                <img src="<?php echo get_theme_mod('scode_ecovacs_logo', '/wp-content/uploads/ecovacs-logo.png'); ?>" alt="ECOVACS" class="brand-logo">
+                                                <?php if (get_theme_mod('scode_mi_logo')) : ?>
+                                                    <img src="<?php echo esc_url(get_theme_mod('scode_mi_logo')); ?>" alt="Mi Vietnam" class="brand-logo">
+                                                <?php else : ?>
+                                                    <div class="brand-logo-placeholder">MI VIETNAM.VN</div>
+                                                <?php endif; ?>
+                                                
+                                                <?php if (get_theme_mod('scode_ecovacs_logo')) : ?>
+                                                    <img src="<?php echo esc_url(get_theme_mod('scode_ecovacs_logo')); ?>" alt="ECOVACS" class="brand-logo">
+                                                <?php else : ?>
+                                                    <div class="brand-logo-placeholder">ECOVACS</div>
+                                                <?php endif; ?>
                                             </div>
                                             
                                             <h1 class="slide-title"><?php the_title(); ?></h1>
@@ -465,56 +474,56 @@
                         <?php endif; ?>
                     </div>
                     
-                                         <!-- Shortcut Categories Row - 3 Columns Layout -->
-                     <div class="shortcut-categories">
-                         <div class="shortcut-column">
-                             <div class="shortcut-item">
-                                 <div class="shortcut-badge">
-                                     <i class="fas fa-star"></i>
-                                 </div>
-                                 <span class="shortcut-label">NEW</span>
-                             </div>
-                             
-                             <div class="shortcut-item">
-                                 <div class="shortcut-badge">
-                                     <i class="fas fa-crown"></i>
-                                 </div>
-                                 <span class="shortcut-label">VIP</span>
-                             </div>
-                         </div>
-                         
-                         <div class="shortcut-column">
-                             <div class="shortcut-item">
-                                 <div class="shortcut-badge">
-                                     <i class="fas fa-running"></i>
-                                 </div>
-                                 <span class="shortcut-label">MÁY CHẠY BỘ</span>
-                             </div>
-                             
-                             <div class="shortcut-item">
-                                 <div class="shortcut-badge">
-                                     <i class="fas fa-robot"></i>
-                                 </div>
-                                 <span class="shortcut-label">ROBOT HÚT BỤI</span>
-                             </div>
-                         </div>
-                         
-                         <div class="shortcut-column">
-                             <div class="shortcut-item">
-                                 <div class="shortcut-badge">
-                                     <i class="fas fa-wind"></i>
-                                 </div>
-                                 <span class="shortcut-label">MÁY LỌC KHÔNG KHÍ</span>
-                             </div>
-                             
-                             <div class="shortcut-item">
-                                 <div class="shortcut-badge">
-                                     <i class="fas fa-cogs"></i>
-                                 </div>
-                                 <span class="shortcut-label">PHỤ KIỆN ROBOT</span>
-                             </div>
-                         </div>
-                     </div>
+                    <!-- Shortcut Categories Row - 3 Columns Layout -->
+                    <div class="shortcut-categories">
+                        <div class="shortcut-column">
+                            <div class="shortcut-item">
+                                <div class="shortcut-badge">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <span class="shortcut-label">NEW</span>
+                            </div>
+                            
+                            <div class="shortcut-item">
+                                <div class="shortcut-badge">
+                                    <i class="fas fa-crown"></i>
+                                </div>
+                                <span class="shortcut-label">VIP</span>
+                            </div>
+                        </div>
+                        
+                        <div class="shortcut-column">
+                            <div class="shortcut-item">
+                                <div class="shortcut-badge">
+                                    <i class="fas fa-running"></i>
+                                </div>
+                                <span class="shortcut-label">MÁY CHẠY BỘ</span>
+                            </div>
+                            
+                            <div class="shortcut-item">
+                                <div class="shortcut-badge">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <span class="shortcut-label">ROBOT HÚT BỤI</span>
+                            </div>
+                        </div>
+                        
+                        <div class="shortcut-column">
+                            <div class="shortcut-item">
+                                <div class="shortcut-badge">
+                                    <i class="fas fa-wind"></i>
+                                </div>
+                                <span class="shortcut-label">MÁY LỌC KHÔNG KHÍ</span>
+                            </div>
+                            
+                            <div class="shortcut-item">
+                                <div class="shortcut-badge">
+                                    <i class="fas fa-cogs"></i>
+                                </div>
+                                <span class="shortcut-label">PHỤ KIỆN ROBOT</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

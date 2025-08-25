@@ -112,8 +112,8 @@ get_header(); ?>
                     <?php while ($flash_sale_products->have_posts()) : $flash_sale_products->the_post(); 
                         global $product;
                     ?>
-                        <article class="mi-card">
-                            <div class="mi-media">
+                        <article class="product-card flash-sale">
+                            <div class="product-image-wrapper">
                                 <?php 
                                 // Calculate discount percentage
                                 $regular_price = $product->get_regular_price();
@@ -131,39 +131,41 @@ get_header(); ?>
                                 ?>
                                 
                                 <?php if ($discount_percent > 0) : ?>
-                                    <span class="mi-badge-off"><?php echo $discount_percent; ?>%</span>
-                                <?php endif; ?>
-                                
-                                <?php if (has_post_thumbnail()) : ?>
-                                    <a href="<?php the_permalink(); ?>">
-                                        <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
-                                    </a>
+                                    <span class="badge-sale">-<?php echo $discount_percent; ?>%</span>
                                 <?php endif; ?>
                                 
                                 <?php if ($has_coupon) : ?>
-                                    <span class="mi-ribbon">MÃ GIẢM GIÁ</span>
+                                    <span class="badge-coupon">MÃ GIẢM GIÁ</span>
                                 <?php endif; ?>
+                                
+                                <?php 
+                                // Use simple WooCommerce image loader
+                                $product_id = $product->get_id();
+                                echo '<a href="' . get_permalink() . '">';
+                                echo scode_get_simple_product_image($product_id, 'product-thumb', 'product-img');
+                                echo '</a>';
+                                ?>
                             </div>
 
-                            <h3 class="mi-title">
-                                <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                            </h3>
-
-                            <div class="mi-price">
-                                <?php if ($product->is_on_sale()) : ?>
-                                    <span class="mi-price-sale">
-                                        <?php echo number_format_i18n($sale_price, 0); ?>
-                                        <span class="cur">đ</span>
+                            <div class="product-info">
+                                <h3 class="product-title">
+                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                                </h3>
+                                
+                                <div class="product-price">
+                                    <?php if ($product->is_on_sale()) : ?>
+                                        <span class="price-sale">
+                                            <?php echo number_format_i18n($sale_price, 0); ?>đ
                                     </span>
-                                    <span class="mi-price-regular">
-                                        <?php echo number_format_i18n($regular_price, 0); ?>đ
-                                    </span>
-                                <?php else : ?>
-                                    <span class="mi-price-sale">
-                                        <?php echo number_format_i18n($product->get_price(), 0); ?>
-                                        <span class="cur">đ</span>
-                                    </span>
-                                <?php endif; ?>
+                                        <span class="price-regular">
+                                            <?php echo number_format_i18n($regular_price, 0); ?>đ
+                                        </span>
+                                    <?php else : ?>
+                                        <span class="price-current">
+                                            <?php echo number_format_i18n($product->get_price(), 0); ?>đ
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </article>
                     <?php endwhile; wp_reset_postdata(); ?>
@@ -245,55 +247,56 @@ get_header(); ?>
                                 $gift_value = get_post_meta($product_id, '_gift_value', true);
                                 $free_shipping = get_post_meta($product_id, '_free_shipping', true);
                             ?>
-                                <article class="mi-card">
-                                    <div class="mi-media">
+                                <article class="product-card featured">
+                                    <div class="product-image-wrapper">
+                                        <?php if ($discount_percentage > 0) : ?>
+                                            <span class="badge-sale">-<?php echo $discount_percentage; ?>%</span>
+                                        <?php endif; ?>
+                                        
+                                        <?php if ($is_new) : ?>
+                                            <span class="badge-new">Hàng mới về</span>
+                                        <?php endif; ?>
+                                        
+                                        <button class="btn-heart" data-product-id="<?php echo $product_id; ?>">
+                                            <i class="fas fa-heart"></i>
+                                        </button>
+                                        
                                         <?php 
-                                        // Calculate discount percentage
-                                        $discount_percent = 0;
-                                        if ($regular_price && $sale_price && $regular_price > $sale_price) {
-                                            $discount_percent = round((($regular_price - $sale_price) / $regular_price) * 100);
-                                        }
-                                        
-                                        // Check if product has special tags
-                                        $has_coupon = has_term('coupon', 'product_tag', $product_id) || 
-                                                     has_term('flash-sale', 'product_tag', $product_id) ||
-                                                     has_term('khuyen-mai', 'product_tag', $product_id);
+                                        // Use simple WooCommerce image loader
+                                        echo '<a href="' . get_permalink() . '">';
+                                        echo scode_get_simple_product_image($product_id, 'product-thumb', 'product-img');
+                                        echo '</a>';
                                         ?>
-                                        
-                                        <?php if ($discount_percent > 0) : ?>
-                                            <span class="mi-badge-off"><?php echo $discount_percent; ?>%</span>
-                                        <?php endif; ?>
-                                        
-                                        <?php if (has_post_thumbnail()) : ?>
-                                            <a href="<?php the_permalink(); ?>">
-                                                <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
-                                            </a>
-                                        <?php endif; ?>
-                                        
-                                        <?php if ($has_coupon) : ?>
-                                            <span class="mi-ribbon">MÃ GIẢM GIÁ</span>
-                                        <?php endif; ?>
                                     </div>
 
-                                    <h3 class="mi-title">
-                                        <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                                    </h3>
-
-                                    <div class="mi-price">
-                                        <?php if ($sale_price && $regular_price) : ?>
-                                            <span class="mi-price-sale">
-                                                <?php echo number_format_i18n($sale_price, 0); ?>
-                                                <span class="cur">đ</span>
-                                            </span>
-                                            <span class="mi-price-regular">
-                                                <?php echo number_format_i18n($regular_price, 0); ?>đ
-                                            </span>
-                                        <?php else : ?>
-                                            <span class="mi-price-sale">
-                                                <?php echo number_format_i18n($current_price, 0); ?>
-                                                <span class="cur">đ</span>
-                                            </span>
-                                        <?php endif; ?>
+                                    <div class="product-info">
+                                        <h3 class="product-title">
+                                            <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                                        </h3>
+                                        
+                                        <div class="product-rating">
+                                            <?php echo scode_get_product_rating($product_id); ?>
+                                        </div>
+                                        
+                                        <div class="product-price">
+                                            <?php if ($sale_price && $regular_price) : ?>
+                                                <span class="price-sale">
+                                                    <?php echo number_format_i18n($sale_price, 0); ?>đ
+                                                </span>
+                                                <span class="price-regular">
+                                                    <?php echo number_format_i18n($regular_price, 0); ?>đ
+                                                </span>
+                                            <?php else : ?>
+                                                <span class="price-current">
+                                                    <?php echo number_format_i18n($current_price, 0); ?>đ
+                                                </span>
+                                            <?php endif; ?>
+                                        </div>
+                                        
+                                        <button class="btn-add-to-cart" data-product-id="<?php echo $product_id; ?>">
+                                            <i class="fas fa-shopping-cart"></i>
+                                            Thêm vào giỏ
+                                        </button>
                                     </div>
                                 </article>
                             <?php endwhile; ?>
@@ -324,8 +327,8 @@ get_header(); ?>
                     <?php while ($best_sellers->have_posts()) : $best_sellers->the_post(); 
                         global $product;
                     ?>
-                        <article class="mi-card">
-                            <div class="mi-media">
+                        <article class="product-card bestseller">
+                            <div class="product-image-wrapper">
                                 <?php 
                                 // Calculate discount percentage
                                 $regular_price = $product->get_regular_price();
@@ -335,47 +338,40 @@ get_header(); ?>
                                 if ($regular_price && $sale_price && $regular_price > $sale_price) {
                                     $discount_percent = round((($regular_price - $sale_price) / $regular_price) * 100);
                                 }
-                                
-                                // Check if product has special tags
-                                $has_coupon = has_term('coupon', 'product_tag', $product->get_id()) || 
-                                             has_term('flash-sale', 'product_tag', $product->get_id()) ||
-                                             has_term('khuyen-mai', 'product_tag', $product->get_id());
                                 ?>
                                 
                                 <?php if ($discount_percent > 0) : ?>
-                                    <span class="mi-badge-off"><?php echo $discount_percent; ?>%</span>
+                                    <span class="badge-sale">-<?php echo $discount_percent; ?>%</span>
                                 <?php endif; ?>
                                 
-                                <?php if (has_post_thumbnail()) : ?>
-                                    <a href="<?php the_permalink(); ?>">
-                                        <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
-                                    </a>
-                                <?php endif; ?>
-                                
-                                <?php if ($has_coupon) : ?>
-                                    <span class="mi-ribbon">MÃ GIẢM GIÁ</span>
-                                <?php endif; ?>
+                                <?php 
+                                // Use simple WooCommerce image loader
+                                $product_id = $product->get_id();
+                                echo '<a href="' . get_permalink() . '">';
+                                echo scode_get_simple_product_image($product_id, 'product-thumb', 'product-img');
+                                echo '</a>';
+                                ?>
                             </div>
 
-                            <h3 class="mi-title">
-                                <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                            </h3>
-
-                            <div class="mi-price">
-                                <?php if ($product->is_on_sale()) : ?>
-                                    <span class="mi-price-sale">
-                                        <?php echo number_format_i18n($sale_price, 0); ?>
-                                        <span class="cur">đ</span>
-                                    </span>
-                                    <span class="mi-price-regular">
-                                        <?php echo number_format_i18n($regular_price, 0); ?>đ
-                                    </span>
-                                <?php else : ?>
-                                    <span class="mi-price-sale">
-                                        <?php echo number_format_i18n($product->get_price(), 0); ?>
-                                        <span class="cur">đ</span>
-                                    </span>
-                                <?php endif; ?>
+                            <div class="product-info">
+                                <h3 class="product-title">
+                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                                </h3>
+                                
+                                <div class="product-price">
+                                    <?php if ($product->is_on_sale()) : ?>
+                                        <span class="price-sale">
+                                            <?php echo number_format_i18n($sale_price, 0); ?>đ
+                                        </span>
+                                        <span class="price-regular">
+                                            <?php echo number_format_i18n($regular_price, 0); ?>đ
+                                        </span>
+                                    <?php else : ?>
+                                        <span class="price-current">
+                                            <?php echo number_format_i18n($product->get_price(), 0); ?>đ
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </article>
                     <?php endwhile; wp_reset_postdata(); ?>
@@ -491,8 +487,8 @@ get_header(); ?>
                     <?php while ($air_purifiers->have_posts()) : $air_purifiers->the_post(); 
                         global $product;
                     ?>
-                        <article class="mi-card">
-                            <div class="mi-media">
+                        <article class="product-card category-product">
+                            <div class="product-image-wrapper">
                                 <?php 
                                 // Calculate discount percentage
                                 $regular_price = $product->get_regular_price();
@@ -510,39 +506,41 @@ get_header(); ?>
                                 ?>
                                 
                                 <?php if ($discount_percent > 0) : ?>
-                                    <span class="mi-badge-off"><?php echo $discount_percent; ?>%</span>
-                                <?php endif; ?>
-                                
-                                <?php if (has_post_thumbnail()) : ?>
-                                    <a href="<?php the_permalink(); ?>">
-                                        <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
-                                    </a>
+                                    <span class="badge-sale">-<?php echo $discount_percent; ?>%</span>
                                 <?php endif; ?>
                                 
                                 <?php if ($has_coupon) : ?>
-                                    <span class="mi-ribbon">MÃ GIẢM GIÁ</span>
+                                    <span class="badge-coupon">MÃ GIẢM GIÁ</span>
                                 <?php endif; ?>
+                                
+                                <?php 
+                                // Use simple WooCommerce image loader
+                                $product_id = $product->get_id();
+                                echo '<a href="' . get_permalink() . '">';
+                                echo scode_get_simple_product_image($product_id, 'product-thumb', 'product-img');
+                                echo '</a>';
+                                ?>
                             </div>
 
-                            <h3 class="mi-title">
-                                <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                            </h3>
-
-                            <div class="mi-price">
-                                <?php if ($product->is_on_sale()) : ?>
-                                    <span class="mi-price-sale">
-                                        <?php echo number_format_i18n($sale_price, 0); ?>
-                                        <span class="cur">đ</span>
-                                    </span>
-                                    <span class="mi-price-regular">
-                                        <?php echo number_format_i18n($regular_price, 0); ?>đ
-                                    </span>
-                                <?php else : ?>
-                                    <span class="mi-price-sale">
-                                        <?php echo number_format_i18n($product->get_price(), 0); ?>
-                                        <span class="cur">đ</span>
-                                    </span>
-                                <?php endif; ?>
+                            <div class="product-info">
+                                <h3 class="product-title">
+                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                                </h3>
+                                
+                                <div class="product-price">
+                                    <?php if ($product->is_on_sale()) : ?>
+                                        <span class="price-sale">
+                                            <?php echo number_format_i18n($sale_price, 0); ?>đ
+                                        </span>
+                                        <span class="price-regular">
+                                            <?php echo number_format_i18n($regular_price, 0); ?>đ
+                                        </span>
+                                    <?php else : ?>
+                                        <span class="price-current">
+                                            <?php echo number_format_i18n($product->get_price(), 0); ?>đ
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </article>
                     <?php endwhile; wp_reset_postdata(); ?>
@@ -571,8 +569,8 @@ get_header(); ?>
                     <?php while ($water_purifiers->have_posts()) : $water_purifiers->the_post(); 
                         global $product;
                     ?>
-                        <article class="mi-card">
-                            <div class="mi-media">
+                        <article class="product-card category-product">
+                            <div class="product-image-wrapper">
                                 <?php 
                                 // Calculate discount percentage
                                 $regular_price = $product->get_regular_price();
@@ -590,39 +588,41 @@ get_header(); ?>
                                 ?>
                                 
                                 <?php if ($discount_percent > 0) : ?>
-                                    <span class="mi-badge-off"><?php echo $discount_percent; ?>%</span>
-                                <?php endif; ?>
-                                
-                                <?php if (has_post_thumbnail()) : ?>
-                                    <a href="<?php the_permalink(); ?>">
-                                        <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
-                                    </a>
+                                    <span class="badge-sale">-<?php echo $discount_percent; ?>%</span>
                                 <?php endif; ?>
                                 
                                 <?php if ($has_coupon) : ?>
-                                    <span class="mi-ribbon">MÃ GIẢM GIÁ</span>
+                                    <span class="badge-coupon">MÃ GIẢM GIÁ</span>
                                 <?php endif; ?>
+                                
+                                <?php 
+                                // Use simple WooCommerce image loader
+                                $product_id = $product->get_id();
+                                echo '<a href="' . get_permalink() . '">';
+                                echo scode_get_simple_product_image($product_id, 'product-thumb', 'product-img');
+                                echo '</a>';
+                                ?>
                             </div>
 
-                            <h3 class="mi-title">
-                                <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                            </h3>
-
-                            <div class="mi-price">
-                                <?php if ($product->is_on_sale()) : ?>
-                                    <span class="mi-price-sale">
-                                        <?php echo number_format_i18n($sale_price, 0); ?>
-                                        <span class="cur">đ</span>
-                                    </span>
-                                    <span class="mi-price-regular">
-                                        <?php echo number_format_i18n($regular_price, 0); ?>đ
-                                    </span>
-                                <?php else : ?>
-                                    <span class="mi-price-sale">
-                                        <?php echo number_format_i18n($product->get_price(), 0); ?>
-                                        <span class="cur">đ</span>
-                                    </span>
-                                <?php endif; ?>
+                            <div class="product-info">
+                                <h3 class="product-title">
+                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                                </h3>
+                                
+                                <div class="product-price">
+                                    <?php if ($product->is_on_sale()) : ?>
+                                        <span class="price-sale">
+                                            <?php echo number_format_i18n($sale_price, 0); ?>đ
+                                        </span>
+                                        <span class="price-regular">
+                                            <?php echo number_format_i18n($regular_price, 0); ?>đ
+                                        </span>
+                                    <?php else : ?>
+                                        <span class="price-current">
+                                            <?php echo number_format_i18n($product->get_price(), 0); ?>đ
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </article>
                     <?php endwhile; wp_reset_postdata(); ?>
@@ -661,8 +661,8 @@ get_header(); ?>
                     <?php while ($smartwatch_products->have_posts()) : $smartwatch_products->the_post(); 
                         global $product;
                     ?>
-                        <article class="mi-card">
-                            <div class="mi-media">
+                        <article class="product-card category-product">
+                            <div class="product-image-wrapper">
                                 <?php 
                                 // Calculate discount percentage
                                 $regular_price = $product->get_regular_price();
@@ -680,39 +680,41 @@ get_header(); ?>
                                 ?>
                                 
                                 <?php if ($discount_percent > 0) : ?>
-                                    <span class="mi-badge-off"><?php echo $discount_percent; ?>%</span>
-                                <?php endif; ?>
-                                
-                                <?php if (has_post_thumbnail()) : ?>
-                                    <a href="<?php the_permalink(); ?>">
-                                        <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
-                                    </a>
+                                    <span class="badge-sale">-<?php echo $discount_percent; ?>%</span>
                                 <?php endif; ?>
                                 
                                 <?php if ($has_coupon) : ?>
-                                    <span class="mi-ribbon">MÃ GIẢM GIÁ</span>
+                                    <span class="badge-coupon">MÃ GIẢM GIÁ</span>
                                 <?php endif; ?>
+                                
+                                <?php 
+                                // Use simple WooCommerce image loader
+                                $product_id = $product->get_id();
+                                echo '<a href="' . get_permalink() . '">';
+                                echo scode_get_simple_product_image($product_id, 'product-thumb', 'product-img');
+                                echo '</a>';
+                                ?>
                             </div>
 
-                            <h3 class="mi-title">
-                                <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                            </h3>
-
-                            <div class="mi-price">
-                                <?php if ($product->is_on_sale()) : ?>
-                                    <span class="mi-price-sale">
-                                        <?php echo number_format_i18n($sale_price, 0); ?>
-                                        <span class="cur">đ</span>
-                                    </span>
-                                    <span class="mi-price-regular">
-                                        <?php echo number_format_i18n($regular_price, 0); ?>đ
-                                    </span>
-                                <?php else : ?>
-                                    <span class="mi-price-sale">
-                                        <?php echo number_format_i18n($product->get_price(), 0); ?>
-                                        <span class="cur">đ</span>
-                                    </span>
-                                <?php endif; ?>
+                            <div class="product-info">
+                                <h3 class="product-title">
+                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                                </h3>
+                                
+                                <div class="product-price">
+                                    <?php if ($product->is_on_sale()) : ?>
+                                        <span class="price-sale">
+                                            <?php echo number_format_i18n($sale_price, 0); ?>đ
+                                        </span>
+                                        <span class="price-regular">
+                                            <?php echo number_format_i18n($regular_price, 0); ?>đ
+                                        </span>
+                                    <?php else : ?>
+                                        <span class="price-current">
+                                            <?php echo number_format_i18n($product->get_price(), 0); ?>đ
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </article>
                     <?php endwhile; wp_reset_postdata(); ?>
@@ -733,7 +735,7 @@ get_header(); ?>
                 <a href="<?php echo home_url('/danh-muc/phu-kien'); ?>" class="view-all">Xem tất cả</a>
             </div>
             
-                        <?php
+            <?php
             $accessories = scode_get_products_by_category('phu-kien', 12);
             if ($accessories->have_posts()) :
             ?>
@@ -741,8 +743,8 @@ get_header(); ?>
                     <?php while ($accessories->have_posts()) : $accessories->the_post(); 
                         global $product;
                     ?>
-                        <article class="mi-card">
-                            <div class="mi-media">
+                        <article class="product-card category-product">
+                            <div class="product-image-wrapper">
                                 <?php 
                                 // Calculate discount percentage
                                 $regular_price = $product->get_regular_price();
@@ -760,39 +762,41 @@ get_header(); ?>
                                 ?>
                                 
                                 <?php if ($discount_percent > 0) : ?>
-                                    <span class="mi-badge-off"><?php echo $discount_percent; ?>%</span>
-                                <?php endif; ?>
-                                
-                                <?php if (has_post_thumbnail()) : ?>
-                                    <a href="<?php the_permalink(); ?>">
-                                        <?php the_post_thumbnail('product-thumb', array('class' => 'product-img')); ?>
-                                    </a>
+                                    <span class="badge-sale">-<?php echo $discount_percent; ?>%</span>
                                 <?php endif; ?>
                                 
                                 <?php if ($has_coupon) : ?>
-                                    <span class="mi-ribbon">MÃ GIẢM GIÁ</span>
+                                    <span class="badge-coupon">MÃ GIẢM GIÁ</span>
                                 <?php endif; ?>
+                                
+                                <?php 
+                                // Use simple WooCommerce image loader
+                                $product_id = $product->get_id();
+                                echo '<a href="' . get_permalink() . '">';
+                                echo scode_get_simple_product_image($product_id, 'product-thumb', 'product-img');
+                                echo '</a>';
+                                ?>
                             </div>
 
-                            <h3 class="mi-title">
-                                <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                            </h3>
-
-                            <div class="mi-price">
-                                <?php if ($product->is_on_sale()) : ?>
-                                    <span class="mi-price-sale">
-                                        <?php echo number_format_i18n($sale_price, 0); ?>
-                                        <span class="cur">đ</span>
-                                    </span>
-                                    <span class="mi-price-regular">
-                                        <?php echo number_format_i18n($regular_price, 0); ?>đ
-                                    </span>
-                                <?php else : ?>
-                                    <span class="mi-price-sale">
-                                        <?php echo number_format_i18n($product->get_price(), 0); ?>
-                                        <span class="cur">đ</span>
-                                    </span>
-                                <?php endif; ?>
+                            <div class="product-info">
+                                <h3 class="product-title">
+                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                                </h3>
+                                
+                                <div class="product-price">
+                                    <?php if ($product->is_on_sale()) : ?>
+                                        <span class="price-sale">
+                                            <?php echo number_format_i18n($sale_price, 0); ?>đ
+                                        </span>
+                                        <span class="price-regular">
+                                            <?php echo number_format_i18n($regular_price, 0); ?>đ
+                                        </span>
+                                    <?php else : ?>
+                                        <span class="price-current">
+                                            <?php echo number_format_i18n($product->get_price(), 0); ?>đ
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </article>
                     <?php endwhile; wp_reset_postdata(); ?>
@@ -905,30 +909,48 @@ get_header(); ?>
                     </div>
                 </div>
                 
-                <!-- Partners -->
-                <div class="partners-column">
-                    <h3>Đối tác của chúng tôi</h3>
-                    <div class="partners-grid">
-                        <div class="partner-logo">
-                            <img src="https://via.placeholder.com/120x60/007bff/ffffff?text=Xiaomi" alt="Xiaomi">
-                        </div>
-                        <div class="partner-logo">
-                            <img src="https://via.placeholder.com/120x60/ff6b35/ffffff?text=Ecovacs" alt="Ecovacs">
-                        </div>
-                        <div class="partner-logo">
-                            <img src="https://via.placeholder.com/120x60/00d4aa/ffffff?text=Roborock" alt="Roborock">
-                        </div>
-                        <div class="partner-logo">
-                            <img src="https://via.placeholder.com/120x60/ff6b6b/ffffff?text=iRobot" alt="iRobot">
-                        </div>
-                        <div class="partner-logo">
-                            <img src="https://via.placeholder.com/120x60/4ecdc4/ffffff?text=Tineco" alt="Tineco">
-                        </div>
-                        <div class="partner-logo">
-                            <img src="https://via.placeholder.com/120x60/45b7d1/ffffff?text=Dreame" alt="Dreame">
-                        </div>
-                    </div>
-                </div>
+                                 <!-- Partners -->
+                 <div class="partners-column">
+                     <h3>Đối tác của chúng tôi</h3>
+                     <div class="partners-grid">
+                         <div class="partner-logo">
+                             <div class="partner-icon" style="background: #007bff; color: white; width: 120px; height: 60px; display: flex; align-items: center; justify-content: center; font-weight: bold; border-radius: 8px;">
+                                 <i class="fas fa-mobile-alt"></i>
+                                 <span style="margin-left: 8px;">Xiaomi</span>
+                             </div>
+                         </div>
+                         <div class="partner-logo">
+                             <div class="partner-icon" style="background: #ff6b35; color: white; width: 120px; height: 60px; display: flex; align-items: center; justify-content: center; font-weight: bold; border-radius: 8px;">
+                                 <i class="fas fa-robot"></i>
+                                 <span style="margin-left: 8px;">Ecovacs</span>
+                             </div>
+                         </div>
+                         <div class="partner-logo">
+                             <div class="partner-icon" style="background: #00d4aa; color: white; width: 120px; height: 60px; display: flex; align-items: center; justify-content: center; font-weight: bold; border-radius: 8px;">
+                                 <i class="fas fa-robot"></i>
+                                 <span style="margin-left: 8px;">Roborock</span>
+                             </div>
+                         </div>
+                         <div class="partner-logo">
+                             <div class="partner-icon" style="background: #ff6b6b; color: white; width: 120px; height: 60px; display: flex; align-items: center; justify-content: center; font-weight: bold; border-radius: 8px;">
+                                 <i class="fas fa-robot"></i>
+                                 <span style="margin-left: 8px;">iRobot</span>
+                             </div>
+                         </div>
+                         <div class="partner-logo">
+                             <div class="partner-icon" style="background: #4ecdc4; color: white; width: 120px; height: 60px; display: flex; align-items: center; justify-content: center; font-weight: bold; border-radius: 8px;">
+                                 <i class="fas fa-wind"></i>
+                                 <span style="margin-left: 8px;">Tineco</span>
+                             </div>
+                         </div>
+                         <div class="partner-logo">
+                             <div class="partner-icon" style="background: #45b7d1; color: white; width: 120px; height: 60px; display: flex; align-items: center; justify-content: center; font-weight: bold; border-radius: 8px;">
+                                 <i class="fas fa-robot"></i>
+                                 <span style="margin-left: 8px;">Dreame</span>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
             </div>
         </section>
 

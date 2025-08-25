@@ -239,9 +239,17 @@
         },
 
         bindEvents: function() {
-            $(window).on('scroll', $.throttle(100, () => {
-                this.checkScrollPosition();
-            }));
+            // Simple throttle function
+            let ticking = false;
+            $(window).on('scroll', () => {
+                if (!ticking) {
+                    requestAnimationFrame(() => {
+                        this.checkScrollPosition();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
 
             // Add to cart button in sticky bar
             $(document).on('click', '.sticky-add-to-cart', function(e) {
@@ -421,13 +429,14 @@
     // ===== PERFORMANCE OPTIMIZATION =====
     const PerformanceOptimizer = {
         init: function() {
-            try {
-                this.setupLazyLoading();
-                this.optimizeImages();
-                this.setupIntersectionObserver();
-            } catch (error) {
-                ErrorHandler.log('Performance optimization failed', error);
-            }
+            // Disabled to prevent image issues
+            // try {
+            //     this.setupLazyLoading();
+            //     this.optimizeImages();
+            //     this.setupIntersectionObserver();
+            // } catch (error) {
+            //     ErrorHandler.log('Performance optimization failed', error);
+            // }
         },
 
         setupLazyLoading: function() {
@@ -454,21 +463,22 @@
         },
 
         optimizeImages: function() {
-            try {
-                // Convert images to WebP if supported
-                if (this.supportsWebP()) {
-                    $('img').each(function() {
-                        const img = $(this);
-                        const src = img.attr('src');
-                        if (src && !src.includes('.webp')) {
-                            const webpSrc = src.replace(/\.(jpg|jpeg|png)$/i, '.webp');
-                            img.attr('src', webpSrc);
-            }
-        });
-    }
-            } catch (error) {
-                ErrorHandler.log('Image optimization failed', error);
-            }
+            // Disabled to prevent image conversion issues
+            // try {
+            //     // Convert images to WebP if supported
+            //     if (this.supportsWebP()) {
+            //         $('img').each(function() {
+            //             const img = $(this);
+            //             const src = img.attr('src');
+            //             if (src && !src.includes('.webp')) {
+            //                 const webpSrc = src.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+            //                 img.attr('src', webpSrc);
+            //             }
+            //         });
+            //     }
+            // } catch (error) {
+            //     ErrorHandler.log('Image optimization failed', error);
+            // }
         },
 
         supportsWebP: function() {
@@ -596,7 +606,7 @@
                 TabSystem.init();
                 StickyCart.init();
                 ProductForm.init();
-                PerformanceOptimizer.init();
+                // PerformanceOptimizer.init(); // Disabled to prevent image issues
                 Analytics.init();
 
                 // Trigger custom event

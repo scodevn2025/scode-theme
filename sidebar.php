@@ -10,14 +10,6 @@ if (!is_active_sidebar('sidebar-1')) {
 }
 ?>
 
-<aside id="secondary" class="sidebar no-scrollbar" role="complementary">
+<aside id="secondary" class="widget-area">
     <?php dynamic_sidebar('sidebar-1'); ?>
-    
-    <!-- Default Sidebar Content if no widgets -->
-    <?php if (!is_active_sidebar('sidebar-1')) : ?>
-        <div class="widget">
-            <h3 class="widget-title">Sidebar</h3>
-            <p>Add widgets to this area in the WordPress admin.</p>
-        </div>
-    <?php endif; ?>
-</aside>
+</aside><!-- #secondary -->
