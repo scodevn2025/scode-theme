@@ -12,6 +12,202 @@ get_header(); ?>
 <main class="main-content" id="main-content">
     <div class="container">
         
+        <!-- ===== FLASH SALE SECTION ===== -->
+        <?php if (class_exists('WooCommerce')) : ?>
+        <section class="home-products flash-sale-section">
+            <div class="section-header">
+                <div class="section-title-wrapper">
+                    <div class="title-box">
+                        <h2 class="section-title">
+                            <i class="fas fa-bolt"></i>
+                            FLASH SALE
+                        </h2>
+                    </div>
+                    <a href="<?php echo home_url('/khuyen-mai/flash-sale'); ?>" class="view-all-link">
+                        Xem tất cả
+                    </a>
+                </div>
+            </div>
+            
+            <?php
+            // Get products with flash sale tags OR products on sale
+            $flash_sale_args = array(
+                'post_type' => 'product',
+                'posts_per_page' => 6,
+                'post_status' => 'publish',
+                'tax_query' => array(
+                    array(
+                        'taxonomy' => 'product_tag',
+                        'field' => 'slug',
+                        'terms' => array('flash-sale', 'khuyen-mai', 'sale', 'robot-hut-bui', 'robot-lau-nha'),
+                        'operator' => 'OR'
+                    )
+                )
+            );
+            
+            $flash_sale_products = new WP_Query($flash_sale_args);
+            
+            if ($flash_sale_products->have_posts()) :
+            ?>
+                <div class="products-grid">
+                    <?php while ($flash_sale_products->have_posts()) : $flash_sale_products->the_post(); 
+                        global $product;
+                    ?>
+                        <?php get_template_part('template-parts/product-card'); ?>
+                    <?php endwhile; wp_reset_postdata(); ?>
+                </div>
+            <?php else : ?>
+                <div class="no-products">
+                    <p>Chưa có sản phẩm flash sale nào.</p>
+                </div>
+            <?php endif; ?>
+        </section>
+        <?php endif; ?>
+
+        <!-- ===== BÁN CHẠY SECTION ===== -->
+        <?php if (class_exists('WooCommerce')) : ?>
+        <section class="home-products best-sellers-section">
+            <div class="section-header">
+                <div class="section-title-wrapper">
+                    <div class="title-box">
+                        <h2 class="section-title">
+                            <i class="fas fa-star"></i>
+                            BÁN CHẠY
+                        </h2>
+                    </div>
+                    <a href="<?php echo home_url('/ban-chay'); ?>" class="view-all-link">
+                        Xem tất cả
+                    </a>
+                </div>
+            </div>
+            
+            <?php
+            // Get best selling products
+            $best_sellers = scode_get_best_selling_products(6);
+            
+            if ($best_sellers->have_posts()) :
+            ?>
+                <div class="products-grid">
+                    <?php while ($best_sellers->have_posts()) : $best_sellers->the_post(); 
+                        global $product;
+                    ?>
+                        <?php get_template_part('template-parts/product-card'); ?>
+                    <?php endwhile; wp_reset_postdata(); ?>
+                </div>
+            <?php else : ?>
+                <div class="no-products">
+                    <p>Chưa có sản phẩm bán chạy nào.</p>
+                </div>
+            <?php endif; ?>
+        </section>
+        <?php endif; ?>
+
+        <!-- ===== GIẢM GIÁ SỐC SECTION ===== -->
+        <?php if (class_exists('WooCommerce')) : ?>
+        <section class="home-products shocking-discount-section">
+            <div class="section-header">
+                <div class="section-title-wrapper">
+                    <div class="title-box">
+                        <h2 class="section-title">
+                            <i class="fas fa-fire"></i>
+                            GIẢM GIÁ SỐC
+                        </h2>
+                    </div>
+                    <a href="<?php echo home_url('/khuyen-mai/giam-gia-soc'); ?>" class="view-all-link">
+                        Xem tất cả
+                    </a>
+                </div>
+            </div>
+            
+            <?php
+            // Get products with discount tags or high prices (potential for discounts)
+            $shocking_discount_args = array(
+                'post_type' => 'product',
+                'posts_per_page' => 6,
+                'post_status' => 'publish',
+                'tax_query' => array(
+                    array(
+                        'taxonomy' => 'product_tag',
+                        'field' => 'slug',
+                        'terms' => array('robot-cao-cap', 'robot-sang-trong', 'robot-sieu-luc-hut', 'robot-ai-3d'),
+                        'operator' => 'OR'
+                    )
+                )
+            );
+            
+            $shocking_discount_products = new WP_Query($shocking_discount_args);
+            
+            if ($shocking_discount_products->have_posts()) :
+            ?>
+                <div class="products-grid">
+                    <?php while ($shocking_discount_products->have_posts()) : $shocking_discount_products->the_post(); 
+                        global $product;
+                    ?>
+                        <?php get_template_part('template-parts/product-card'); ?>
+                    <?php endwhile; wp_reset_postdata(); ?>
+                </div>
+            <?php else : ?>
+                <div class="no-products">
+                    <p>Chưa có sản phẩm giảm giá sốc nào.</p>
+                </div>
+            <?php endif; ?>
+        </section>
+        <?php endif; ?>
+
+        <!-- ===== SẢN PHẨM MỚI SECTION ===== -->
+        <?php if (class_exists('WooCommerce')) : ?>
+        <section class="home-products new-products-section">
+            <div class="section-header">
+                <div class="section-title-wrapper">
+                    <div class="title-box">
+                        <h2 class="section-title">
+                            <i class="fas fa-gift"></i>
+                            SẢN PHẨM MỚI
+                        </h2>
+                    </div>
+                    <a href="<?php echo home_url('/san-pham-moi'); ?>" class="view-all-link">
+                        Xem tất cả
+                    </a>
+                </div>
+            </div>
+            
+            <?php
+            // Get new products (created within last 30 days or with new tags)
+            $new_products_args = array(
+                'post_type' => 'product',
+                'posts_per_page' => 6,
+                'post_status' => 'publish',
+                'tax_query' => array(
+                    array(
+                        'taxonomy' => 'product_tag',
+                        'field' => 'slug',
+                        'terms' => array('vot_san-pham-vua-ra-mat', 'robot-hut-bui-the-he-moi'),
+                        'operator' => 'OR'
+                    )
+                ),
+                'orderby' => 'date',
+                'order' => 'DESC'
+            );
+            
+            $new_products = new WP_Query($new_products_args);
+            
+            if ($new_products->have_posts()) :
+            ?>
+                <div class="products-grid">
+                    <?php while ($new_products->have_posts()) : $new_products->the_post(); 
+                        global $product;
+                    ?>
+                        <?php get_template_part('template-parts/product-card'); ?>
+                    <?php endwhile; wp_reset_postdata(); ?>
+                </div>
+            <?php else : ?>
+                <div class="no-products">
+                    <p>Chưa có sản phẩm mới nào.</p>
+                </div>
+            <?php endif; ?>
+        </section>
+        <?php endif; ?>
+
         <!-- Enhanced Icons Row Section -->
         <section class="icons-row">
             <div class="container">
@@ -72,260 +268,6 @@ get_header(); ?>
             </div>
         </section>
 
-        <!-- ===== FLASH SALE SECTION ===== -->
-        <?php if (class_exists('WooCommerce')) : ?>
-        <section class="home-products flash-sale-section">
-            <div class="section-header">
-                <div class="section-title-wrapper">
-                    <div class="title-box">
-                        <h2 class="section-title">
-                            <i class="fas fa-bolt"></i>
-                            FLASH SALE
-                        </h2>
-                    </div>
-                    <a href="<?php echo home_url('/khuyen-mai/flash-sale'); ?>" class="view-all-link">
-                        Xem tất cả
-                    </a>
-                </div>
-            </div>
-            
-            <?php
-            // Get products on sale with flash sale tag
-            $flash_sale_args = array(
-                'post_type' => 'product',
-                'posts_per_page' => 8,
-                'post_status' => 'publish',
-                'meta_query' => array(
-                    array(
-                        'key' => '_sale_price',
-                        'value' => '',
-                        'compare' => '!='
-                    ),
-                    array(
-                        'key' => '_regular_price',
-                        'value' => '',
-                        'compare' => '!='
-                    )
-                ),
-                'tax_query' => array(
-                    array(
-                        'taxonomy' => 'product_tag',
-                        'field' => 'slug',
-                        'terms' => array('flash-sale', 'khuyen-mai', 'sale'),
-                        'operator' => 'OR'
-                    )
-                )
-            );
-            
-            $flash_sale_products = new WP_Query($flash_sale_args);
-            
-            if ($flash_sale_products->have_posts()) :
-            ?>
-                <div class="products-grid">
-                    <?php while ($flash_sale_products->have_posts()) : $flash_sale_products->the_post(); 
-                        global $product;
-                        $product_id = $product->get_id();
-                        
-                        // Calculate discount percentage
-                        $regular_price = $product->get_regular_price();
-                        $sale_price = $product->get_sale_price();
-                        $discount_percent = 0;
-                        
-                        if ($regular_price && $sale_price && $regular_price > $sale_price) {
-                            $discount_percent = round((($regular_price - $sale_price) / $regular_price) * 100);
-                        }
-                        
-                        // Check product attributes
-                        $is_new = get_post_meta($product_id, '_is_new', true);
-                        $is_premium = get_post_meta($product_id, '_is_premium', true);
-                        $has_coupon = has_term('coupon', 'product_tag', $product_id);
-                    ?>
-                        <div class="product-card">
-                            <div class="product-image-wrapper">
-                                <?php if ($discount_percent > 0) : ?>
-                                    <div class="discount-badge">
-                                        -<?php echo $discount_percent; ?>%
-                                    </div>
-                                <?php endif; ?>
-                                
-                                <?php if ($has_coupon) : ?>
-                                    <div class="ribbon">
-                                        MÃ GIẢM GIÁ
-                                    </div>
-                                <?php endif; ?>
-                                
-                                <?php if ($is_new) : ?>
-                                    <div class="badge-new">HÀNG MỚI</div>
-                                <?php endif; ?>
-                                
-                                <?php if ($is_premium) : ?>
-                                    <div class="badge-premium">PREMIUM</div>
-                                <?php endif; ?>
-                                
-                                <a href="<?php the_permalink(); ?>">
-                                    <?php echo scode_get_simple_product_image($product_id, 'product-thumb', 'product-img'); ?>
-                                </a>
-                            </div>
-
-                            <div class="product-info">
-                                <h3 class="product-title">
-                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                                </h3>
-                                
-                                <div class="product-price">
-                                    <?php if ($product->is_on_sale()) : ?>
-                                        <span class="price-promotional">
-                                            <?php echo number_format_i18n($sale_price, 0); ?>đ
-                                        </span>
-                                        <span class="price-original">
-                                            <?php echo number_format_i18n($regular_price, 0); ?>đ
-                                        </span>
-                                    <?php else : ?>
-                                        <span class="price-current">
-                                            <?php echo number_format_i18n($product->get_price(), 0); ?>đ
-                                        </span>
-                                    <?php endif; ?>
-                                </div>
-                                
-                                <div class="product-actions">
-                                    <button class="btn-add-to-cart" data-product-id="<?php echo $product_id; ?>">
-                                        <i class="fas fa-shopping-cart"></i>
-                                        Chọn mua
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endwhile; wp_reset_postdata(); ?>
-                </div>
-            <?php else : ?>
-                <div class="no-products">
-                    <p>Chưa có sản phẩm flash sale nào.</p>
-                </div>
-            <?php endif; ?>
-        </section>
-        <?php endif; ?>
-
-        <!-- ===== GIẢM GIÁ SỐC SECTION ===== -->
-        <?php if (class_exists('WooCommerce')) : ?>
-        <section class="home-products shocking-discount-section">
-            <div class="section-header">
-                <div class="section-title-wrapper">
-                    <div class="title-box">
-                        <h2 class="section-title">
-                            <i class="fas fa-fire"></i>
-                            GIẢM GIÁ SỐC
-                        </h2>
-                    </div>
-                    <a href="<?php echo home_url('/khuyen-mai/giam-gia-soc'); ?>" class="view-all-link">
-                        Xem tất cả
-                    </a>
-                </div>
-            </div>
-            
-            <?php
-            // Get products with high discount percentage
-            $shocking_discount_args = array(
-                'post_type' => 'product',
-                'posts_per_page' => 8,
-                'post_status' => 'publish',
-                'meta_query' => array(
-                    array(
-                        'key' => '_sale_price',
-                        'value' => '',
-                        'compare' => '!='
-                    ),
-                    array(
-                        'key' => '_regular_price',
-                        'value' => '',
-                        'compare' => '!='
-                    )
-                )
-            );
-            
-            $shocking_discount_products = new WP_Query($shocking_discount_args);
-            
-            if ($shocking_discount_products->have_posts()) :
-            ?>
-                <div class="products-grid">
-                    <?php while ($shocking_discount_products->have_posts()) : $shocking_discount_products->the_post(); 
-                        global $product;
-                        $product_id = $product->get_id();
-                        
-                        // Calculate discount percentage
-                        $regular_price = $product->get_regular_price();
-                        $sale_price = $product->get_sale_price();
-                        $discount_percent = 0;
-                        
-                        if ($regular_price && $sale_price && $regular_price > $sale_price) {
-                            $discount_percent = round((($regular_price - $sale_price) / $regular_price) * 100);
-                        }
-                        
-                        // Only show products with significant discount
-                        if ($discount_percent < 15) continue;
-                        
-                        // Check product attributes
-                        $is_new = get_post_meta($product_id, '_is_new', true);
-                        $is_premium = get_post_meta($product_id, '_is_premium', true);
-                    ?>
-                        <div class="product-card">
-                            <div class="product-image-wrapper">
-                                <?php if ($discount_percent > 0) : ?>
-                                    <div class="discount-badge">
-                                        -<?php echo $discount_percent; ?>%
-                                    </div>
-                                <?php endif; ?>
-                                
-                                <?php if ($is_new) : ?>
-                                    <div class="badge-new">HÀNG MỚI</div>
-                                <?php endif; ?>
-                                
-                                <?php if ($is_premium) : ?>
-                                    <div class="badge-premium">PREMIUM</div>
-                                <?php endif; ?>
-                                
-                                <a href="<?php the_permalink(); ?>">
-                                    <?php echo scode_get_simple_product_image($product_id, 'product-thumb', 'product-img'); ?>
-                                </a>
-                            </div>
-
-                            <div class="product-info">
-                                <h3 class="product-title">
-                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                                </h3>
-                                
-                                <div class="product-price">
-                                    <?php if ($product->is_on_sale()) : ?>
-                                        <span class="price-promotional">
-                                            <?php echo number_format_i18n($sale_price, 0); ?>đ
-                                        </span>
-                                        <span class="price-original">
-                                            <?php echo number_format_i18n($regular_price, 0); ?>đ
-                                        </span>
-                                    <?php else : ?>
-                                        <span class="price-current">
-                                            <?php echo number_format_i18n($product->get_price(), 0); ?>đ
-                                        </span>
-                                    <?php endif; ?>
-                                </div>
-                                
-                                <div class="product-actions">
-                                    <button class="btn-add-to-cart" data-product-id="<?php echo $product_id; ?>">
-                                        <i class="fas fa-shopping-cart"></i>
-                                        Chọn mua
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endwhile; wp_reset_postdata(); ?>
-                </div>
-            <?php else : ?>
-                <div class="no-products">
-                    <p>Chưa có sản phẩm giảm giá sốc nào.</p>
-                </div>
-            <?php endif; ?>
-        </section>
-        <?php endif; ?>
-
         <!-- Enhanced Mid Banner 1 -->
         <section class="banner-wide">
             <div class="container">
@@ -355,218 +297,6 @@ get_header(); ?>
                 </a>
             </div>
         </section>
-
-        <!-- ===== BÁN CHẠY SECTION ===== -->
-        <?php if (class_exists('WooCommerce')) : ?>
-        <section class="home-products best-sellers-section">
-            <div class="section-header">
-                <div class="section-title-wrapper">
-                    <div class="title-box">
-                        <h2 class="section-title">
-                            <i class="fas fa-star"></i>
-                            BÁN CHẠY
-                        </h2>
-                    </div>
-                    <a href="<?php echo home_url('/ban-chay'); ?>" class="view-all-link">
-                        Xem tất cả
-                    </a>
-                </div>
-            </div>
-            
-            <?php
-            // Get best selling products
-            $best_sellers = scode_get_best_selling_products(8);
-            
-            if ($best_sellers->have_posts()) :
-            ?>
-                <div class="products-grid">
-                    <?php while ($best_sellers->have_posts()) : $best_sellers->the_post(); 
-                        global $product;
-                        $product_id = $product->get_id();
-                        
-                        // Calculate discount percentage
-                        $regular_price = $product->get_regular_price();
-                        $sale_price = $product->get_sale_price();
-                        $discount_percent = 0;
-                        
-                        if ($regular_price && $sale_price && $regular_price > $sale_price) {
-                            $discount_percent = round((($regular_price - $sale_price) / $regular_price) * 100);
-                        }
-                        
-                        // Check product attributes
-                        $is_new = get_post_meta($product_id, '_is_new', true);
-                        $is_premium = get_post_meta($product_id, '_is_premium', true);
-                    ?>
-                        <div class="product-card">
-                            <div class="product-image-wrapper">
-                                <?php if ($discount_percent > 0) : ?>
-                                    <div class="discount-badge">
-                                        -<?php echo $discount_percent; ?>%
-                                    </div>
-                                <?php endif; ?>
-                                
-                                <?php if ($is_new) : ?>
-                                    <div class="badge-new">HÀNG MỚI</div>
-                                <?php endif; ?>
-                                
-                                <?php if ($is_premium) : ?>
-                                    <div class="badge-premium">PREMIUM</div>
-                                <?php endif; ?>
-                                
-                                <a href="<?php the_permalink(); ?>">
-                                    <?php echo scode_get_simple_product_image($product_id, 'product-thumb', 'product-img'); ?>
-                                </a>
-                            </div>
-
-                            <div class="product-info">
-                                <h3 class="product-title">
-                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                                </h3>
-                                
-                                <div class="product-price">
-                                    <?php if ($product->is_on_sale()) : ?>
-                                        <span class="price-promotional">
-                                            <?php echo number_format_i18n($sale_price, 0); ?>đ
-                                        </span>
-                                        <span class="price-original">
-                                            <?php echo number_format_i18n($regular_price, 0); ?>đ
-                                        </span>
-                                    <?php else : ?>
-                                        <span class="price-current">
-                                            <?php echo number_format_i18n($product->get_price(), 0); ?>đ
-                                        </span>
-                                    <?php endif; ?>
-                                </div>
-                                
-                                <div class="product-actions">
-                                    <button class="btn-add-to-cart" data-product-id="<?php echo $product_id; ?>">
-                                        <i class="fas fa-shopping-cart"></i>
-                                        Chọn mua
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endwhile; wp_reset_postdata(); ?>
-                </div>
-            <?php else : ?>
-                <div class="no-products">
-                    <p>Chưa có sản phẩm bán chạy nào.</p>
-                </div>
-            <?php endif; ?>
-        </section>
-        <?php endif; ?>
-
-        <!-- ===== SẢN PHẨM MỚI SECTION ===== -->
-        <?php if (class_exists('WooCommerce')) : ?>
-        <section class="home-products new-products-section">
-            <div class="section-header">
-                <div class="section-title-wrapper">
-                    <div class="title-box">
-                        <h2 class="section-title">
-                            <i class="fas fa-gift"></i>
-                            SẢN PHẨM MỚI
-                        </h2>
-                    </div>
-                    <a href="<?php echo home_url('/san-pham-moi'); ?>" class="view-all-link">
-                        Xem tất cả
-                    </a>
-                </div>
-            </div>
-            
-            <?php
-            // Get new products
-            $new_products_args = array(
-                'post_type' => 'product',
-                'posts_per_page' => 8,
-                'post_status' => 'publish',
-                'meta_query' => array(
-                    array(
-                        'key' => '_is_new',
-                        'value' => '1',
-                        'compare' => '='
-                    )
-                ),
-                'orderby' => 'date',
-                'order' => 'DESC'
-            );
-            
-            $new_products = new WP_Query($new_products_args);
-            
-            if ($new_products->have_posts()) :
-            ?>
-                <div class="products-grid">
-                    <?php while ($new_products->have_posts()) : $new_products->the_post(); 
-                        global $product;
-                        $product_id = $product->get_id();
-                        
-                        // Calculate discount percentage
-                        $regular_price = $product->get_regular_price();
-                        $sale_price = $product->get_sale_price();
-                        $discount_percent = 0;
-                        
-                        if ($regular_price && $sale_price && $regular_price > $sale_price) {
-                            $discount_percent = round((($regular_price - $sale_price) / $regular_price) * 100);
-                        }
-                        
-                        // Check product attributes
-                        $is_premium = get_post_meta($product_id, '_is_premium', true);
-                    ?>
-                        <div class="product-card">
-                            <div class="product-image-wrapper">
-                                <?php if ($discount_percent > 0) : ?>
-                                    <div class="discount-badge">
-                                        -<?php echo $discount_percent; ?>%
-                                    </div>
-                                <?php endif; ?>
-                                
-                                <div class="badge-new">HÀNG MỚI</div>
-                                
-                                <?php if ($is_premium) : ?>
-                                    <div class="badge-premium">PREMIUM</div>
-                                <?php endif; ?>
-                                
-                                <a href="<?php the_permalink(); ?>">
-                                    <?php echo scode_get_simple_product_image($product_id, 'product-thumb', 'product-img'); ?>
-                                </a>
-                            </div>
-
-                            <div class="product-info">
-                                <h3 class="product-title">
-                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                                </h3>
-                                
-                                <div class="product-price">
-                                    <?php if ($product->is_on_sale()) : ?>
-                                        <span class="price-promotional">
-                                            <?php echo number_format_i18n($sale_price, 0); ?>đ
-                                        </span>
-                                        <span class="price-original">
-                                            <?php echo number_format_i18n($regular_price, 0); ?>đ
-                                        </span>
-                                    <?php else : ?>
-                                        <span class="price-current">
-                                            <?php echo number_format_i18n($product->get_price(), 0); ?>đ
-                                        </span>
-                                    <?php endif; ?>
-                                </div>
-                                
-                                <div class="product-actions">
-                                    <button class="btn-add-to-cart" data-product-id="<?php echo $product_id; ?>">
-                                        <i class="fas fa-shopping-cart"></i>
-                                        Chọn mua
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endwhile; wp_reset_postdata(); ?>
-                </div>
-            <?php else : ?>
-                <div class="no-products">
-                    <p>Chưa có sản phẩm mới nào.</p>
-                </div>
-            <?php endif; ?>
-        </section>
-        <?php endif; ?>
 
         <!-- Enhanced Category Strip Section -->
         <section class="category-strip">

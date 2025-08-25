@@ -578,6 +578,8 @@ function scode_enqueue_scripts() {
         wp_enqueue_style('scode-single-product', get_template_directory_uri() . '/assets/css/single-product.css', array(), '1.0.0');
     }
     
+    // No Borders CSS - REMOVED (no longer needed)
+    
     // jQuery (WordPress includes this by default)
     wp_enqueue_script('jquery');
     
@@ -1148,11 +1150,7 @@ function scode_fix_image_display_issues() {
             display: block !important;
         }
         
-        /* Debug borders */
-        .product-img,
-        .product-image img {
-            border: 2px solid #ff0000 !important;
-        }
+        /* Debug borders - REMOVED */
         </style>';
     });
     
