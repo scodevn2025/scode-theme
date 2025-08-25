@@ -33,16 +33,25 @@ $product_data = [
     'is_on_sale' => $product->is_on_sale(),
     'stock_status' => $product->get_stock_status(),
     'short_description' => $product->get_short_description(),
-    'categories' => wc_get_product_category_list($product_data['id']),
     'rating' => $product->get_average_rating(),
     'review_count' => $product->get_review_count(),
     'sku' => $product->get_sku(),
     'weight' => $product->get_weight(),
-    'dimensions' => $product->get_dimensions()
+    'dimensions' => $product->get_dimensions(false)
 ];
 
-// Preload related products
-$related_products = wc_get_related_product_ids($product_data['id']);
+// Get categories after product_data is defined
+$product_data['categories'] = wc_get_product_category_list($product_data['id']);
+
+// Preload related products - use modern WooCommerce method
+$related_products = [];
+if (function_exists('wc_get_related_product_ids')) {
+    $related_products = wc_get_related_product_ids($product_data['id']);
+} else {
+    // Fallback for newer WooCommerce versions
+    $related_products = $product->get_upsell_ids();
+}
+
 $related_query = null;
 if (!empty($related_products)) {
     $related_query = new WP_Query([
@@ -376,7 +385,15 @@ do_action('woocommerce_before_single_product');
                             <?php if ($product_data['dimensions']) : ?>
                                 <div class="otnt-pdp__detail-item">
                                     <span class="detail-label">Kích thước:</span>
-                                    <span class="detail-value"><?php echo esc_html($product_data['dimensions']); ?></span>
+                                    <span class="detail-value">
+                                        <?php 
+                                        if (is_array($product_data['dimensions'])) {
+                                            echo esc_html(implode(' x ', $product_data['dimensions']));
+                                        } else {
+                                            echo esc_html($product_data['dimensions']);
+                                        }
+                                        ?>
+                                    </span>
                                 </div>
                             <?php endif; ?>
                         </div>

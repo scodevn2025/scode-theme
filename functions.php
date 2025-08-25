@@ -80,6 +80,8 @@ function scode_woocommerce_setup() {
     // Fix image display issues
     add_filter('woocommerce_product_get_image', 'scode_fix_product_image', 10, 2);
     add_filter('woocommerce_single_product_image_thumbnail_html', 'scode_fix_single_product_image', 10, 2);
+    
+
 }
 add_action('after_setup_theme', 'scode_woocommerce_setup');
 
@@ -144,6 +146,7 @@ function scode_woocommerce_loop_start() {
 function scode_woocommerce_loop_end() {
     echo '</div>';
 }
+
 
 // Add custom product fields
 function scode_add_custom_product_fields() {
@@ -588,6 +591,11 @@ function scode_enqueue_scripts() {
         wp_enqueue_script('scode-single-product', get_template_directory_uri() . '/assets/js/single-product.js', array('jquery'), '1.0.0', true);
     }
     
+    // Product Item JavaScript
+    if (file_exists(get_template_directory() . '/assets/js/product-item.js')) {
+        wp_enqueue_script('scode-product-item', get_template_directory_uri() . '/assets/js/product-item.js', array('jquery'), '1.0.0', true);
+    }
+    
     // Localize script for AJAX
     if (wp_script_is('scode-main', 'enqueued')) {
         wp_localize_script('scode-main', 'scode_ajax', array(
@@ -810,7 +818,7 @@ function scode_format_price($price) {
     if (!class_exists('WooCommerce')) {
         return number_format($price, 0, ',', '.') . '₫';
     }
-    return wc_price($price);
+        return wc_price($price);
 }
 
 // ===== AJAX FUNCTIONS =====
@@ -831,16 +839,16 @@ function scode_ajax_add_to_cart() {
     if ($product_id <= 0 || $quantity <= 0) {
         wp_send_json_error('Invalid product or quantity');
     }
-    
+        
     // Add to cart
     $cart_item_key = WC()->cart->add_to_cart($product_id, $quantity);
     
     if ($cart_item_key) {
-        wp_send_json_success(array(
+            wp_send_json_success(array(
             'message' => 'Product added to cart successfully',
-            'cart_count' => WC()->cart->get_cart_contents_count()
-        ));
-    } else {
+                'cart_count' => WC()->cart->get_cart_contents_count()
+            ));
+        } else {
         wp_send_json_error('Failed to add product to cart');
     }
 }
@@ -852,9 +860,9 @@ function scode_ajax_update_cart_count() {
         wp_send_json_error('WooCommerce is not active');
     }
     
-    wp_send_json_success(array(
-        'cart_count' => WC()->cart->get_cart_contents_count()
-    ));
+        wp_send_json_success(array(
+            'cart_count' => WC()->cart->get_cart_contents_count()
+        ));
 }
 add_action('wp_ajax_scode_update_cart_count', 'scode_ajax_update_cart_count');
 add_action('wp_ajax_nopriv_scode_update_cart_count', 'scode_ajax_update_cart_count');
@@ -1216,7 +1224,7 @@ function scode_fix_image_display_issues() {
                 $img.hide();
                 if ($placeholder.length) {
                     $placeholder.show();
-                } else {
+    } else {
                     // Create placeholder if none exists
                     const placeholder = $("<div>")
                         .addClass("image-placeholder")
@@ -1260,4 +1268,67 @@ function scode_create_svg_placeholder() {
 
 // Run on theme init
 add_action('init', 'scode_create_svg_placeholder');
+
+/**
+ * Render product item using the new product-item template
+ * 
+ * @param int $product_id Product ID
+ * @param string $classes Additional CSS classes
+ * @return void
+ */
+function scode_render_product_item($product_id, $classes = '') {
+    global $product, $post;
+    
+    // Get the product object
+    $product = wc_get_product($product_id);
+    
+    if (!$product) {
+        return;
+    }
+    
+    // Get the post object for this product
+    $post = get_post($product_id);
+    
+    if (!$post) {
+        return;
+    }
+    
+    // Set up post data for the product
+    setup_postdata($post);
+    
+    // Include the product-item template
+    include get_template_directory() . '/template-parts/product-item.php';
+    
+    // Reset post data
+    wp_reset_postdata();
+}
+
+/**
+ * Get product items grid with specified columns
+ * 
+ * @param array $product_ids Array of product IDs
+ * @param int $columns Number of columns (2-6)
+ * @param string $classes Additional CSS classes
+ * @return string HTML output
+ */
+function scode_get_product_items_grid($product_ids, $columns = 6, $classes = '') {
+    if (empty($product_ids)) {
+        return '';
+    }
+    
+    $grid_classes = 'product-items-grid cols-' . min(max($columns, 2), 6);
+    if ($classes) {
+        $grid_classes .= ' ' . $classes;
+    }
+    
+    ob_start();
+    ?>
+    <div class="<?php echo esc_attr($grid_classes); ?>">
+        <?php foreach ($product_ids as $product_id) : ?>
+            <?php scode_render_product_item($product_id); ?>
+        <?php endforeach; ?>
+    </div>
+    <?php
+    return ob_get_clean();
+}
 

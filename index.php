@@ -878,6 +878,54 @@ get_header(); ?>
             </div>
         </section>
 
+        <!-- New Product Item Structure Demo Section -->
+        <?php if (class_exists('WooCommerce')) : ?>
+        <section class="product-section new-product-structure-section">
+            <div class="section-header">
+                <div class="section-title-wrapper">
+                    <h2 class="section-title">
+                        <i class="fas fa-star"></i>
+                        Sản phẩm mới (Cấu trúc mới)
+                    </h2>
+                    <p class="section-subtitle">Sử dụng cấu trúc product-item với kích thước chuẩn 210x290px</p>
+                </div>
+            </div>
+            
+            <?php
+            // Get some sample products to demonstrate the new structure
+            $args = array(
+                'post_type' => 'product',
+                'posts_per_page' => 6,
+                'post_status' => 'publish',
+                'meta_query' => array(
+                    array(
+                        'key' => '_stock_status',
+                        'value' => 'instock',
+                        'compare' => '='
+                    )
+                )
+            );
+            
+            $sample_products = new WP_Query($args);
+            
+            if ($sample_products->have_posts()) :
+                $product_ids = array();
+                while ($sample_products->have_posts()) : $sample_products->the_post();
+                    $product_ids[] = get_the_ID();
+                endwhile;
+                wp_reset_postdata();
+                
+                // Use the new helper function
+                echo scode_get_product_items_grid($product_ids, 6, 'demo-grid');
+            else :
+            ?>
+                <div class="no-products">
+                    <p>Chưa có sản phẩm nào để hiển thị.</p>
+                </div>
+            <?php endif; ?>
+        </section>
+        <?php endif; ?>
+
         <!-- News & Partners Section -->
         <section class="news-partners-section">
             <div class="section-header">
