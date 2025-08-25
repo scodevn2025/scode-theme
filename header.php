@@ -45,11 +45,11 @@
     </style>
 </head>
 
-<body <?php body_class(); ?>>
+<body <?php body_class('orange-theme'); ?>>
     <?php wp_body_open(); ?>
-    
+
     <!-- Top Bar -->
-    <div class="top-bar">
+    <div class="top-bar" style="background: var(--color-primary); color: var(--color-white);">
         <div class="container">
             <div class="top-bar-left">
                 <div class="top-bar-item">

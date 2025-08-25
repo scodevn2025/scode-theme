@@ -10,18 +10,18 @@
     --otnt-primary-ultra-light: #fff5f0;
     --otnt-orange: #ff6b35;
     --otnt-orange-light: #f7931e;
-    
-    --otnt-secondary: #1e3a8a;
-    --otnt-secondary-dark: #1e40af;
-    --otnt-secondary-light: #3b82f6;
-    --otnt-secondary-ultra-light: #eff6ff;
+
+    --otnt-secondary: #f36c21;
+    --otnt-secondary-dark: #e55a1f;
+    --otnt-secondary-light: #ff8c42;
+    --otnt-secondary-ultra-light: #fff5f0;
     
     /* ===== ACCENT COLORS ===== */
     --otnt-accent: #ffefe6;
-    --otnt-accent-1: #6f42c1;
-    --otnt-accent-2: #e83e8c;
+    --otnt-accent-1: #ffcc99;
+    --otnt-accent-2: #ffb366;
     --otnt-accent-3: #fd7e14;
-    --otnt-accent-4: #20c997;
+    --otnt-accent-4: #ffe6cc;
     
     /* ===== STATUS COLORS ===== */
     --otnt-success: #28a745;
@@ -46,8 +46,8 @@
     --otnt-bg-accent: #fff5f0;
     --otnt-bg-card: #ffffff;
     --otnt-bg-sidebar: #f8fafc;
-    --otnt-bg-footer: #1a202c;
-    --otnt-bg-footer-light: #2d3748;
+    --otnt-bg-footer: #e55a1f;
+    --otnt-bg-footer-light: #f36c21;
     --otnt-bg-section: #f7fafc;
     --otnt-bg-alternate: #edf2f7;
     
@@ -440,7 +440,7 @@ body::before {
 }
 
 .menu-link i:first-child {
-    color: var(--otnt-secondary);
+    color: var(--otnt-primary);
     margin-right: 12px;
     width: 20px;
     text-align: center;
@@ -568,7 +568,7 @@ body::before {
 .logo-title {
     font-size: 28px;
     font-weight: 800;
-    color: var(--otnt-secondary);
+    color: var(--otnt-primary);
     line-height: 1;
     letter-spacing: 2px;
 }
@@ -672,7 +672,7 @@ body::before {
 .action-link i {
     font-size: 20px;
     margin-bottom: 4px;
-    color: var(--otnt-secondary);
+    color: var(--otnt-primary);
 }
 
 .action-link span {
@@ -701,7 +701,7 @@ body::before {
 }
 
 .header-top {
-    background: linear-gradient(135deg, var(--otnt-secondary) 0%, var(--otnt-secondary-dark) 100%);
+    background: linear-gradient(135deg, var(--otnt-primary) 0%, var(--otnt-primary-dark) 100%);
     color: var(--otnt-white);
     padding: 12px 0;
     font-size: 14px;
@@ -711,7 +711,7 @@ body::before {
 
 /* ===== TOP BAR STYLES ===== */
 .top-bar {
-    background: linear-gradient(135deg, var(--otnt-secondary) 0%, var(--otnt-secondary-dark) 100%);
+    background: linear-gradient(135deg, var(--otnt-primary) 0%, var(--otnt-primary-dark) 100%);
     color: var(--otnt-white);
     padding: 12px 0;
     font-size: 14px;
@@ -854,7 +854,7 @@ body::before {
 /* ===== HERO SECTION ===== */
 .hero-section {
     padding: var(--otnt-spacing-lg) 0;
-    background: linear-gradient(135deg, var(--otnt-secondary) 0%, var(--otnt-primary) 100%);
+    background: linear-gradient(135deg, var(--otnt-primary-light) 0%, var(--otnt-primary) 100%);
 }
 
 .hero-grid {
@@ -1492,7 +1492,7 @@ html body .site-footer {
     transform: translateX(-50%);
     width: 100px;
     height: 2px;
-    background: linear-gradient(90deg, #667eea, #764ba2);
+    background: linear-gradient(90deg, var(--otnt-primary), var(--otnt-primary-light));
     border-radius: 1px;
 }
 

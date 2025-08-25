@@ -11,23 +11,22 @@ Text Domain: scode-theme
 :root {
     /* ===== ENHANCED COLOR SYSTEM ===== */
     /* Primary Brand Colors - Modern Orange Gradient */
-    --color-primary: #ff6b35;
-    --color-primary-light: #ff8a65;
-    --color-primary-dark: #e55a1a;
-    --color-primary-gradient: linear-gradient(135deg, #ff6b35, #ff8a65);
-    
-    /* Secondary Colors - Modern Blue */
-    --color-secondary: #4f46e5;
-    --color-secondary-light: #6366f1;
-    --color-secondary-dark: #3730a3;
-    
-    /* Accent Colors - Purple & Teal */
-    --color-accent: #8b5cf6;
-    --color-accent-light: #a78bfa;
-    --color-accent-dark: #7c3aed;
-    --color-purple: #7c3aed;
-    --color-teal: #06b6d4;
-    --color-teal-light: #22d3ee;
+    --color-primary: #f47920;
+    --color-primary-light: #ff8f4c;
+    --color-primary-dark: #d65e0e;
+    --color-primary-gradient: linear-gradient(135deg, #f47920, #ff8f4c);
+
+    /* Secondary & Accent Colors - Orange Variations */
+    --color-secondary: #ffa94d;
+    --color-secondary-light: #ffd8a8;
+    --color-secondary-dark: #e68a00;
+
+    --color-accent: #ffcc99;
+    --color-accent-light: #ffe6cc;
+    --color-accent-dark: #d9874a;
+    --color-purple: #ffcc99;
+    --color-teal: #ffb84d;
+    --color-teal-light: #ffe6cc;
     
     /* Neutral Colors - Modern Gray Scale */
     --color-white: #ffffff;
@@ -265,7 +264,7 @@ a:hover {
 
 /* ===== TOP BAR STYLES ===== */
 .top-bar {
-    background-color: var(--color-dark);
+    background-color: var(--color-primary);
     color: var(--color-white);
     padding: var(--spacing-8) 0;
     font-size: 0.875rem;
@@ -466,7 +465,7 @@ a:hover {
 }
 
 .vertical-mega-menu {
-    background: var(--color-dark);
+    background: var(--color-primary-dark);
     border-radius: var(--radius);
     overflow: hidden;
     box-shadow: var(--shadow-lg);
@@ -1063,7 +1062,7 @@ a:hover {
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: var(--color-dark);
+    color: var(--color-primary-dark);
     text-align: center;
     max-width: 140px;
     line-height: 1.2;
@@ -6558,7 +6557,7 @@ body.video-modal-open {
     top: 50px;
     right: 12px;
     background: var(--color-warning);
-    color: var(--color-dark);
+    color: var(--color-primary-dark);
     padding: 6px 12px;
     border-radius: 20px;
     font-size: 0.875rem;

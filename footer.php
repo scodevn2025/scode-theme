@@ -2,7 +2,7 @@
     </main><!-- .main-content -->
 
     <!-- Site Footer -->
-    <footer class="site-footer" role="contentinfo">
+    <footer class="site-footer" role="contentinfo" style="background: linear-gradient(135deg, var(--otnt-primary-dark), var(--otnt-primary)); color: var(--otnt-text-inverse);">
         <div class="container">
             <!-- After Sales Support Section -->
             <div class="after-sales-support">
