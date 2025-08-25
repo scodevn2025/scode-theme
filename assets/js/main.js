@@ -1149,4 +1149,42 @@ jQuery(document).ready(function($) {
     
     // Initialize back to top functionality
     initBackToTop();
+    
+    // ===== ADD TO CART FUNCTIONALITY =====
+    function initAddToCart() {
+        $('.btn-add-to-cart').on('click', function(e) {
+            e.preventDefault();
+            const $btn = $(this);
+            const productId = $btn.data('product-id');
+            const originalText = $btn.html();
+            
+            // Show loading state
+            $btn.html('<i class="fas fa-spinner fa-spin"></i> Đang thêm...').prop('disabled', true);
+            
+            // Simulate AJAX call to add to cart
+            setTimeout(() => {
+                // Show success message
+                showNotification('Đã thêm sản phẩm vào giỏ hàng!', 'success');
+                
+                // Reset button
+                $btn.html(originalText).prop('disabled', false);
+                
+                // Add success animation
+                $btn.addClass('success');
+                setTimeout(() => {
+                    $btn.removeClass('success');
+                }, 2000);
+                
+                // Update cart count if exists
+                const $cartCount = $('.cart-count');
+                if ($cartCount.length) {
+                    const currentCount = parseInt($cartCount.text()) || 0;
+                    $cartCount.text(currentCount + 1);
+                }
+            }, 1000);
+        });
+    }
+    
+    // Initialize add to cart functionality
+    initAddToCart();
 });

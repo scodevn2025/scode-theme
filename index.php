@@ -108,7 +108,7 @@ get_header(); ?>
             $flash_sale_products = scode_get_sale_products(10);
             if ($flash_sale_products->have_posts()) :
             ?>
-                <div class="products-grid cols-5">
+                <div class="products-grid cols-6">
                     <?php while ($flash_sale_products->have_posts()) : $flash_sale_products->the_post(); 
                         global $product;
                     ?>
@@ -128,6 +128,10 @@ get_header(); ?>
                                 $has_coupon = has_term('coupon', 'product_tag', $product->get_id()) || 
                                              has_term('flash-sale', 'product_tag', $product->get_id()) ||
                                              has_term('khuyen-mai', 'product_tag', $product->get_id());
+                                
+                                // Check for new product
+                                $is_new = get_post_meta($product->get_id(), '_is_new', true);
+                                $is_premium = get_post_meta($product->get_id(), '_is_premium', true);
                                 ?>
                                 
                                 <?php if ($discount_percent > 0) : ?>
@@ -136,6 +140,14 @@ get_header(); ?>
                                 
                                 <?php if ($has_coupon) : ?>
                                     <span class="badge-coupon">MÃ GIẢM GIÁ</span>
+                                <?php endif; ?>
+                                
+                                <?php if ($is_new) : ?>
+                                    <span class="badge-new">HÀNG MỚI</span>
+                                <?php endif; ?>
+                                
+                                <?php if ($is_premium) : ?>
+                                    <span class="badge-premium">PREMIUM</span>
                                 <?php endif; ?>
                                 
                                 <?php 
@@ -156,15 +168,35 @@ get_header(); ?>
                                     <?php if ($product->is_on_sale()) : ?>
                                         <span class="price-sale">
                                             <?php echo number_format_i18n($sale_price, 0); ?>đ
-                                    </span>
+                                        </span>
                                         <span class="price-regular">
                                             <?php echo number_format_i18n($regular_price, 0); ?>đ
                                         </span>
+                                        <div class="price-save">
+                                            Tiết kiệm: <?php echo number_format_i18n($regular_price - $sale_price, 0); ?>đ
+                                        </div>
                                     <?php else : ?>
                                         <span class="price-current">
                                             <?php echo number_format_i18n($product->get_price(), 0); ?>đ
                                         </span>
                                     <?php endif; ?>
+                                </div>
+                                
+                                <!-- Product Features -->
+                                <?php 
+                                $product_features = get_post_meta($product->get_id(), '_product_features', true);
+                                if ($product_features) : ?>
+                                    <div class="product-features">
+                                        <?php echo esc_html($product_features); ?>
+                                    </div>
+                                <?php endif; ?>
+                                
+                                <!-- Add to Cart Button -->
+                                <div class="product-actions">
+                                    <button class="btn-add-to-cart" data-product-id="<?php echo $product->get_id(); ?>">
+                                        <i class="fas fa-shopping-cart"></i>
+                                        Thêm vào giỏ
+                                    </button>
                                 </div>
                             </div>
                         </article>
