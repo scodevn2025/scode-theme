@@ -9,7 +9,7 @@
 get_header(); ?>
 
 <!-- Main Content -->
-<main class="main-content" id="main-content">
+<main class="main-content" id="main-content" style="background: var(--color-white);">
     <div class="container">
         
         <!-- ===== FLASH SALE SECTION ===== -->
