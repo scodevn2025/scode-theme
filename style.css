@@ -711,8 +711,8 @@ a:hover {
     height: 100%;
     text-decoration: none;
     /* Ensure link is above overlays and product title */
-    z-index: 999 !important;
-    position: relative;
+    z-index: 9999 !important;
+    position: relative !important;
 }
 
 .product-img {
@@ -723,8 +723,8 @@ a:hover {
     /* Ensure image fills container completely */
     object-position: center;
     /* Ensure image is above overlays */
-    z-index: 10;
-    position: relative;
+    z-index: 9999 !important;
+    position: relative !important;
 }
 
 .product-card:hover .product-img {
@@ -744,8 +744,8 @@ a:hover {
     writing-mode: vertical-rl;
     text-orientation: mixed;
     transform: rotate(180deg);
-    z-index: 1;
-    pointer-events: none;
+    z-index: 1 !important;
+    pointer-events: none !important;
 }
 
 /* Compact version for smaller discount strip */
@@ -768,8 +768,8 @@ a:hover {
     justify-content: center;
     color: var(--color-white);
     font-size: 1.25rem;
-    z-index: 1;
-    pointer-events: none;
+    z-index: 1 !important;
+    pointer-events: none !important;
 }
 
 /* Compact version for smaller gift box */
@@ -837,12 +837,12 @@ a:hover {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    z-index: 1;
+    z-index: 1 !important;
     box-shadow: 0 2px 8px rgba(229, 57, 53, 0.3);
     white-space: nowrap;
     transform: rotate(-45deg);
     transform-origin: center;
-    pointer-events: none;
+    pointer-events: none !important;
 }
 
 /* Compact version for smaller hot sale ribbon */
@@ -1038,16 +1038,21 @@ a:hover {
     border-bottom: 8px solid var(--color-danger);
 }
 
-/* Force image to be on top of all overlays */
+/* Force image to be on top of all overlays - UPDATED */
 .product-image-container img,
 .product-image-container .product-img {
-    z-index: 999 !important;
+    z-index: 9999 !important;
     position: relative !important;
+    /* Ensure image is above everything */
+    transform: translateZ(0) !important;
+    /* Force image to be visible */
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
-/* Force product image link to be fully visible */
+/* Force product image link to be fully visible - UPDATED */
 .product-image-link {
-    z-index: 999 !important;
+    z-index: 9999 !important;
     position: relative !important;
     /* Ensure link covers full area */
     display: block !important;
@@ -1056,6 +1061,8 @@ a:hover {
     /* Ensure link is clickable and visible */
     pointer-events: auto !important;
     overflow: visible !important;
+    /* Ensure link is above everything */
+    transform: translateZ(0) !important;
 }
 
 /* Product Grid Layout */
@@ -9509,4 +9516,94 @@ html body *[class*="image"] * {
     border: none !important;
     outline: none !important;
 }
+
+/* ===== ULTIMATE PRODUCT IMAGE VISIBILITY SOLUTION ===== */
+/* Force product image container to be the top layer */
+.product-card.compact .product-image-container {
+    position: relative !important;
+    z-index: 9999 !important;
+    overflow: visible !important;
+}
+
+/* Force product image link to be completely visible and clickable */
+.product-card.compact .product-image-link {
+    position: relative !important;
+    z-index: 9999 !important;
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: auto !important;
+    overflow: visible !important;
+    /* Ensure link is above everything */
+    transform: translateZ(0) !important;
+}
+
+/* Force product image to be on top of ALL overlays */
+.product-card.compact .product-image-container img,
+.product-card.compact .product-image-container .product-img {
+    position: relative !important;
+    z-index: 9999 !important;
+    /* Ensure image is above everything */
+    transform: translateZ(0) !important;
+    /* Force image to be visible */
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Force all overlay elements to be BELOW the image */
+.product-card.compact .discount-strip-vertical,
+.product-card.compact .hot-sale-ribbon,
+.product-card.compact .gift-box-icon,
+.product-card.compact .medal-icon,
+.product-card.compact .logo-small,
+.product-card.compact .global-week-label {
+    position: absolute !important;
+    z-index: 1 !important;
+    pointer-events: none !important;
+    /* Ensure overlays don't interfere with image */
+    transform: translateZ(0) !important;
+}
+
+/* Force product title and price sections to be BELOW the image */
+.product-card.compact .product-title-section,
+.product-card.compact .product-price-section,
+.product-card.compact .discount-ribbon-red {
+    position: relative !important;
+    z-index: 1 !important;
+    pointer-events: none !important;
+    /* Ensure text sections don't overlap with image */
+    transform: translateZ(0) !important;
+}
+
+/* Ensure product card layout doesn't interfere with image */
+.product-card.compact {
+    position: relative !important;
+    overflow: visible !important;
+}
+
+/* Force image container to maintain its dimensions */
+.product-card.compact .product-image-container {
+    flex-shrink: 0 !important;
+    flex-grow: 0 !important;
+    height: 160px !important;
+    width: 100% !important;
+}
+
+/* Ensure image fills container completely */
+.product-card.compact .product-image-container img,
+.product-card.compact .product-image-container .product-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+}
+
+/* Force link to cover exact image area */
+.product-card.compact .product-image-link {
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+}
+
+/* ===== END ULTIMATE SOLUTION ===== */
 
