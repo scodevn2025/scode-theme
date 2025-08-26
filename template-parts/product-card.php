@@ -131,7 +131,12 @@ $product_image = scode_get_simple_product_image($product_id);
         <?php endif; ?>
     </div>
 
-
+    <!-- Discount ribbon - Red banner above product title -->
+    <?php if ($has_discount || $discount_percent > 0) : ?>
+        <div class="discount-ribbon-red">
+            <?php echo esc_html($discount_code_text); ?>
+        </div>
+    <?php endif; ?>
 
     <!-- Product title -->
     <div class="product-title-section">
@@ -156,13 +161,6 @@ $product_image = scode_get_simple_product_image($product_id);
                 <span class="price-current">
                     <?php echo number_format_i18n($current_price, 0); ?>đ
                 </span>
-            </div>
-        <?php endif; ?>
-        
-        <!-- Discount amount below price -->
-        <?php if ($has_discount || $discount_percent > 0) : ?>
-            <div class="discount-amount-below-price">
-                <?php echo esc_html($discount_code_text); ?>
             </div>
         <?php endif; ?>
     </div>

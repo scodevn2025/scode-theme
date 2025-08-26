@@ -983,6 +983,44 @@ a:hover {
     padding: 4px 8px;
 }
 
+/* Red Discount Ribbon - Above product title */
+.discount-ribbon-red {
+    background: var(--color-danger);
+    color: var(--color-white);
+    text-align: center;
+    padding: 8px 16px;
+    margin: 8px 12px 4px 12px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(229, 57, 53, 0.3);
+    position: relative;
+    z-index: 1;
+}
+
+/* Compact version for smaller red ribbon */
+.product-card.compact .discount-ribbon-red {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    margin: 6px 10px 3px 10px;
+}
+
+/* Add a subtle arrow effect to the ribbon */
+.discount-ribbon-red::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid var(--color-danger);
+}
+
 /* Product Grid Layout */
 .products-grid {
     display: grid;
