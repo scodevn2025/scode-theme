@@ -606,7 +606,7 @@ a:hover {
 
 /* Compact header for smaller cards */
 .product-card.compact .card-header {
-    padding: 4px 8px;
+    padding: 3px 6px;
 }
 
 .card-header-left {
@@ -659,6 +659,13 @@ a:hover {
     font-size: 0.875rem;
 }
 
+/* Compact version for smaller medal */
+.product-card.compact .medal-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 0.75rem;
+}
+
 .global-week-label {
     background: var(--color-accent);
     color: var(--color-white);
@@ -695,7 +702,7 @@ a:hover {
 
 /* Compact version for smaller image container */
 .product-card.compact .product-image-container {
-    height: 200px;
+    height: 160px;
 }
 
 .product-image-link {
@@ -735,8 +742,8 @@ a:hover {
 
 /* Compact version for smaller discount strip */
 .product-card.compact .discount-strip-vertical {
-    font-size: 0.75rem;
-    padding: 6px 4px;
+    font-size: 0.7rem;
+    padding: 4px 3px;
 }
 
 /* Gift Box Icon */
@@ -759,11 +766,11 @@ a:hover {
 
 /* Compact version for smaller gift box */
 .product-card.compact .gift-box-icon {
-    width: 32px;
-    height: 32px;
-    font-size: 1rem;
-    right: 8px;
-    top: 8px;
+    width: 28px;
+    height: 28px;
+    font-size: 0.875rem;
+    right: 6px;
+    top: 6px;
 }
 
 .yellow-ribbon {
@@ -879,9 +886,9 @@ a:hover {
 
 /* Compact version for smaller title */
 .product-card.compact .product-title-section {
-    padding: 6px 10px;
+    padding: 4px 8px;
     margin-top: 1px;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
     position: relative;
     z-index: 1;
     /* Ensure title section is positioned correctly */
@@ -916,7 +923,7 @@ a:hover {
 
 /* Compact version for smaller price section */
 .product-card.compact .product-price-section {
-    padding: 6px 10px 8px;
+    padding: 4px 8px 6px;
     margin-top: 1px;
     position: relative;
     z-index: 1;
@@ -1002,9 +1009,9 @@ a:hover {
 
 /* Compact version for smaller red ribbon */
 .product-card.compact .discount-ribbon-red {
-    font-size: 0.75rem;
-    padding: 4px 10px;
-    margin: 4px 8px 2px 8px;
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    margin: 3px 6px 1px 6px;
 }
 
 /* Add a subtle arrow effect to the ribbon */
