@@ -698,8 +698,6 @@ a:hover {
     flex-shrink: 0;
     /* Ensure exact spacing */
     box-sizing: border-box;
-    /* Ensure image is fully visible */
-    z-index: 1;
 }
 
 /* Compact version for smaller image container */
@@ -713,7 +711,7 @@ a:hover {
     height: 100%;
     text-decoration: none;
     /* Ensure link is above overlays */
-    z-index: 2;
+    z-index: 10;
     position: relative;
 }
 
@@ -725,7 +723,7 @@ a:hover {
     /* Ensure image fills container completely */
     object-position: center;
     /* Ensure image is above overlays */
-    z-index: 2;
+    z-index: 10;
     position: relative;
 }
 
@@ -746,7 +744,7 @@ a:hover {
     writing-mode: vertical-rl;
     text-orientation: mixed;
     transform: rotate(180deg);
-    z-index: 5;
+    z-index: 1;
     pointer-events: none;
 }
 
@@ -770,7 +768,7 @@ a:hover {
     justify-content: center;
     color: var(--color-white);
     font-size: 1.25rem;
-    z-index: 5;
+    z-index: 1;
     pointer-events: none;
 }
 
@@ -839,7 +837,7 @@ a:hover {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    z-index: 5;
+    z-index: 1;
     box-shadow: 0 2px 8px rgba(229, 57, 53, 0.3);
     white-space: nowrap;
     transform: rotate(-45deg);
@@ -1036,6 +1034,13 @@ a:hover {
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
     border-bottom: 8px solid var(--color-danger);
+}
+
+/* Force image to be on top of all overlays */
+.product-image-container img,
+.product-image-container .product-img {
+    z-index: 999 !important;
+    position: relative !important;
 }
 
 /* Product Grid Layout */
