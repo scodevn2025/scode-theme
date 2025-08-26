@@ -3,7 +3,7 @@
  * Product Card Template Part - Redesigned with Dynamic Data
  * 
  * @package SCODE_Theme
- * @version 3.1.0
+ * @version 3.2.0
  */
 
 // Ensure we have a product object
@@ -47,7 +47,7 @@ $has_stock = $product->is_in_stock();
 
 // Dynamic promotion label based on product status
 if ($is_new) {
-    $promotion_type = 'New Arrival';
+    $promotion_type = 'GLOBAL';
 } elseif ($is_featured) {
     $promotion_type = 'Featured';
 } elseif ($discount_percent > 20) {
@@ -83,9 +83,12 @@ if ($warranty_years) {
 } else {
     $warranty_status = 'Chất lượng cao';
 }
+
+// Get product image using the existing function
+$product_image = scode_get_simple_product_image($product_id);
 ?>
 
-<div class="product-card">
+<div class="product-card compact">
     <!-- Header section with dynamic logo and labels -->
     <div class="card-header">
         <div class="card-header-left">
@@ -102,13 +105,20 @@ if ($warranty_years) {
     <!-- Product image section - Square container -->
     <div class="product-image-container">
         <a href="<?php the_permalink(); ?>" class="product-image-link">
-            <?php echo scode_get_simple_product_image($product_id, 'product-thumb', 'product-img'); ?>
+            <?php echo $product_image; ?>
         </a>
         
         <!-- Vertical discount strip - Left side -->
         <?php if ($discount_percent > 0) : ?>
             <div class="discount-strip-vertical">
                 -<?php echo $discount_percent; ?>%
+            </div>
+        <?php endif; ?>
+
+        <!-- Hot Sale ribbon - Diagonal corner -->
+        <?php if ($has_discount || $discount_percent > 0) : ?>
+            <div class="hot-sale-ribbon">
+                <?php echo esc_html($hot_sale_text); ?>
             </div>
         <?php endif; ?>
 
@@ -121,13 +131,7 @@ if ($warranty_years) {
         <?php endif; ?>
     </div>
 
-    <!-- Horizontal ribbon below image -->
-    <?php if ($has_discount || $discount_percent > 0) : ?>
-        <div class="horizontal-ribbon">
-            <span class="hot-sale-label"><?php echo esc_html($hot_sale_text); ?></span>
-            <span class="ribbon-text"><?php echo esc_html($discount_code_text); ?></span>
-        </div>
-    <?php endif; ?>
+
 
     <!-- Product title -->
     <div class="product-title-section">
@@ -152,6 +156,13 @@ if ($warranty_years) {
                 <span class="price-current">
                     <?php echo number_format_i18n($current_price, 0); ?>đ
                 </span>
+            </div>
+        <?php endif; ?>
+        
+        <!-- Discount amount below price -->
+        <?php if ($has_discount || $discount_percent > 0) : ?>
+            <div class="discount-amount-below-price">
+                <?php echo esc_html($discount_code_text); ?>
             </div>
         <?php endif; ?>
     </div>
