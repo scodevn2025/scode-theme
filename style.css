@@ -582,8 +582,9 @@ a:hover {
 
 /* Compact version for smaller cards */
 .product-card.compact {
-    max-height: 360px;
-    min-height: 320px;
+    /* Remove fixed heights to allow natural content flow */
+    height: auto;
+    min-height: auto;
 }
 
 .product-card:hover {
@@ -599,6 +600,8 @@ a:hover {
     padding: 8px 12px;
     background: linear-gradient(135deg, var(--surface-1), var(--surface-0));
     border-bottom: 1px solid var(--color-border-light);
+    /* Ensure header doesn't grow */
+    flex-shrink: 0;
 }
 
 /* Compact header for smaller cards */
@@ -684,6 +687,10 @@ a:hover {
     justify-content: center;
     overflow: hidden;
     margin-bottom: 1px;
+    /* Ensure image container doesn't grow or shrink */
+    flex-shrink: 0;
+    /* Ensure exact spacing */
+    box-sizing: border-box;
 }
 
 /* Compact version for smaller image container */
@@ -874,9 +881,11 @@ a:hover {
 .product-card.compact .product-title-section {
     padding: 8px 12px;
     margin-top: 1px;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     position: relative;
     z-index: 1;
+    /* Ensure title section is positioned correctly */
+    flex-shrink: 0;
 }
 
 .product-card.compact .product-title {
@@ -911,6 +920,10 @@ a:hover {
     margin-top: 1px;
     position: relative;
     z-index: 1;
+    /* Ensure price section is positioned correctly */
+    flex-shrink: 0;
+    /* Push to bottom of card */
+    margin-top: auto;
 }
 
 .price-container {
