@@ -1,0 +1,315 @@
+/* ===== GLOBAL COLOR OVERRIDES - SCODE THEME ===== */
+/* This file ensures consistent color application across all components */
+
+/* ===== FORCE COLOR OVERRIDES ===== */
+/* Header & Navigation */
+.site-header,
+.main-header,
+.header-main {
+    background: var(--color-white) !important;
+    border-bottom: 2px solid var(--color-primary) !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+/* Logo & Brand */
+.site-logo,
+.custom-logo-link {
+    color: var(--color-primary) !important;
+}
+
+.site-title a {
+    color: var(--color-primary) !important;
+}
+
+/* Navigation Menu */
+.main-navigation ul li a {
+    color: var(--color-text) !important;
+}
+
+.main-navigation ul li a:hover,
+.main-navigation ul li.current-menu-item a {
+    color: var(--color-primary) !important;
+}
+
+/* Buttons */
+.btn,
+.button,
+input[type="submit"],
+input[type="button"] {
+    background: var(--gradient-primary) !important;
+    color: var(--color-white) !important;
+    border: none !important;
+    box-shadow: var(--shadow-md) !important;
+}
+
+.btn:hover,
+.button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover {
+    background: var(--gradient-secondary) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: var(--shadow-lg) !important;
+}
+
+/* Secondary Buttons */
+.btn-secondary,
+.button-secondary {
+    background: var(--color-white) !important;
+    color: var(--color-primary) !important;
+    border: 2px solid var(--color-primary) !important;
+}
+
+.btn-secondary:hover,
+.button-secondary:hover {
+    background: var(--color-primary) !important;
+    color: var(--color-white) !important;
+}
+
+/* Links */
+a {
+    color: var(--color-primary) !important;
+}
+
+a:hover {
+    color: var(--color-primary-dark) !important;
+}
+
+/* Form Elements */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+textarea,
+select {
+    border: 1px solid var(--color-border) !important;
+    background: var(--color-white) !important;
+    color: var(--color-text) !important;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+}
+
+/* Product Cards */
+.product,
+.product-card,
+.woocommerce ul.products li.product {
+    background: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    box-shadow: var(--shadow-sm) !important;
+    transition: all 0.3s ease !important;
+}
+
+.product:hover,
+.product-card:hover,
+.woocommerce ul.products li.product:hover {
+    border-color: var(--color-primary) !important;
+    box-shadow: var(--shadow-lg) !important;
+    transform: translateY(-4px) !important;
+}
+
+/* Product Prices */
+.price,
+.woocommerce-Price-amount {
+    color: var(--color-primary) !important;
+}
+
+.price del,
+.woocommerce-Price-amount del {
+    color: var(--color-text-muted) !important;
+}
+
+/* Sale Badges */
+.onsale,
+.sale-badge {
+    background: var(--color-primary) !important;
+    color: var(--color-white) !important;
+}
+
+/* Section Titles */
+.section-title,
+.widget-title,
+h1, h2, h3, h4, h5, h6 {
+    color: var(--color-text) !important;
+}
+
+.section-title.bg-primary {
+    background: var(--color-primary) !important;
+    color: var(--color-white) !important;
+}
+
+/* Footer */
+.site-footer,
+.footer-main {
+    background: var(--gradient-footer) !important;
+    color: var(--color-white) !important;
+    border-top: 4px solid var(--color-primary) !important;
+}
+
+.footer-widget h3,
+.footer-widget .widget-title {
+    color: var(--color-primary) !important;
+}
+
+.footer-widget h3::after,
+.footer-widget .widget-title::after {
+    background: var(--gradient-primary) !important;
+}
+
+/* Breadcrumbs */
+.breadcrumb,
+.woocommerce-breadcrumb {
+    color: var(--color-text-muted) !important;
+}
+
+.breadcrumb a,
+.woocommerce-breadcrumb a {
+    color: var(--color-primary) !important;
+}
+
+/* Pagination */
+.pagination,
+.woocommerce-pagination {
+    background: var(--color-white) !important;
+}
+
+.pagination .page-numbers,
+.woocommerce-pagination .page-numbers {
+    color: var(--color-text) !important;
+    border: 1px solid var(--color-border) !important;
+}
+
+.pagination .page-numbers.current,
+.woocommerce-pagination .page-numbers.current {
+    background: var(--color-primary) !important;
+    color: var(--color-white) !important;
+    border-color: var(--color-primary) !important;
+}
+
+.pagination .page-numbers:hover,
+.woocommerce-pagination .page-numbers:hover {
+    background: var(--color-primary-light) !important;
+    color: var(--color-white) !important;
+}
+
+/* Sidebar */
+.widget-area,
+.sidebar {
+    background: var(--color-bg-sidebar) !important;
+}
+
+.widget {
+    background: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+/* Search Results */
+.search-results .entry-title a {
+    color: var(--color-primary) !important;
+}
+
+.search-results .entry-title a:hover {
+    color: var(--color-primary-dark) !important;
+}
+
+/* Comments */
+.comment-form input[type="submit"] {
+    background: var(--gradient-primary) !important;
+    color: var(--color-white) !important;
+}
+
+.comment-form input[type="submit"]:hover {
+    background: var(--gradient-secondary) !important;
+}
+
+/* WooCommerce Specific */
+.woocommerce-message,
+.woocommerce-info,
+.woocommerce-error {
+    border-left: 4px solid var(--color-primary) !important;
+}
+
+.woocommerce-message {
+    background: var(--color-primary-ultra-light) !important;
+}
+
+.woocommerce-info {
+    background: var(--color-info-ultra-light) !important;
+}
+
+.woocommerce-error {
+    background: var(--color-danger-ultra-light) !important;
+}
+
+/* Cart & Checkout */
+.woocommerce-cart .cart-collaterals .cart_totals,
+.woocommerce-checkout .checkout .col2-set {
+    background: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+/* Order Summary */
+.woocommerce-order-received .woocommerce-order {
+    background: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+/* Account Pages */
+.woocommerce-account .woocommerce-MyAccount-navigation {
+    background: var(--color-bg-sidebar) !important;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation ul li a {
+    color: var(--color-text) !important;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation ul li.is-active a {
+    background: var(--color-primary) !important;
+    color: var(--color-white) !important;
+}
+
+/* ===== RESPONSIVE COLOR ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+    .site-header,
+    .main-header {
+        border-bottom-width: 1px !important;
+    }
+    
+    .btn,
+    .button {
+        transform: none !important;
+    }
+    
+    .btn:hover,
+    .button:hover {
+        transform: none !important;
+    }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+    .site-header,
+    .site-footer,
+    .sidebar {
+        display: none !important;
+    }
+    
+    body {
+        color: var(--color-black) !important;
+        background: var(--color-white) !important;
+    }
+    
+    a {
+        color: var(--color-black) !important;
+        text-decoration: underline !important;
+    }
+}

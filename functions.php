@@ -573,6 +573,16 @@ function scode_enqueue_scripts() {
         wp_enqueue_style('scode-theme-colors', get_template_directory_uri() . '/assets/css/theme-colors.css', array(), '3.0.0');
     }
     
+    // Global Color Overrides - Ensures consistent colors
+    if (file_exists(get_template_directory() . '/assets/css/global-colors.css')) {
+        wp_enqueue_style('scode-global-colors', get_template_directory_uri() . '/assets/css/global-colors.css', array('scode-theme-colors'), '3.0.0');
+    }
+    
+    // Final Color Overrides - Ensures ALL elements use red theme
+    if (file_exists(get_template_directory() . '/assets/css/final-overrides.css')) {
+        wp_enqueue_style('scode-final-overrides', get_template_directory_uri() . '/assets/css/final-overrides.css', array('scode-global-colors'), '3.0.0');
+    }
+    
     // Custom CSS
     if (file_exists(get_template_directory() . '/assets/css/main.css')) {
         wp_enqueue_style('scode-main', get_template_directory_uri() . '/assets/css/main.css', array(), '3.0.0');
