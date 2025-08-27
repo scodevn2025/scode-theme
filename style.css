@@ -9,64 +9,65 @@ Text Domain: scode-theme
 
 /* ===== CSS VARIABLES & ROOT STYLES ===== */
 :root {
-    /* ===== ENHANCED COLOR SYSTEM ===== */
-    /* Primary Brand Colors - Modern Orange Gradient */
-    --color-primary: #ff6b35;
-    --color-primary-light: #ff8a65;
-    --color-primary-dark: #e55a1a;
-    --color-primary-gradient: linear-gradient(135deg, #ff6b35, #ff8a65);
+    /* ===== ENHANCED COLOR SYSTEM - RED, WHITE & BLACK THEME ===== */
+    /* Primary Brand Colors - Modern Red */
+    --color-primary: #dc2626;
+    --color-primary-light: #ef4444;
+    --color-primary-dark: #b91c1c;
+    --color-primary-gradient: linear-gradient(135deg, #dc2626, #ef4444);
     
-    /* Secondary Colors - Modern Blue */
-    --color-secondary: #4f46e5;
-    --color-secondary-light: #6366f1;
-    --color-secondary-dark: #3730a3;
+    /* Secondary Colors - Deep Red */
+    --color-secondary: #991b1b;
+    --color-secondary-light: #b91c1c;
+    --color-secondary-dark: #7f1d1d;
     
-    /* Accent Colors - Purple & Teal */
-    --color-accent: #8b5cf6;
-    --color-accent-light: #a78bfa;
-    --color-accent-dark: #7c3aed;
-    --color-purple: #7c3aed;
-    --color-teal: #06b6d4;
-    --color-teal-light: #22d3ee;
+    /* Accent Colors - Red Variations */
+    --color-accent: #dc2626;
+    --color-accent-light: #f87171;
+    --color-accent-dark: #991b1b;
+    --color-red-light: #fca5a5;
+    --color-red-medium: #f87171;
+    --color-red-dark: #dc2626;
     
-    /* Neutral Colors - Modern Gray Scale */
+    /* Neutral Colors - Black & White Scale */
     --color-white: #ffffff;
-    --color-gray-50: #f9fafb;
-    --color-gray-100: #f3f4f6;
-    --color-gray-200: #e5e7eb;
-    --color-gray-300: #d1d5db;
-    --color-gray-400: #9ca3af;
-    --color-gray-500: #6b7280;
-    --color-gray-600: #4b5563;
-    --color-gray-700: #374151;
-    --color-gray-800: #1f2937;
-    --color-gray-900: #111827;
+    --color-black: #000000;
+    --color-gray-50: #fafafa;
+    --color-gray-100: #f5f5f5;
+    --color-gray-200: #e5e5e5;
+    --color-gray-300: #d4d4d4;
+    --color-gray-400: #a3a3a3;
+    --color-gray-500: #737373;
+    --color-gray-600: #525252;
+    --color-gray-700: #404040;
+    --color-gray-800: #262626;
+    --color-gray-900: #171717;
     
     /* Text Colors */
-    --color-text: #111827;
-    --color-text-primary: #111827;
-    --color-text-secondary: #4b5563;
-    --color-text-muted: #6b7280;
+    --color-text: #171717;
+    --color-text-primary: #171717;
+    --color-text-secondary: #525252;
+    --color-text-muted: #737373;
     --color-text-inverse: #ffffff;
     
-    /* Status Colors - Enhanced */
-    --color-success: #10b981;
-    --color-success-light: #34d399;
-    --color-warning: #f59e0b;
-    --color-warning-light: #fbbf24;
-    --color-danger: #ef4444;
-    --color-danger-light: #f87171;
-    --color-info: #3b82f6;
-    --color-info-light: #60a5fa;
+    /* Status Colors - Enhanced with Red Theme */
+    --color-success: #16a34a;
+    --color-success-light: #22c55e;
+    --color-warning: #d97706;
+    --color-warning-light: #f59e0b;
+    --color-danger: #dc2626;
+    --color-danger-light: #ef4444;
+    --color-info: #2563eb;
+    --color-info-light: #3b82f6;
     
     /* Border & Background Colors */
-    --color-border: #e5e7eb;
-    --color-border-light: #e5e7eb;
-    --color-border-medium: #d1d5db;
-    --color-border-dark: #9ca3af;
-    --color-bg-light: #f9fafb;
-    --color-bg-medium: #f3f4f6;
-    --color-bg-dark: #e5e7eb;
+    --color-border: #e5e5e5;
+    --color-border-light: #f5f5f5;
+    --color-border-medium: #d4d4d4;
+    --color-border-dark: #a3a3a3;
+    --color-bg-light: #fafafa;
+    --color-bg-medium: #f5f5f5;
+    --color-bg-dark: #e5e5e5;
     
     /* ===== ENHANCED LAYOUT SYSTEM ===== */
     --container-width: 1280px;
@@ -135,13 +136,13 @@ Text Domain: scode-theme
     --letter-spacing-widest: 0.1em;
     
     /* ===== ENHANCED SHADOW SYSTEM ===== */
-    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
-    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
-    --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.25);
-    --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+    --shadow-xs: 0 1px 2px rgba(220, 38, 38, 0.05);
+    --shadow-sm: 0 1px 3px rgba(220, 38, 38, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px rgba(220, 38, 38, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px rgba(220, 38, 38, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px rgba(220, 38, 38, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+    --shadow-2xl: 0 25px 50px rgba(220, 38, 38, 0.25);
+    --shadow-inner: inset 0 2px 4px rgba(220, 38, 38, 0.06);
     
     /* ===== ENHANCED TRANSITION SYSTEM ===== */
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -150,22 +151,22 @@ Text Domain: scode-theme
     --transition-bounce: 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
     
     /* ===== ENHANCED SPACING SYSTEM ===== */
---spacing-0: 0px;
---spacing-1: 4px;
---spacing-2: 8px;
---spacing-3: 12px;
---spacing-4: 16px;
---spacing-5: 20px;
---spacing-6: 24px;
---spacing-8: 32px;
---spacing-10: 40px;
---spacing-12: 48px;
---spacing-16: 64px;
---spacing-20: 80px;
---spacing-24: 96px;
---spacing-32: 128px;
---product-gap: 16px;
---product-gap-mobile: 12px;
+    --spacing-0: 0px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-20: 80px;
+    --spacing-24: 96px;
+    --spacing-32: 128px;
+    --product-gap: 16px;
+    --product-gap-mobile: 12px;
     
     /* ===== ENHANCED BUTTON SYSTEM ===== */
     --btn-primary-bg: var(--color-primary);
@@ -182,16 +183,16 @@ Text Domain: scode-theme
     --btn-ghost-hover: var(--color-gray-100);
     
     /* ===== ENHANCED PRODUCT CARD SYSTEM ===== */
---card-bg: var(--color-white);
---card-border: var(--color-gray-200);
---card-radius: var(--radius-lg);
---card-shadow: var(--shadow-sm);
---card-shadow-hover: var(--shadow-lg);
---card-padding: var(--spacing-4);
---card-transition: var(--transition-normal);
---card-width: 210px;
---card-height: 290px;
---card-spacing: 16px;
+    --card-bg: var(--color-white);
+    --card-border: var(--color-gray-200);
+    --card-radius: var(--radius-lg);
+    --card-shadow: var(--shadow-sm);
+    --card-shadow-hover: var(--shadow-lg);
+    --card-padding: var(--spacing-4);
+    --card-transition: var(--transition-normal);
+    --card-width: 210px;
+    --card-height: 290px;
+    --card-spacing: 16px;
     
     /* ===== RESPONSIVE BREAKPOINTS ===== */
     --breakpoint-xs: 480px;
@@ -1482,7 +1483,7 @@ a:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(30, 58, 138, 0.8), rgba(124, 58, 237, 0.6));
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.8), rgba(153, 27, 27, 0.6));
     z-index: 2;
 }
 
@@ -1619,7 +1620,7 @@ a:hover {
 }
 
 .gifts-box {
-    background: rgba(59, 130, 246, 0.9);
+    background: rgba(220, 38, 38, 0.9);
     border-radius: var(--radius);
     padding: var(--spacing-20);
     color: var(--color-white);
@@ -2019,7 +2020,7 @@ a:hover {
     text-transform: uppercase;
     margin: 0;
     
-    /* Enhanced Color System - Orange background with white text */
+    /* Enhanced Color System - Red background with white text */
     background: var(--color-primary);
     color: var(--color-white);
     padding: 8px 16px;
@@ -2027,7 +2028,7 @@ a:hover {
     
     /* Modern Shadow Effects */
     text-shadow: none;
-    box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
     
     /* Smooth Transitions */
     transition: all var(--transition-normal);
@@ -5242,7 +5243,7 @@ body.video-modal-open {
 
 .product-features-single li {
     padding: var(--spacing-8) 0;
-    border-bottom: 1px solid rgba(243, 108, 33, 0.1);
+    border-bottom: 1px solid rgba(220, 38, 38, 0.1);
     position: relative;
     padding-left: var(--spacing-24);
 }
@@ -7253,11 +7254,6 @@ body.video-modal-open {
     line-height: 1.3;
 }
 
-.related-product-card .product-title a {
-    color: var(--color-text);
-    text-decoration: none;
-}
-
 .related-product-card .product-title a:hover {
     color: var(--color-primary);
 }
@@ -7298,7 +7294,7 @@ body.video-modal-open {
 
 .tab-btn:hover {
     color: var(--color-primary);
-    background: rgba(243, 108, 33, 0.05);
+    background: rgba(220, 38, 38, 0.05);
 }
 
 .tab-btn.active {
@@ -7359,7 +7355,7 @@ body.video-modal-open {
 }
 
 .read-more-btn {
-    background: linear-gradient(135deg, #f36c21, #ff8c42);
+    background: linear-gradient(135deg, #dc2626, #ef4444);
     color: #fff;
     border: none;
     padding: 12px 24px;
@@ -7371,12 +7367,12 @@ body.video-modal-open {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    box-shadow: 0 4px 12px rgba(243, 108, 33, 0.3);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
 }
 
 .read-more-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(243, 108, 33, 0.4);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
 }
 
 .read-more-btn:active {
@@ -7500,12 +7496,12 @@ body.video-modal-open {
 }
 
 .sticky-buy-now {
-    background: #dc3545;
+    background: #991b1b;
     color: white;
 }
 
 .sticky-buy-now:hover {
-    background: #c82333;
+    background: #7f1d1d;
     transform: translateY(-2px);
 }
 
@@ -7591,15 +7587,15 @@ body.video-modal-open {
 /* ===== NEW PRODUCT CARD DESIGN ===== */
 .product-card {
     background: var(--color-white);
-    border-radius: var(--mi-radius);
-    box-shadow: var(--mi-shadow);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
     transition: all var(--transition-normal);
     overflow: hidden;
     position: relative;
 }
 
 .product-card:hover {
-    box-shadow: var(--mi-shadow-hover);
+    box-shadow: var(--shadow-lg);
     transform: translateY(-4px);
 }
 
@@ -7624,7 +7620,7 @@ body.video-modal-open {
     width: 100%;
     height: 290px;
     overflow: hidden;
-    background: var(--color-light-gray);
+    background: var(--color-bg-light);
 }
 
 .product-image-wrapper img {
@@ -7672,7 +7668,7 @@ body.video-modal-open {
     top: 50px;
     right: 12px;
     background: linear-gradient(135deg, #ffd700, #ffed4e);
-    color: var(--color-dark);
+    color: var(--color-black);
     padding: 6px 12px;
     border-radius: 20px;
     font-size: 0.875rem;
@@ -7686,7 +7682,7 @@ body.video-modal-open {
     top: 88px;
     right: 12px;
     background: var(--color-warning);
-    color: var(--color-dark);
+    color: var(--color-black);
     padding: 6px 12px;
     border-radius: 20px;
     font-size: 0.875rem;
@@ -7722,7 +7718,7 @@ body.video-modal-open {
 }
 
 .product-info {
-    padding: var(--spacing-16);
+    padding: var(--spacing-4);
 }
 
 .product-title {
@@ -8781,14 +8777,14 @@ img[onerror] {
 }
 
 .new-product-structure-section .section-title {
-    background: linear-gradient(135deg, var(--color-purple), var(--color-secondary));
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
 .new-product-structure-section .section-title::after {
-    background: linear-gradient(135deg, var(--color-purple), var(--color-secondary));
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
 }
 
 .demo-grid {
@@ -9021,7 +9017,7 @@ img[onerror] {
 .home-products .product-card:hover {
     transform: translateY(-12px) scale(1.02);
     box-shadow: 
-        0 25px 50px rgba(255, 107, 53, 0.2),
+        0 25px 50px rgba(220, 38, 38, 0.2),
         0 15px 35px rgba(0, 0, 0, 0.1),
         0 8px 25px rgba(0, 0, 0, 0.08),
         inset 0 1px 0 rgba(255, 255, 255, 0.9);
@@ -9403,14 +9399,174 @@ img[onerror] {
 
 /* ===== CSS VARIABLES ===== */
 :root {
-    --color-primary: #ff6b35;
-    --color-danger: #e53935;
-    --color-gray-500: #6b7280;
-    --color-gray-400: #9ca3af;
-    --color-gray-300: #d1d5db;
-    --color-gray-200: #e5e7eb;
-    --color-gray-100: #f3f4f6;
-    --color-gray-50: #f9fafb;
+    --color-primary: #dc2626;
+    --color-primary-light: #ef4444;
+    --color-primary-dark: #b91c1c;
+    --color-primary-gradient: linear-gradient(135deg, #dc2626, #ef4444);
+    
+    --color-secondary: #991b1b;
+    --color-secondary-light: #b91c1c;
+    --color-secondary-dark: #7f1d1d;
+    
+    --color-accent: #dc2626;
+    --color-accent-light: #f87171;
+    --color-accent-dark: #991b1b;
+    --color-red-light: #fca5a5;
+    --color-red-medium: #f87171;
+    --color-red-dark: #dc2626;
+    
+    --color-white: #ffffff;
+    --color-black: #000000;
+    --color-gray-50: #fafafa;
+    --color-gray-100: #f5f5f5;
+    --color-gray-200: #e5e5e5;
+    --color-gray-300: #d4d4d4;
+    --color-gray-400: #a3a3a3;
+    --color-gray-500: #737373;
+    --color-gray-600: #525252;
+    --color-gray-700: #404040;
+    --color-gray-800: #262626;
+    --color-gray-900: #171717;
+    
+    --color-text: #171717;
+    --color-text-primary: #171717;
+    --color-text-secondary: #525252;
+    --color-text-muted: #737373;
+    --color-text-inverse: #ffffff;
+    
+    --color-success: #16a34a;
+    --color-success-light: #22c55e;
+    --color-warning: #d97706;
+    --color-warning-light: #f59e0b;
+    --color-danger: #dc2626;
+    --color-danger-light: #ef4444;
+    --color-info: #2563eb;
+    --color-info-light: #3b82f6;
+    
+    --color-border: #e5e5e5;
+    --color-border-light: #f5f5f5;
+    --color-border-medium: #d4d4d4;
+    --color-border-dark: #a3a3a3;
+    --color-bg-light: #fafafa;
+    --color-bg-medium: #f5f5f5;
+    --color-bg-dark: #e5e5e5;
+    
+    --container-width: 1280px;
+    --container-padding: 24px;
+    --grid-gap: 16px;
+    --section-padding: 80px;
+    --section-padding-mobile: 48px;
+    
+    --radius: 12px;
+    --radius-xs: 6px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-2xl: 24px;
+    --radius-round: 9999px;
+    
+    --header-height: 80px;
+    --header-height-mobile: 70px;
+    --topbar-height: 40px;
+    --nav-item-height: 48px;
+    
+    --font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    --font-family-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Consolas', monospace;
+    
+    --font-size-xs: 0.75rem;    /* 12px */
+    --font-size-sm: 0.875rem;   /* 14px */
+    --font-size-base: 1rem;     /* 16px */
+    --font-size-lg: 1.125rem;   /* 18px */
+    --font-size-xl: 1.25rem;    /* 20px */
+    --font-size-2xl: 1.5rem;    /* 24px */
+    --font-size-3xl: 1.875rem;  /* 30px */
+    --font-size-4xl: 2.25rem;   /* 36px */
+    --font-size-5xl: 3rem;      /* 48px */
+    --font-size-6xl: 3.75rem;   /* 60px */
+    
+    --font-weight-thin: 100;
+    --font-weight-extralight: 200;
+    --font-weight-light: 300;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-weight-extrabold: 800;
+    --font-weight-black: 900;
+    
+    --line-height-tight: 1.1;
+    --line-height-snug: 1.2;
+    --line-height-normal: 1.4;
+    --line-height-relaxed: 1.6;
+    --line-height-loose: 1.8;
+    
+    --letter-spacing-tighter: -0.05em;
+    --letter-spacing-tight: -0.025em;
+    --letter-spacing-normal: 0em;
+    --letter-spacing-wide: 0.025em;
+    --letter-spacing-wider: 0.05em;
+    --letter-spacing-widest: 0.1em;
+    
+    --shadow-xs: 0 1px 2px rgba(220, 38, 38, 0.05);
+    --shadow-sm: 0 1px 3px rgba(220, 38, 38, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px rgba(220, 38, 38, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px rgba(220, 38, 38, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px rgba(220, 38, 38, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+    --shadow-2xl: 0 25px 50px rgba(220, 38, 38, 0.25);
+    --shadow-inner: inset 0 2px 4px rgba(220, 38, 38, 0.06);
+    
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    --spacing-0: 0px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-20: 80px;
+    --spacing-24: 96px;
+    --spacing-32: 128px;
+    --product-gap: 16px;
+    --product-gap-mobile: 12px;
+    
+    --btn-primary-bg: var(--color-primary);
+    --btn-primary-hover: var(--color-primary-dark);
+    --btn-primary-gradient: var(--color-primary-gradient);
+    --btn-secondary-bg: var(--color-white);
+    --btn-secondary-border: var(--color-primary);
+    --btn-secondary-text: var(--color-primary);
+    --btn-secondary-hover: var(--color-primary);
+    --btn-secondary-hover-text: var(--color-white);
+    --btn-ghost-bg: transparent;
+    --btn-ghost-border: var(--color-gray-300);
+    --btn-ghost-text: var(--color-gray-700);
+    --btn-ghost-hover: var(--color-gray-100);
+    
+    --card-bg: var(--color-white);
+    --card-border: var(--color-gray-200);
+    --card-radius: var(--radius-lg);
+    --card-shadow: var(--shadow-sm);
+    --card-shadow-hover: var(--shadow-lg);
+    --card-padding: var(--spacing-4);
+    --card-transition: var(--transition-normal);
+    --card-width: 210px;
+    --card-height: 290px;
+    --card-spacing: 16px;
+    
+    --breakpoint-xs: 480px;
+    --breakpoint-sm: 640px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1024px;
 }
 
 /* ===== ULTIMATE BORDER REMOVAL - FINAL OVERRIDE ===== */

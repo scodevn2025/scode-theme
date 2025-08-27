@@ -3,16 +3,16 @@
 
 /* ===== CSS VARIABLES ===== */
 :root {
-    --otnt-primary: #f36c21;
-    --otnt-primary-dark: #e55a1f;
-    --otnt-secondary: #ff8c42;
-    --otnt-accent: #ffefe6;
-    --otnt-text: #2c3e50;
-    --otnt-muted: #7f8c8d;
-    --otnt-light: #ecf0f1;
-    --otnt-border: #bdc3c7;
+    --otnt-primary: #dc2626;
+    --otnt-primary-dark: #b91c1c;
+    --otnt-secondary: #ef4444;
+    --otnt-accent: #fef2f2;
+    --otnt-text: #171717;
+    --otnt-muted: #737373;
+    --otnt-light: #f5f5f5;
+    --otnt-border: #e5e5e5;
     --otnt-white: #ffffff;
-    --otnt-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    --otnt-shadow: 0 4px 20px rgba(220, 38, 38, 0.08);
     --otnt-radius: 12px;
     --otnt-transition: all 0.3s ease;
 }

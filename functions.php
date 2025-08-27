@@ -568,6 +568,11 @@ function scode_enqueue_scripts() {
     // Theme stylesheet
     wp_enqueue_style('scode-style', get_stylesheet_uri(), array(), '3.0.0');
     
+    // Theme Colors CSS - RED, WHITE & BLACK THEME
+    if (file_exists(get_template_directory() . '/assets/css/theme-colors.css')) {
+        wp_enqueue_style('scode-theme-colors', get_template_directory_uri() . '/assets/css/theme-colors.css', array(), '3.0.0');
+    }
+    
     // Custom CSS
     if (file_exists(get_template_directory() . '/assets/css/main.css')) {
         wp_enqueue_style('scode-main', get_template_directory_uri() . '/assets/css/main.css', array(), '3.0.0');

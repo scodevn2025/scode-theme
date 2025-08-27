@@ -3,68 +3,68 @@
 
 /* ===== CSS VARIABLES & ROOT STYLES ===== */
 :root {
-    /* ===== BRAND COLORS ===== */
-    --otnt-primary: #f36c21;
-    --otnt-primary-dark: #e55a1f;
-    --otnt-primary-light: #ff8c42;
-    --otnt-primary-ultra-light: #fff5f0;
-    --otnt-orange: #ff6b35;
-    --otnt-orange-light: #f7931e;
+    /* ===== BRAND COLORS - RED, WHITE & BLACK THEME ===== */
+    --otnt-primary: #dc2626;
+    --otnt-primary-dark: #b91c1c;
+    --otnt-primary-light: #ef4444;
+    --otnt-primary-ultra-light: #fef2f2;
+    --otnt-orange: #dc2626;
+    --otnt-orange-light: #ef4444;
 
-    --otnt-secondary: #f36c21;
-    --otnt-secondary-dark: #e55a1f;
-    --otnt-secondary-light: #ff8c42;
-    --otnt-secondary-ultra-light: #fff5f0;
+    --otnt-secondary: #991b1b;
+    --otnt-secondary-dark: #7f1d1d;
+    --otnt-secondary-light: #b91c1c;
+    --otnt-secondary-ultra-light: #fef2f2;
     
     /* ===== ACCENT COLORS ===== */
-    --otnt-accent: #ffefe6;
-    --otnt-accent-1: #ffcc99;
-    --otnt-accent-2: #ffb366;
-    --otnt-accent-3: #fd7e14;
-    --otnt-accent-4: #ffe6cc;
+    --otnt-accent: #fef2f2;
+    --otnt-accent-1: #fca5a5;
+    --otnt-accent-2: #f87171;
+    --otnt-accent-3: #dc2626;
+    --otnt-accent-4: #fee2e2;
     
     /* ===== STATUS COLORS ===== */
-    --otnt-success: #28a745;
-    --otnt-warning: #ffc107;
-    --otnt-danger: #dc3545;
-    --otnt-info: #17a2b8;
+    --otnt-success: #16a34a;
+    --otnt-warning: #d97706;
+    --otnt-danger: #dc2626;
+    --otnt-info: #2563eb;
     
     /* ===== TEXT COLORS ===== */
-    --otnt-text: #2c3e50;
-    --otnt-text-primary: #1a202c;
-    --otnt-text-secondary: #4a5568;
-    --otnt-text-tertiary: #718096;
-    --otnt-muted: #7f8c8d;
+    --otnt-text: #171717;
+    --otnt-text-primary: #171717;
+    --otnt-text-secondary: #525252;
+    --otnt-text-tertiary: #737373;
+    --otnt-muted: #737373;
     --otnt-text-inverse: #ffffff;
     
     /* ===== BACKGROUND COLORS ===== */
     --otnt-white: #ffffff;
-    --otnt-light: #ecf0f1;
+    --otnt-light: #f5f5f5;
     --otnt-bg-primary: #ffffff;
-    --otnt-bg-secondary: #f7fafc;
-    --otnt-bg-tertiary: #edf2f7;
-    --otnt-bg-accent: #fff5f0;
+    --otnt-bg-secondary: #fafafa;
+    --otnt-bg-tertiary: #f5f5f5;
+    --otnt-bg-accent: #fef2f2;
     --otnt-bg-card: #ffffff;
-    --otnt-bg-sidebar: #f8fafc;
-    --otnt-bg-footer: #e55a1f;
-    --otnt-bg-footer-light: #f36c21;
-    --otnt-bg-section: #f7fafc;
-    --otnt-bg-alternate: #edf2f7;
+    --otnt-bg-sidebar: #fafafa;
+    --otnt-bg-footer: #171717;
+    --otnt-bg-footer-light: #262626;
+    --otnt-bg-section: #fafafa;
+    --otnt-bg-alternate: #f5f5f5;
     
     /* ===== BORDER COLORS ===== */
-    --otnt-border: #bdc3c7;
-    --otnt-border-light: #e2e8f0;
-    --otnt-border-medium: #cbd5e0;
-    --otnt-border-dark: #a0aec0;
-    --otnt-border-accent: rgba(243, 108, 33, 0.2);
+    --otnt-border: #e5e5e5;
+    --otnt-border-light: #f5f5f5;
+    --otnt-border-medium: #d4d4d4;
+    --otnt-border-dark: #a3a3a3;
+    --otnt-border-accent: rgba(220, 38, 38, 0.2);
     
     /* ===== SHADOW COLORS ===== */
-    --otnt-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    --otnt-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.12);
-    --otnt-shadow-light: rgba(0, 0, 0, 0.05);
-    --otnt-shadow-medium: rgba(0, 0, 0, 0.1);
-    --otnt-shadow-heavy: rgba(0, 0, 0, 0.15);
-    --otnt-shadow-accent: rgba(243, 108, 33, 0.1);
+    --otnt-shadow: 0 4px 20px rgba(220, 38, 38, 0.08);
+    --otnt-shadow-hover: 0 8px 30px rgba(220, 38, 38, 0.12);
+    --otnt-shadow-light: rgba(220, 38, 38, 0.05);
+    --otnt-shadow-medium: rgba(220, 38, 38, 0.1);
+    --otnt-shadow-heavy: rgba(220, 38, 38, 0.15);
+    --otnt-shadow-accent: rgba(220, 38, 38, 0.1);
     
     /* ===== LAYOUT ===== */
     --otnt-container: 1230px;
@@ -1461,12 +1461,12 @@ footer.site-footer,
 .site-footer,
 body .site-footer,
 html body .site-footer {
-    background: linear-gradient(135deg, var(--otnt-bg-footer) 0%, var(--otnt-bg-footer-light) 100%) !important;
-    color: var(--otnt-text-inverse) !important;
+    background: linear-gradient(135deg, #171717 0%, #262626 100%) !important;
+    color: #ffffff !important;
     padding: var(--otnt-spacing-xxl) 0 var(--otnt-spacing-xl);
     position: relative;
     overflow: hidden;
-    border-top: 4px solid var(--otnt-orange) !important;
+    border-top: 4px solid var(--color-primary) !important;
 }
 
 .site-footer::after {
@@ -1476,8 +1476,8 @@ html body .site-footer {
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, var(--otnt-orange) 0%, var(--otnt-orange-light) 50%, var(--otnt-orange) 100%) !important;
-    box-shadow: 0 0 20px rgba(255, 107, 53, 0.5) !important;
+    background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-light) 50%, var(--color-primary) 100%) !important;
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.5) !important;
 }
 
 /* After Sales Support Section */
@@ -1496,7 +1496,7 @@ html body .site-footer {
     transform: translateX(-50%);
     width: 100px;
     height: 2px;
-    background: linear-gradient(90deg, var(--otnt-primary), var(--otnt-primary-light));
+    background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
     border-radius: 1px;
 }
 
@@ -1526,7 +1526,7 @@ html body .site-footer {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+    background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.1), transparent);
     transition: left 0.5s ease;
 }
 
@@ -1538,13 +1538,13 @@ html body .site-footer {
     background: rgba(255, 255, 255, 0.12);
     transform: translateY(-4px);
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
-    border-color: rgba(102, 126, 234, 0.4);
+    border-color: rgba(220, 38, 38, 0.4);
 }
 
 .support-icon {
     width: 64px;
     height: 64px;
-    background: linear-gradient(135deg, #4c63d2 0%, #5a67d8 100%);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1553,17 +1553,17 @@ html body .site-footer {
     color: #ffffff;
     flex-shrink: 0;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 15px rgba(76, 99, 210, 0.4);
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
     border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .support-item:hover .support-icon {
     transform: scale(1.1) rotate(5deg);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.5);
 }
 
 .support-content h4 {
-    color: var(--otnt-primary);
+    color: var(--color-primary);
     margin-bottom: var(--otnt-spacing-sm);
     font-size: 1.1rem;
     font-weight: 600;
@@ -1576,7 +1576,7 @@ html body .site-footer {
 }
 
 .support-highlight {
-    color: var(--otnt-primary);
+    color: var(--color-primary);
     font-weight: 600;
     font-size: 1rem !important;
 }
@@ -1584,7 +1584,7 @@ html body .site-footer {
 .support-btn {
     display: inline-block;
     padding: 10px 20px;
-    background: linear-gradient(135deg, #4c63d2 0%, #5a67d8 100%);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
     color: #ffffff;
     text-decoration: none;
     border-radius: 25px;
@@ -1593,7 +1593,7 @@ html body .site-footer {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(76, 99, 210, 0.4);
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -1613,9 +1613,9 @@ html body .site-footer {
 }
 
 .support-btn:hover {
-    background: linear-gradient(135deg, #5a67d8 0%, #4c63d2 100%);
+    background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary) 100%);
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(76, 99, 210, 0.6);
+    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.6);
     border-color: rgba(255, 255, 255, 0.2);
 }
 
@@ -1628,7 +1628,7 @@ html body .site-footer {
 }
 
 .footer-widget h3 {
-    color: var(--otnt-orange);
+    color: var(--color-primary);
     margin-bottom: var(--otnt-spacing-md);
     font-size: 1.2rem;
     position: relative;
@@ -1643,7 +1643,7 @@ html body .site-footer {
     left: 0;
     width: 40px;
     height: 2px;
-    background: linear-gradient(90deg, var(--otnt-orange), var(--otnt-orange-light));
+    background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
     border-radius: 1px;
 }
 
