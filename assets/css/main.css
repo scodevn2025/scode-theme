@@ -99,6 +99,73 @@
     color: var(--color-primary) !important;
 }
 
+/* ===== FORCE RED COLORS EVERYWHERE ===== */
+/* Override any orange colors */
+[style*="orange"],
+[style*="Orange"],
+[style*="#ff6b35"],
+[style*="#f36c21"],
+[style*="#ff8c42"] {
+    color: var(--color-primary) !important;
+}
+
+/* Override orange backgrounds */
+[style*="background: orange"],
+[style*="background: #ff6b35"],
+[style*="background: #f36c21"],
+[style*="background: #ff8c42"] {
+    background: var(--color-primary) !important;
+}
+
+/* Override orange borders */
+[style*="border-color: orange"],
+[style*="border-color: #ff6b35"],
+[style*="border-color: #f36c21"],
+[style*="border-color: #ff8c42"] {
+    border-color: var(--color-primary) !important;
+}
+
+/* Force specific elements to use red */
+.otnt-primary,
+.otnt-orange,
+.otnt-primary-light,
+.otnt-orange-light {
+    color: var(--color-primary) !important;
+}
+
+.otnt-primary,
+.otnt-orange,
+.otnt-primary-light,
+.otnt-orange-light {
+    background: var(--color-primary) !important;
+}
+
+/* Force buttons to use red */
+.btn,
+.button,
+input[type="submit"],
+input[type="button"] {
+    background: var(--gradient-primary) !important;
+    color: var(--color-white) !important;
+    border: none !important;
+}
+
+.btn:hover,
+.button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover {
+    background: var(--gradient-secondary) !important;
+}
+
+/* Force links to use red */
+a {
+    color: var(--color-primary) !important;
+}
+
+a:hover {
+    color: var(--color-primary-dark) !important;
+}
+
 /* Force all brand elements to use red */
 *[class*="brand"],
 *[class*="Brand"],
@@ -108,27 +175,56 @@
 }
 
 /* ===== SPECIFIC COMPONENT OVERRIDES ===== */
-/* Any remaining orange/blue elements */
+/* Force ALL orange colors to red */
 [style*="orange"],
-[style*="blue"],
 [style*="Orange"],
-[style*="Blue"] {
+[style*="#ff6b35"],
+[style*="#f36c21"],
+[style*="#ff8c42"],
+[style*="#e55a1f"],
+[style*="#f7931e"] {
     color: var(--color-primary) !important;
 }
 
-/* Background overrides */
+/* Force ALL orange backgrounds to red */
 [style*="background: orange"],
-[style*="background: blue"],
 [style*="background: #ff6b35"],
-[style*="background: #4c63d2"] {
+[style*="background: #f36c21"],
+[style*="background: #ff8c42"],
+[style*="background: #e55a1f"],
+[style*="background: #f7931e"] {
     background: var(--color-primary) !important;
 }
 
-/* Border overrides */
+/* Force ALL orange borders to red */
 [style*="border-color: orange"],
-[style*="border-color: blue"],
 [style*="border-color: #ff6b35"],
-[style*="border-color: #4c63d2"] {
+[style*="border-color: #f36c21"],
+[style*="border-color: #ff8c42"],
+[style*="border-color: #e55a1f"],
+[style*="border-color: #f7931e"] {
+    border-color: var(--color-primary) !important;
+}
+
+/* Force specific class names to use red */
+.otnt-primary,
+.otnt-orange,
+.otnt-primary-light,
+.otnt-orange-light,
+.otnt-primary-dark,
+.otnt-orange-dark {
+    color: var(--color-primary) !important;
+    background: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+}
+
+/* Force any remaining blue colors to red */
+[style*="blue"],
+[style*="Blue"],
+[style*="#4c63d2"],
+[style*="#5a67d8"] {
+    color: var(--color-primary) !important;
+    background: var(--color-primary) !important;
     border-color: var(--color-primary) !important;
 }
 
@@ -308,6 +404,32 @@
         background: var(--color-bg-secondary) !important;
         border-color: var(--color-border) !important;
     }
+}
+
+/* ===== FINAL FORCE OVERRIDE ===== */
+/* This ensures ALL orange colors are replaced with red */
+* {
+    color: inherit !important;
+}
+
+/* Force any remaining orange elements */
+[class*="orange"],
+[class*="Orange"],
+[style*="orange"],
+[style*="Orange"] {
+    color: var(--color-primary) !important;
+    background: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+}
+
+/* Force any remaining primary elements */
+[class*="primary"],
+[class*="Primary"],
+[style*="primary"],
+[style*="Primary"] {
+    color: var(--color-primary) !important;
+    background: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
 }
 
 /* ===== OPTIMIZED CSS FOR SCODE THEME - MI VIETNAM.VN STYLE ===== */
@@ -3453,4 +3575,52 @@ html body .site-footer {
     .icon-item {
         padding: var(--otnt-spacing-lg);
     }
+}
+
+/* ===== FINAL AGGRESSIVE OVERRIDES - FORCE ALL ORANGE TO RED ===== */
+/* This section ensures NO orange colors can appear anywhere */
+*[style*="orange"] { color: #dc2626 !important; }
+*[style*="Orange"] { color: #dc2626 !important; }
+*[style*="background: orange"] { background: #dc2626 !important; }
+*[style*="background:Orange"] { background: #dc2626 !important; }
+*[style*="border-color: orange"] { border-color: #dc2626 !important; }
+*[style*="border-color:Orange"] { border-color: #dc2626 !important; }
+
+/* Force any class with "orange" in the name */
+[class*="orange"], [class*="Orange"] {
+    color: #dc2626 !important;
+    background: #dc2626 !important;
+    border-color: #dc2626 !important;
+}
+
+/* Override any remaining CSS variables */
+:root {
+    --otnt-orange: #dc2626 !important;
+    --otnt-orange-light: #ef4444 !important;
+    --otnt-orange-dark: #b91c1c !important;
+}
+
+/* ===== ULTIMATE ORANGE ELIMINATION ===== */
+/* Force ALL elements with any orange reference to be red */
+*[class*="orange"], *[class*="Orange"], *[class*="ORANGE"] {
+    color: #dc2626 !important;
+    background: #dc2626 !important;
+    border-color: #dc2626 !important;
+    background-color: #dc2626 !important;
+}
+
+/* Force any inline styles with orange */
+*[style*="orange"], *[style*="Orange"], *[style*="ORANGE"] {
+    color: #dc2626 !important;
+    background: #dc2626 !important;
+    border-color: #dc2626 !important;
+    background-color: #dc2626 !important;
+}
+
+/* Force any data attributes with orange */
+*[data-color*="orange"], *[data-color*="Orange"], *[data-color*="ORANGE"] {
+    color: #dc2626 !important;
+    background: #dc2626 !important;
+    border-color: #dc2626 !important;
+    background-color: #dc2626 !important;
 }

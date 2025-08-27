@@ -573,10 +573,7 @@ function scode_enqueue_scripts() {
         wp_enqueue_style('scode-main', get_template_directory_uri() . '/assets/css/main.css', array(), '3.0.0');
     }
     
-    // Single Product CSS
-    if (file_exists(get_template_directory() . '/assets/css/single-product.css')) {
-        wp_enqueue_style('scode-single-product', get_template_directory_uri() . '/assets/css/single-product.css', array(), '1.0.0');
-    }
+
     
     // No Borders CSS - REMOVED (no longer needed)
     
