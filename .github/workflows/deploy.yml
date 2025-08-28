@@ -36,7 +36,8 @@ jobs:
             chown -R admin:admin "/home/admin/htdocs/shop.scode.works/wp-content/themes/scode-theme"
             /usr/local/bin/wp --path=/home/admin/htdocs/shop.scode.works cache flush >/dev/null 2>&1 || true
           SSH
-      - name: Purge Cloudflare (purge everything)
+      - name: Purge Cloudflare (everything)
+        if: ${{ secrets.CLOUDFLARE_API_TOKEN && secrets.CLOUDFLARE_ZONE_ID }}
         run: |
           curl -sS -X POST \
             "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
