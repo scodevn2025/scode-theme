@@ -386,11 +386,11 @@ a:hover {
 /* ===== DARK MODE SUPPORT ===== */
 @media (prefers-color-scheme: dark) {
     :root {
-        --color-bg-primary: #171717;
-        --color-bg-secondary: #262626;
-        --color-text: #ffffff;
-        --color-text-secondary: #d4d4d4;
-        --color-border: #404040;
+        --color-bg-primary: #ffffff;
+        --color-bg-secondary: #ffffff;
+        --color-text: #171717;
+        --color-text-secondary: #525252;
+        --color-border: #e5e5e5;
     }
     
     .site-header,
@@ -519,12 +519,12 @@ a:hover {
     --otnt-transition-slow: 0.5s ease;
     
     /* ===== SPACING ===== */
-    --otnt-spacing-xs: 8px;
-    --otnt-spacing-sm: 16px;
-    --otnt-spacing-md: 24px;
-    --otnt-spacing-lg: 32px;
-    --otnt-spacing-xl: 48px;
-    --otnt-spacing-xxl: 64px;
+    --otnt-spacing-xs: 1px;
+    --otnt-spacing-sm: 2px;
+    --otnt-spacing-md: 3px;
+    --otnt-spacing-lg: 5px;
+    --otnt-spacing-xl: 8px;
+    --otnt-spacing-xxl: 10px;
 }
 
 /* ===== RESET & BASE STYLES ===== */
@@ -554,13 +554,13 @@ body {
     margin: 0 auto;
     padding: 0 20px;
     box-sizing: border-box;
-    background: transparent;
+    background: #ffffff;
     position: relative;
 }
 
-/* Force footer container to be transparent */
+/* Force footer container to be white */
 .site-footer .container {
-    background: transparent !important;
+    background: #ffffff !important;
 }
 
 .main-layout {
@@ -595,10 +595,11 @@ body::before {
 
 /* ===== CONTENT AREA BACKGROUND ===== */
 .main-content {
-    background: var(--otnt-bg-primary);
+    background: #ffffff;
     min-height: 100vh;
     position: relative;
     z-index: 1;
+    padding: 20px 0;
 }
 
 .main-content::before {
@@ -609,7 +610,7 @@ body::before {
     transform: translateX(-50%);
     width: 100vw;
     height: 100%;
-    background: var(--otnt-bg-primary);
+    background: #ffffff;
     z-index: -1;
 }
 
@@ -653,9 +654,9 @@ body::before {
 
 /* ===== HERO SECTION STYLES ===== */
 .hero-section {
-    background: transparent;
-    padding: 20px 0;
-    margin-bottom: var(--otnt-spacing-lg);
+    background: #ffffff;
+    padding: 5px 0;
+    margin-bottom: 0;
     border-bottom: none;
 }
 
@@ -716,7 +717,7 @@ body::before {
 
 .shortcut-item:hover {
     background: transparent;
-    color: var(--otnt-orange);
+    color: #dc2626 !important;
     transform: translateY(-2px);
     box-shadow: none;
     border-color: transparent;
@@ -725,7 +726,7 @@ body::before {
 .shortcut-badge {
     width: 36px;
     height: 36px;
-    background: linear-gradient(135deg, var(--otnt-orange) 0%, var(--otnt-orange-light) 100%);
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%) !important;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -734,13 +735,13 @@ body::before {
     font-size: 16px;
     font-weight: 700;
     transition: all 0.3s ease;
-    box-shadow: 0 3px 10px rgba(255, 107, 53, 0.3);
+    box-shadow: 0 3px 10px rgba(220, 38, 38, 0.3) !important;
     border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .shortcut-item:hover .shortcut-badge {
     background: var(--otnt-white);
-    color: var(--otnt-orange);
+    color: #dc2626 !important;
     transform: scale(1.1);
 }
 
@@ -757,7 +758,7 @@ body::before {
 }
 
 .shortcut-item:hover .shortcut-label {
-    color: var(--otnt-orange);
+    color: #dc2626 !important;
 }
 
 /* ===== HERO SIDEBAR STYLES ===== */
@@ -810,7 +811,7 @@ body::before {
 /* Menu header pseudo-element removed for transparency */
 
 .menu-header i {
-    color: var(--otnt-orange);
+    color: #dc2626 !important;
     font-size: 20px;
     text-shadow: none;
     animation: none;
@@ -856,7 +857,7 @@ body::before {
 .menu-link {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     padding: 20px;
     color: var(--otnt-text-primary);
     text-decoration: none;
@@ -871,9 +872,9 @@ body::before {
 
 .menu-link:hover {
     background: transparent;
-    color: var(--otnt-orange);
+    color: #dc2626 !important;
     transform: translateX(5px);
-    border-left-color: var(--otnt-orange);
+    border-left-color: #dc2626 !important;
     box-shadow: none;
 }
 
@@ -886,7 +887,7 @@ body::before {
 }
 
 .menu-link:hover i:first-child {
-    color: var(--otnt-orange);
+    color: #dc2626 !important;
     transform: scale(1.1);
 }
 
@@ -894,11 +895,12 @@ body::before {
     color: var(--otnt-text-tertiary);
     font-size: 12px;
     transition: transform 0.3s ease;
+    margin-left: auto;
 }
 
 .menu-link:hover .caret {
     transform: translateX(3px);
-    color: var(--otnt-orange);
+    color: #dc2626 !important;
 }
 
 /* ===== SUBMENU DROPDOWN STYLES ===== */
@@ -906,10 +908,10 @@ body::before {
     position: absolute;
     left: 100%;
     top: 0;
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
+    background: #ffffff;
+    border: 1px solid var(--otnt-border-light);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     min-width: 300px;
     z-index: 1000;
     opacity: 0;
@@ -937,7 +939,7 @@ body::before {
     min-height: auto;
     max-height: none;
     overflow: visible;
-    background: transparent;
+    background: #ffffff;
 }
 
 .submenu-column h4 {
@@ -946,7 +948,7 @@ body::before {
     font-weight: 600;
     margin-bottom: 12px;
     padding-bottom: 8px;
-    border-bottom: 2px solid var(--otnt-orange);
+    border-bottom: 2px solid #dc2626 !important;
 }
 
 .submenu-column ul {
@@ -977,7 +979,7 @@ body::before {
 }
 
 .submenu-column ul li a:hover {
-    color: var(--otnt-orange);
+    color: #dc2626 !important;
     transform: translateX(5px);
 }
 
@@ -1047,8 +1049,8 @@ body::before {
 
 .search-input-wrapper input[type="search"]:focus {
     outline: none;
-    border-color: var(--otnt-orange);
-    box-shadow: 0 4px 20px rgba(255, 107, 53, 0.15);
+    border-color: #dc2626 !important;
+    box-shadow: 0 4px 20px rgba(220, 38, 38, 0.15) !important;
     transform: translateY(-2px);
 }
 
@@ -1057,7 +1059,7 @@ body::before {
     right: 8px;
     top: 50%;
     transform: translateY(-50%);
-    background: linear-gradient(135deg, var(--otnt-orange) 0%, var(--otnt-orange-light) 100%);
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%) !important;
     color: var(--otnt-white);
     border: none;
     border-radius: 50%;
@@ -1068,11 +1070,11 @@ body::before {
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3) !important;
 }
 
 .search-btn:hover {
-    background: linear-gradient(135deg, var(--otnt-orange-light) 0%, var(--otnt-orange) 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     transform: translateY(-50%) scale(1.05);
     box-shadow: 0 6px 25px rgba(255, 107, 53, 0.4);
 }
@@ -1161,6 +1163,7 @@ body::before {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: #ffffff;
 }
 
 .top-bar-left,
@@ -1198,6 +1201,7 @@ body::before {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: #ffffff;
 }
 
 .header-top-left,
@@ -1215,6 +1219,7 @@ body::before {
     grid-template-columns: auto 1fr auto;
     gap: 30px;
     align-items: center;
+    background: #ffffff;
 }
 
 .site-logo img {
@@ -1292,7 +1297,7 @@ body::before {
 /* ===== HERO SECTION ===== */
 .hero-section {
     padding: var(--otnt-spacing-lg) 0;
-    background: linear-gradient(135deg, var(--otnt-primary-light) 0%, var(--otnt-primary) 100%);
+    background: #ffffff;
 }
 
 .hero-grid {
@@ -1370,7 +1375,7 @@ body::before {
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-    color: var(--otnt-white);
+    color: var(--otnt-text-primary);
     z-index: 2;
 }
 
@@ -1378,13 +1383,15 @@ body::before {
     font-size: 3rem;
     font-weight: 700;
     margin-bottom: 20px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    color: var(--otnt-text-primary);
+    text-shadow: none;
 }
 
 .hero-description {
     font-size: 1.2rem;
     margin-bottom: 30px;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    color: var(--otnt-text-primary);
+    text-shadow: none;
 }
 
 .hero-cta {
@@ -1454,7 +1461,7 @@ body::before {
 
 /* ===== VERTICAL MEGA MENU ===== */
 .vertical-mega-menu {
-    background: linear-gradient(180deg, #1f2937 0%, #374151 100%);
+    background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
     border: 2px solid var(--otnt-primary);
     /* Force hide scrollbar */
     scrollbar-width: none !important;
@@ -1488,10 +1495,10 @@ body::before {
     align-items: center;
     gap: 12px;
     padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(220, 38, 38, 0.1);
     border-radius: 8px;
     margin-bottom: 16px;
-    color: var(--otnt-white);
+    color: var(--otnt-text);
 }
 
 .menu-header i {
@@ -1516,9 +1523,9 @@ body::before {
 .menu-link {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     padding: 12px 16px;
-    color: var(--otnt-white);
+    color: var(--otnt-text);
     text-decoration: none;
     border-radius: 8px;
     transition: all var(--otnt-transition);
@@ -1526,7 +1533,7 @@ body::before {
 }
 
 .menu-link:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(220, 38, 38, 0.1);
     color: var(--otnt-primary);
 }
 
@@ -1537,13 +1544,15 @@ body::before {
 }
 
 .menu-link span {
-    flex: 1;
+    flex: 0 1 auto;
     font-weight: 500;
+    margin-right: auto;
 }
 
 .caret {
     transition: transform var(--otnt-transition);
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--otnt-text-tertiary);
+    margin-left: auto;
 }
 
 .mega-menu-item:hover .caret {
@@ -1895,8 +1904,8 @@ footer.site-footer,
 .site-footer,
 body .site-footer,
 html body .site-footer {
-    background: linear-gradient(135deg, #171717 0%, #262626 100%) !important;
-    color: #ffffff !important;
+    background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%) !important;
+    color: var(--otnt-text) !important;
     padding: var(--otnt-spacing-xxl) 0 var(--otnt-spacing-xl);
     position: relative;
     overflow: hidden;
@@ -2557,12 +2566,12 @@ html body .site-footer {
 
 /* ===== ICONS ROW SECTION ===== */
 .icons-row {
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
     padding: var(--otnt-spacing-xxl) 0;
     margin: var(--otnt-spacing-xl) 0;
     position: relative;
-    border-top: 3px solid #667eea;
-    border-bottom: 3px solid #764ba2;
+    border-top: 3px solid var(--otnt-primary);
+    border-bottom: 3px solid var(--otnt-primary-light);
     overflow: hidden;
 }
 
@@ -3067,8 +3076,8 @@ html body .site-footer {
 .after-sales-section {
     background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
     color: var(--otnt-text-primary) !important;
-    padding: var(--otnt-spacing-xxl) 0;
-    margin: var(--otnt-spacing-xl) 0;
+    padding: 15px 0;
+    margin: 5px 0;
     position: relative;
     border-top: 3px solid var(--otnt-orange) !important;
     border-bottom: 3px solid var(--otnt-orange-light) !important;
@@ -3087,7 +3096,7 @@ html body .site-footer {
 }
 
 .after-sales-section .section-header {
-    margin-bottom: var(--otnt-spacing-xl);
+    margin-bottom: 10px;
 }
 
 .after-sales-section .section-title {
@@ -3117,14 +3126,14 @@ html body .site-footer {
 .after-sales-section .support-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--otnt-spacing-lg);
+    gap: 15px;
 }
 
 .after-sales-section .support-item {
     background: var(--otnt-white);
     border: 2px solid var(--otnt-border-light);
     border-radius: var(--otnt-radius-lg);
-    padding: var(--otnt-spacing-xl);
+    padding: 15px;
     text-align: center;
     transition: all 0.3s ease;
     position: relative;
@@ -3204,8 +3213,8 @@ html body .site-footer {
 }
 
 .after-sales-section .support-btn {
-    background: linear-gradient(135deg, var(--otnt-primary) 0%, var(--otnt-primary-dark) 100%);
-    color: var(--otnt-white);
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+    color: #ffffff !important;
     padding: var(--otnt-spacing-sm) var(--otnt-spacing-lg);
     border-radius: 25px;
     text-decoration: none;
@@ -3218,7 +3227,7 @@ html body .site-footer {
 
 .after-sales-section .support-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(243, 108, 33, 0.4);
+    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4) !important;
 }
 
 /* ===== PRODUCT SECTIONS ===== */
@@ -3317,14 +3326,14 @@ html body .site-footer {
     position: absolute;
     top: 10px;
     left: 10px;
-    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    background: linear-gradient(135deg, #dc2626, #ef4444);
     color: var(--otnt-white);
     padding: 6px 12px;
     border-radius: 15px;
     font-size: 0.8rem;
     font-weight: 700;
     z-index: 2;
-    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
@@ -3623,4 +3632,87 @@ html body .site-footer {
     background: #dc2626 !important;
     border-color: #dc2626 !important;
     background-color: #dc2626 !important;
+}
+
+/* ===== COMPLETE ORANGE VARIABLE OVERRIDE ===== */
+/* This section overrides ALL remaining orange variables with direct red colors */
+
+/* Override all remaining var(--otnt-orange) usage */
+* {
+    --otnt-orange: #dc2626 !important;
+    --otnt-orange-light: #ef4444 !important;
+    --otnt-orange-dark: #b91c1c !important;
+}
+
+/* Force all elements using orange variables to use red */
+[style*="var(--otnt-orange)"],
+[style*="var(--otnt-orange-light)"],
+[style*="var(--otnt-orange-dark)"] {
+    color: #dc2626 !important;
+    background: #dc2626 !important;
+    border-color: #dc2626 !important;
+}
+
+/* Override any remaining CSS that might use these variables */
+.search-btn:hover {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+}
+
+/* Force all remaining orange references to red */
+[class*="orange"], [class*="Orange"], [class*="ORANGE"] {
+    color: #dc2626 !important;
+    background: #dc2626 !important;
+    border-color: #dc2626 !important;
+}
+
+/* Override any inline styles with orange */
+[style*="orange"], [style*="Orange"], [style*="ORANGE"] {
+    color: #dc2626 !important;
+    background: #dc2626 !important;
+    border-color: #dc2626 !important;
+}
+
+/* Final override for any remaining orange elements */
+* {
+    color: inherit;
+}
+
+*[class*="orange"], *[class*="Orange"], *[class*="ORANGE"] {
+    color: #dc2626 !important;
+    background: #dc2626 !important;
+    border-color: #dc2626 !important;
+}
+
+/* ===== SUPPORT BUTTON TEXT VISIBILITY FIXES ===== */
+/* Ensure ALL support buttons have visible text regardless of background */
+.support-btn,
+[class*="support-btn"],
+.support-button,
+[class*="support-button"] {
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Force white text on any support button with red background */
+.support-btn[style*="red"],
+.support-btn[style*="Red"],
+.support-btn[style*="#dc2626"],
+.support-btn[style*="#b91c1c"],
+.support-btn[style*="#ef4444"] {
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Ensure support button text is always white on red backgrounds */
+.support-btn:not([style*="white"]):not([style*="White"]):not([style*="#ffffff"]) {
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Force contrast for any button with similar background and text colors */
+button[style*="background"][style*="color"]:not([style*="white"]):not([style*="White"]),
+.btn[style*="background"][style*="color"]:not([style*="white"]):not([style*="White"]),
+[class*="btn"][style*="background"][style*="color"]:not([style*="white"]):not([style*="White"]) {
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
 }

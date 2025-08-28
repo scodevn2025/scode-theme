@@ -58,7 +58,7 @@
                 </div>
                 <div class="top-bar-item">
                     <i class="fas fa-phone"></i>
-                    <span>Hotline: <?php echo esc_html(get_theme_mod('scode_hotline', '0834.777.111')); ?></span>
+                    <span>Hotline: <?php echo esc_html(get_theme_mod('scode_hotline', '0394.091.919')); ?></span>
                 </div>
             </div>
             <div class="top-bar-right">
@@ -158,7 +158,7 @@
                     <nav class="vertical-mega-menu">
                         <div class="menu-header">
                             <i class="fas fa-th-large"></i>
-                            <span>DANH MỤC SẢN PHẨM</span>
+                            <span>MENU</span>
                         </div>
                         
                         <ul class="mega-menu-list">
