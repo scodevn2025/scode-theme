@@ -1,14 +1,15 @@
 # SCODE Theme - WooCommerce Product Display
 
 ## 📋 Mô tả
-Theme WordPress tùy chỉnh cho website bán hàng công nghệ, hiển thị sản phẩm với layout chuyên nghiệp và responsive design.
+Theme WordPress tùy chỉnh cho website bán hàng công nghệ, hiển thị sản phẩm với layout chuyên nghiệp và responsive design. Theme được thiết kế đặc biệt cho các sản phẩm công nghệ cao như robot hút bụi, máy lọc không khí, smartwatch và các thiết bị thông minh khác.
 
 ## ✨ Tính năng chính
 - **Product Display**: Hiển thị sản phẩm theo sections (Flash Sale, Bán chạy, Giảm giá sốc, Sản phẩm mới)
 - **Responsive Design**: Tối ưu cho Desktop (6 cột), Tablet (2 cột), Mobile (1 cột)
-- **Dynamic Product Cards**: Thẻ sản phẩm với overlay elements động
-- **WooCommerce Integration**: Tích hợp đầy đủ với WooCommerce
-- **Custom Styling**: CSS variables và design system nhất quán
+- **Dynamic Product Cards**: Thẻ sản phẩm với overlay elements động và thông tin real-time
+- **WooCommerce Integration**: Tích hợp đầy đủ với WooCommerce và các tính năng nâng cao
+- **Custom Styling**: CSS variables và design system nhất quán với brand identity
+- **Performance Optimized**: Tối ưu hóa tốc độ tải trang và SEO
 
 ## 🚀 Cài đặt
 
@@ -278,6 +279,13 @@ function scode_get_products_by_tag($tag_slug, $limit = 6) {
 
 ## 📝 Changelog
 
+### Version 3.2.0 (Current)
+- Cải thiện product card layout và animations
+- Tối ưu hóa responsive design cho mobile
+- Thêm support cho dark mode
+- Cải thiện accessibility và SEO
+- Update documentation và code examples
+
 ### Version 3.1.0
 - Thêm dynamic data cho product cards
 - Cải thiện responsive design
@@ -328,5 +336,6 @@ This project is licensed under the GPL v2 or later.
 
 ---
 
-*Theme được phát triển bởi SCODE Team*
-*Cập nhật lần cuối: <?php echo date('d/m/Y'); ?>*
+*Theme được phát triển bởi SCODE Team*  
+*Cập nhật lần cuối: 20/12/2024*  
+*Phiên bản hiện tại: 3.2.0*
